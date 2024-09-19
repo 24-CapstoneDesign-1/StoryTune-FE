@@ -1,11 +1,14 @@
 import { lazy, Suspense } from "react";
 import {
+    Navigate,
     BrowserRouter as RootRouter,
     Route,
     Routes,
   } from "react-router-dom";
 import { Loading } from "@/entities";
 import AppStyles from "./AppStyles";
+
+import AuthRouter from "./AuthRouter";
 
 import { PAGE_URL } from "@/shared";
 
@@ -16,11 +19,14 @@ const PageRouter = () => {
         <Suspense fallback={<Loading />}>
             <RootRouter>
                 <AppStyles />
-                <Routes>
-                    <Route>
-                        <Route path={PAGE_URL.HOME} element={<Home />} />
-                    </Route>
-                </Routes>
+                <AuthRouter>
+                    <Routes>
+                        <Route>
+                        <Route index element={<Navigate to={PAGE_URL.Home} replace />} />
+                            <Route path={PAGE_URL.Home} element={<Home />} />
+                        </Route>
+                    </Routes>
+                </AuthRouter>
             </RootRouter>
         </Suspense>
     );

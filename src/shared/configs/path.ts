@@ -1,3 +1,4 @@
 export enum PAGE_URL {
-    HOME = "/",
+    Home = "/",
+    SignIn = "/signin",
 }
