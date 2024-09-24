@@ -13,7 +13,7 @@ import AuthRouter from "./AuthRouter";
 import { PAGE_URL } from "@/shared";
 
 const Home = lazy(() => import("@/pages/home/HomePage"));
-
+const SignIn = lazy(() => import("@/pages/auth/SignInPage"));
 const PageRouter = () => {
     return (
         <Suspense fallback={<Loading />}>
@@ -21,6 +21,7 @@ const PageRouter = () => {
                 <AppStyles />
                 <AuthRouter>
                     <Routes>
+                        <Route path={PAGE_URL.SignIn} element={<SignIn />} />
                         <Route>
                         <Route index element={<Navigate to={PAGE_URL.Home} replace />} />
                             <Route path={PAGE_URL.Home} element={<Home />} />
