@@ -1,9 +1,9 @@
-
+import { Header } from "@/widgets"
 const HomePage = () => {
     return (
-        <div>
-            <h1>Home Page</h1>
-        </div>
+        <>
+            <Header />
+        </>
     );
 };
 
