@@ -5,3 +5,6 @@ export {
     MenuButton,
     SearchButton,
  } from "./element/button/Button";
+export {
+    Title,
+} from "./element/container/Container";

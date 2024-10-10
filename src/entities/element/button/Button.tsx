@@ -13,9 +13,11 @@ export const Button = styled.button<{
     background-color: #1F9EF9;
     border-radius: 10px;
     color: white;
-    margin-top: 40px;
+    margin-top: 0px;
+    margin-bottom: 0px;
     border: none;
     outline: none;
+    font-size: 1.5rem;
     &:hover {
         background-color: darkblue;
     }
