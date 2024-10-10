@@ -20,6 +20,11 @@ const SignUpForm = styled.form`
     width: 350px;
     height: 50vh;
     padding: 40px 70px;
+    @media (max-width: 768px) {
+        width: 250px;
+        height: 40vh;
+        padding: 40px 50px;
+    }
 
 `;
 const GenderButton = styled.div`
@@ -29,7 +34,7 @@ const GenderButton = styled.div`
     justify-content: center;
     align-items: center;
     background-color: #D9D9D9;
-    border: none;
+    border: 2px solid #D9D9D9;
     border-radius: 10px;
     margin: 10px 20px 10px 0px;
     &:hover {
@@ -38,11 +43,16 @@ const GenderButton = styled.div`
     }
 `;
 const SignUpInput = styled.input<{ width?: string; }>`
-    width: ${(props) => props.width || "90%"};
+    width: ${(props) => props.width || "100%"};
     height: 30px;
     border: none;
     margin-bottom: 40px;
     border-bottom: 1px solid black;
+    font-size: 1rem;
+    outline: none;
+    @media (max-width: 768px) {
+        width: ${(props) => props.width || "100%"};
+    }
 `;
 const GenderContainer = styled.div`
     display: flex;

@@ -21,6 +21,11 @@ export const Button = styled.button<{
     &:hover {
         background-color: darkblue;
     }
+    @media (max-width: 768px) {
+        width: 80%;
+        height: 45px;
+        font-size: 1.2rem;
+    }
 `;
 
 export const MenuButton = styled(IoMenu)`

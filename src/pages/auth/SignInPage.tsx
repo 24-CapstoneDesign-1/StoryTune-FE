@@ -20,6 +20,7 @@ const SignInForm = styled.form`
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
 `;
 
 const SignInInput = styled.input`
@@ -29,12 +30,22 @@ const SignInInput = styled.input`
     margin-bottom: 20px;
     border-radius: 10px;
     border: 1px solid black;
+    font-size: 1rem;
     outline: none;
+    @media (max-width: 768px) {
+        width: 300px;
+    }
 `;
 const SignUpButton = styled.div`
     font-size: 1rem;
     color: grey;
     margin: 20px 5px 0px 0px;
+    &:hover {
+        cursor: pointer;
+    }
+    @media (max-width: 768px) {
+        font-size: 0.8rem;
+    }
 `;
 const SignUpContainer = styled.div`
     display: flex;
