@@ -18,9 +18,6 @@ export const Button = styled.button<{
     border: none;
     outline: none;
     font-size: 1.5rem;
-    &:hover {
-        background-color: darkblue;
-    }
     @media (max-width: 768px) {
         width: 80%;
         height: 45px;

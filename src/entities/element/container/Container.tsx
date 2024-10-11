@@ -7,3 +7,12 @@ export const Title = styled.div`
     display: flex;
     justify-content: center;
 `;
+
+export const ValidInput = styled.div`
+    font-size: 0.8rem;
+    align-self: flex-start;
+    color: red;
+    margin-top: 5px;
+    margin-left: 10px;
+    margin-bottom: 20px;
+`;

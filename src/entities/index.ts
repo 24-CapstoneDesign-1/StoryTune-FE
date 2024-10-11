@@ -7,4 +7,5 @@ export {
  } from "./element/button/Button";
 export {
     Title,
+    ValidInput,
 } from "./element/container/Container";

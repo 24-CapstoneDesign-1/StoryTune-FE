@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
-import { Button, Title } from "@/entities";
+import { Button, Title, ValidInput } from "@/entities";
 import { useNavigate } from "react-router-dom";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { PAGE_URL } from "@/shared";
 
 const SignInContainer = styled.div`
@@ -27,7 +28,6 @@ const SignInInput = styled.input`
     width: 400px;
     height: 23px;
     padding: 10px;
-    margin-bottom: 20px;
     border-radius: 10px;
     border: 1px solid black;
     font-size: 1rem;
@@ -56,16 +56,47 @@ const LoginButton = styled(Button)`
     width: 300px;
     height: 50px;
 `;
+
+interface SignInFormInput {
+    userId: string;
+    password: string;
+}
+
 const SignInPage = () => {
     const navigate = useNavigate();
+    const { register, handleSubmit, setError, formState: { errors }, } = useForm<SignInFormInput>()
+
+    const onSubmit: SubmitHandler<SignInFormInput> = (data) => {
+        // signin({
+        //     userId: data.userId,
+        //   password: data.password,
+        // }).then(() => navigate("/home"));
+        navigate(PAGE_URL.Home);
+      }
 
     return (
         <SignInContainer>
             <SignInSubContainer>
                 <Title>Story Tune</Title>
-                <SignInForm>
-                    <SignInInput type="text" placeholder="아이디" />
-                    <SignInInput type="password" placeholder="비밀번호" />
+                <SignInForm onSubmit={handleSubmit(onSubmit)}>
+                    <SignInInput type="text" placeholder="아이디" 
+                    {...register("userId", { required: '* 아이디를 입력해주세요.', maxLength: 20, minLength: {
+                        value: 0,
+                        message: '아이디를 입력해주세요.',
+                      }, })}
+                    />
+                    <ValidInput>
+                        {errors?.userId?.message ? errors?.userId?.message : '\u00A0'}
+                    </ValidInput>
+                    <SignInInput type="password" placeholder="비밀번호" 
+                    {...register("password", { required: '* 비밀번호를 입력해주세요.', maxLength: 20, minLength: {
+                        value: 0,
+                        message: '비밀번호를 입력해주세요.',
+                      }, })}
+                    />
+                    <ValidInput>
+                        {errors?.password?.message ? errors?.password?.message : '\u00A0'}
+                    </ValidInput>
                     <br />
                     <LoginButton type="submit" width="300px" height="50px">로그인 하기</LoginButton>
                 </SignInForm>
