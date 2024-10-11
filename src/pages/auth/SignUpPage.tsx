@@ -4,6 +4,7 @@ import { ValidInput } from "@/entities";
 import { useState } from "react";
 import { useNavigate, } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form"
+import { PAGE_URL } from "@/shared";
 
 const SignUpContainer = styled.div`
     display: flex;
@@ -96,6 +97,7 @@ interface SignUpFormInput {
     gender: string;
     userId: string;
     password: string;
+    passwordValid: string;
 }
 
 const SignUpPage = () => {
@@ -104,18 +106,19 @@ const SignUpPage = () => {
     const navigate = useNavigate();
 
     const { register, handleSubmit, setError, setValue, formState: { errors }, } = useForm<SignUpFormInput>()
-    // const onSubmit: SubmitHandler<SignUpFormInput> = (data) => {
-    //     try {
-    //     onValid(data)
-    //     signin({
-    //         userId: data.userId,
-    //         password: data.password,
-    //     }).then(() => navigate("/home"));
-    //     }
-    //     catch (error) {
-    //     console.error(error)
-    //     }
-    // }
+    const onSubmit: SubmitHandler<SignUpFormInput> = (data) => {
+        try {
+            onValid(data);
+            // signin({
+            //     userId: data.userId,
+            //     password: data.password,
+            // }).then(() => navigate("/home"));
+            navigate(PAGE_URL.SignIn);
+        }
+        catch (error) {
+        console.error(error)
+        }
+    }
 
     const onValid = (data : SignUpFormInput) => {
         if (data.name === '') {
@@ -153,6 +156,20 @@ const SignUpPage = () => {
             { shouldFocus: true },
             );
         }
+        if (data.passwordValid === '') {
+            setError(
+            'passwordValid',
+            { message: '비밀번호 확인이 입력되어 있지 않습니다.' },
+            { shouldFocus: true },
+            );
+        }
+        if (data.password !== data.passwordValid) {
+            setError(
+            'passwordValid',
+            { message: '비밀번호가 일치하지 않습니다.' },
+            { shouldFocus: true },
+            );
+        }
     }
 
     const handleGenderSelection = (selectedGender: string) => {
@@ -163,7 +180,7 @@ const SignUpPage = () => {
     return (
         <SignUpContainer>
             <Title>Story Tune</Title>
-            <SignUpForm>
+            <SignUpForm onSubmit={handleSubmit(onSubmit)}>
                 {progress === 0 ? (
                 <>
                     {/* <BackButton src="./images/back.svg" onClick={() => navigate("/signin")} /> */}
@@ -197,8 +214,7 @@ const SignUpPage = () => {
                     {...register("gender", { required: '* 성별을 입력해주세요.', maxLength: 1, minLength: {
                         value: 0,
                         message: '성별을 입력해주세요.',
-                      }, }
-                    )}
+                      },})}
                     >
                         <GenderButton gender={gender == '남' ? true : false} onClick={() => handleGenderSelection("남")}>남</GenderButton>
                         <GenderButton gender={gender == '여' ? true : false} onClick={() => handleGenderSelection('여')}>여</GenderButton>
@@ -216,13 +232,37 @@ const SignUpPage = () => {
                         <BackButton src="./images/back.svg" onClick={() => setProgress(progress - 1)} />
                         <label>아이디</label>
                         <IdInputContainer>
-                            <SignUpInput type="text" placeholder="아이디를 입력하세요" />
+                            <SignUpInput type="text" placeholder="아이디를 입력하세요" 
+                            {...register("userId", { required: '* 아이디를 입력해주세요.', maxLength: 20, minLength: {
+                                value: 0,
+                                message: '아이디를 입력해주세요.',
+                            },})}
+                            />
                             <DuplicateButton>중복 확인</DuplicateButton>
                         </IdInputContainer>
+                        <ValidInput>
+                            {errors?.userId?.message ? errors?.userId?.message : '\u00A0'}
+                        </ValidInput>
                         <label>비밀번호</label>
-                        <SignUpInput type="password" placeholder="비밀번호를 입력하세요" />
+                        <SignUpInput type="password" placeholder="비밀번호를 입력하세요"
+                        {...register("password", { required: '* 비밀번호를 입력해주세요.', maxLength: 20, minLength: {
+                            value: 0,
+                            message: '비밀번호를 입력해주세요.',
+                        },})}
+                        />
+                        <ValidInput>
+                            {errors?.password?.message ? errors?.password?.message : '\u00A0'}
+                        </ValidInput>
                         <label>비밀번호 확인</label>
-                        <SignUpInput type="password" placeholder="비밀번호를 다시 입력하세요" />
+                        <SignUpInput type="password" placeholder="비밀번호를 다시 입력하세요"
+                        {...register("passwordValid", { required: '* 비밀번호를 다시 입력해주세요.', maxLength: 20, minLength: {
+                            value: 0,
+                            message: '비밀번호를 다시 입력해주세요.',
+                        },})}
+                        />
+                        <ValidInput>
+                            {errors?.passwordValid?.message ? errors?.password?.message : '\u00A0'}
+                        </ValidInput>
                         <NextConatiner>
                             <Button width="400px" height="50px">회원가입 하기</Button>
                         </NextConatiner>

@@ -8,7 +8,7 @@ const MainContainer = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: #D2FFFF;
+    background-image: linear-gradient(to top, #FFFFFF, #D2FFFF);
     height: 100vh;
 `;
 
