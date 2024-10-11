@@ -18,11 +18,11 @@ const SignUpForm = styled.form`
     background-color: white;
     border-radius: 20px;
     width: 350px;
-    height: 50vh;
+    height: 60vh;
     padding: 40px 70px;
     @media (max-width: 768px) {
-        width: 250px;
-        height: 40vh;
+        width: 220px;
+        height: 50vh;
         padding: 40px 50px;
     }
 
@@ -84,6 +84,7 @@ const SignUpPage = () => {
             <SignUpForm>
                 {progress === 0 ? (
                 <>
+                    <BackButton src="./public/images/back.svg" onClick={() => navigate("/")} />
                     <label>이름</label>
                     <SignUpInput type="text" />
                     <label>나이</label>
