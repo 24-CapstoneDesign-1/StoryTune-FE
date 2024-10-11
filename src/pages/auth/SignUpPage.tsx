@@ -74,6 +74,24 @@ const AgeLabel = styled.div`
     display: flex;
     margin-left: 10px;
 `;
+const DuplicateButton = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+    width: 100px;
+    border-radius: 10px;
+    color: white;
+    border: none;
+    outline: none;
+    background-color: white;
+    border: 1px solid black;
+    color: black;
+    font-size: 1rem;
+`;
+const IdInputContainer = styled.div`
+    display: flex;
+`;
 const SignUpPage = () => {
     const [progress, setProgress] = useState(0);
     const navigate = useNavigate();
@@ -84,7 +102,7 @@ const SignUpPage = () => {
             <SignUpForm>
                 {progress === 0 ? (
                 <>
-                    <BackButton src="./public/images/back.svg" onClick={() => navigate("/")} />
+                    {/* <BackButton src="./images/back.svg" onClick={() => navigate("/signin")} /> */}
                     <label>이름</label>
                     <SignUpInput type="text" />
                     <label>나이</label>
@@ -105,9 +123,13 @@ const SignUpPage = () => {
                 </>
                 ) : (
                     <>
-                        <BackButton src="./public/images/back.svg" onClick={() => setProgress(progress - 1)} />
+                        
+                        <BackButton src="./images/back.svg" onClick={() => setProgress(progress - 1)} />
                         <label>아이디</label>
-                        <SignUpInput type="text" placeholder="아이디를 입력하세요" />
+                        <IdInputContainer>
+                            <SignUpInput type="text" placeholder="아이디를 입력하세요" />
+                            <DuplicateButton>중복 확인</DuplicateButton>
+                        </IdInputContainer>
                         <label>비밀번호</label>
                         <SignUpInput type="password" placeholder="비밀번호를 입력하세요" />
                         <label>비밀번호 확인</label>
