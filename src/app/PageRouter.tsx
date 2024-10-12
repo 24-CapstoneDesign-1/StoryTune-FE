@@ -16,6 +16,8 @@ const Home = lazy(() => import("@/pages/home/HomePage"));
 const SignIn = lazy(() => import("@/pages/auth/SignInPage"));
 const SignUp = lazy(() => import("@/pages/auth/SignUpPage"));
 const Main = lazy(() => import("@/pages/auth/MainPage"));
+const BookMain = lazy(() => import("@/pages/book/MainPage"));
+
 const PageRouter = () => {
     return (
         <Suspense fallback={<Loading />}>
@@ -29,6 +31,7 @@ const PageRouter = () => {
                         <Route>
                             {/* <Route index element={<Navigate to={PAGE_URL.Home} replace />} /> */}
                             <Route path={PAGE_URL.Home} element={<Home />} />
+                            <Route path={PAGE_URL.BookMain} element={<BookMain />} />
                         </Route>
                     </Routes>
                 </AuthRouter>

@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { IoMenu, IoSearchSharp } from "react-icons/io5";
+import { CgProfile } from "react-icons/cg";
 
 export const Button = styled.button<{
     width?: string;
@@ -25,6 +26,8 @@ export const Button = styled.button<{
     }
 `;
 
+export const ProfileButton = styled(Button)`
+`;
 export const MenuButton = styled(IoMenu)`
     font-size: 1.5rem;
     margin-right: 20px;

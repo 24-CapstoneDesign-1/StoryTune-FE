@@ -1,1 +1,4 @@
-export { Header } from "./header/Header";
+export { 
+    Header,
+    InfoHeader,
+} from "./header/Header";
