@@ -8,4 +8,5 @@ export {
 export {
     Title,
     ValidInput,
+    Book,
 } from "./element/container/Container";

@@ -7,10 +7,11 @@ const HeaderContainer = styled.header`
     width: 100%;
     height: 60px;
     justify-content: center;
+    background-color: #FFFFFF;
     align-items: center;
     padding: 10px;
     position: relative;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid black;
 `;
 
 const BackButton = styled(IoChevronBack)`
@@ -20,7 +21,7 @@ const BackButton = styled(IoChevronBack)`
     font-size: 3rem;
 `;
 const Title = styled.div`
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: bold;
 `;
 export const Header = () => {
