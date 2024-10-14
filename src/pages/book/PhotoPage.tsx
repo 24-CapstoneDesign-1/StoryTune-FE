@@ -1,6 +1,8 @@
 import styled from "@emotion/styled";
 import { InfoHeader } from "@/widgets";
 import { useState } from "react";
+import { CiRedo } from "react-icons/ci";
+import { FaCaretRight } from "react-icons/fa";
 
 const MainContainer = styled.div`
   background-color: #FFFCAD;
@@ -48,17 +50,47 @@ const AddImageBlock = styled.label<{ hasImage: boolean }>`
   justify-content: center;
   align-items: center;
   font-size: ${(props) => (props.hasImage ? "0" : "100px")};
-  background-color: ${(props) => (props.hasImage ? "transparent" : "#d9d9d9")};
+  background-color: ${(props) => (props.hasImage ? "transparent" : "#FFFFFF")};
   border-radius: 10px;
-  color: white;
+  color: black;
   overflow: hidden;
   position: relative;
+  border: 1px solid #000000;
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.5);
 `;
 
 const HiddenInput = styled.input`
   display: none;
 `;
 
+const RerollButton = styled(CiRedo)`
+  font-size: 2rem;
+`;
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 30%;
+`;
+const NextButton = styled(FaCaretRight)`
+  font-size: 2rem;
+`;
+const RerollContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 20px;
+  margin-top: 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+`;
+const NextContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+`;
 const PhotoPage = () => {
   const [images, setImages] = useState<string[]>(Array(10).fill("")); // 10개의 빈 이미지 슬롯을 준비
 
@@ -94,6 +126,16 @@ const PhotoPage = () => {
           </AddImageBlock>
         ))}
       </ImageContainer>
+      <ButtonContainer>
+        <RerollContainer>
+          <RerollButton />
+          다시 고르고 싶어요
+        </RerollContainer>
+        <NextContainer>
+          <NextButton />
+          다 골랐어요!
+        </NextContainer>
+      </ButtonContainer>
     </MainContainer>
   );
 };
