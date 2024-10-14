@@ -29,7 +29,7 @@ const MainPage = () => {
     ]);
     return (
         <MainContainer>
-            <InfoHeader />
+            <InfoHeader type="나만의 동화 만들기" />
             <MainSubContainer>
                 <BookList title="나만의 동화 만들기" bookList={bookList} /> 
             </MainSubContainer>

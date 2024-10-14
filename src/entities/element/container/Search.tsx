@@ -10,6 +10,7 @@ const SearchInput = styled.input`
     width: 300px;
     height: 30px;
     padding-left: 15px;
+    padding-right: 45px;
     border-radius: 30px;
     border: 1px solid gray;
     box-shadow: 3px 3px 5px gray;
@@ -23,7 +24,7 @@ const SearchButtonCustom = styled(SearchButton)`
 export const Search = () => {
     return (
         <SearchContainer>
-            <SearchInput type="text" placeholder="검색어를 입력하세요." />
+            <SearchInput type="text" placeholder="찾고 싶은 책을 입력해 주세요." />
             <SearchButtonCustom />
         </SearchContainer>
     );

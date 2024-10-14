@@ -17,6 +17,7 @@ const SignIn = lazy(() => import("@/pages/auth/SignInPage"));
 const SignUp = lazy(() => import("@/pages/auth/SignUpPage"));
 const Main = lazy(() => import("@/pages/auth/MainPage"));
 const BookMain = lazy(() => import("@/pages/book/MainPage"));
+const BooKPhoto = lazy(() => import("@/pages/book/PhotoPage"));
 
 const PageRouter = () => {
     return (
@@ -32,6 +33,7 @@ const PageRouter = () => {
                             {/* <Route index element={<Navigate to={PAGE_URL.Home} replace />} /> */}
                             <Route path={PAGE_URL.Home} element={<Home />} />
                             <Route path={PAGE_URL.BookMain} element={<BookMain />} />
+                            <Route path={PAGE_URL.BookPhoto} element={<BooKPhoto />} />
                         </Route>
                     </Routes>
                 </AuthRouter>

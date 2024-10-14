@@ -33,12 +33,12 @@ export const Header = () => {
     );
 };
 
-export const InfoHeader = () => {
+export const InfoHeader = ({type} : {type : string}) => {
     return (
         <HeaderContainer>
             <BackButton />
             <Title>
-                나만의 동화 만들기
+                {type}
             </Title>
         </HeaderContainer>
     );
