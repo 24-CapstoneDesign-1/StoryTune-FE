@@ -23,6 +23,7 @@ const BookContainer = styled.div`
     border-radius: 10px;
     width: 200px;
     height: 300px;
+    box-shadow: 5px 5px 5px gray;
 `;
 const ImageContainer = styled.img`
     width: 100%;

@@ -10,3 +10,6 @@ export {
     ValidInput,
     Book,
 } from "./element/container/Container";
+export { 
+    Search,
+} from "./element/container/Search";
