@@ -18,6 +18,8 @@ export const Button = styled.button<{
     border: none;
     outline: none;
     font-size: 1.5rem;
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+    border: 0.3px solid #000000;
     @media (max-width: 768px) {
         width: 80%;
         height: 45px;

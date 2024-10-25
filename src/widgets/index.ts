@@ -5,3 +5,6 @@ export {
 export { 
     BookList,
 } from "./books/BookList";
+export {
+    Rerollplay,
+} from "./button/Rerollplay";

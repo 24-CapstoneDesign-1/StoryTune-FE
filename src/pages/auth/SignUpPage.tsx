@@ -254,14 +254,14 @@ const SignUpPage = () => {
                             {errors?.password?.message ? errors?.password?.message : '\u00A0'}
                         </ValidInput>
                         <label>비밀번호 확인</label>
-                        <SignUpInput type="password" placeholder="비밀번호를 다시 입력하세요"
+                        <SignUpInput type="passwordValid" placeholder="비밀번호를 다시 입력하세요"
                         {...register("passwordValid", { required: '* 비밀번호를 다시 입력해주세요.', maxLength: 20, minLength: {
                             value: 0,
                             message: '비밀번호를 다시 입력해주세요.',
                         },})}
                         />
                         <ValidInput>
-                            {errors?.passwordValid?.message ? errors?.password?.message : '\u00A0'}
+                            {errors?.passwordValid?.message ? errors?.passwordValid?.message : '\u00A0'}
                         </ValidInput>
                         <NextConatiner>
                             <Button width="400px" height="50px">회원가입 하기</Button>

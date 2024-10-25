@@ -9,6 +9,8 @@ export {
     Title,
     ValidInput,
     Book,
+    MainContainer,
+    InputContainer,
 } from "./element/container/Container";
 export { 
     Search,

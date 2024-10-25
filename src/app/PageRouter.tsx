@@ -18,6 +18,8 @@ const SignUp = lazy(() => import("@/pages/auth/SignUpPage"));
 const Main = lazy(() => import("@/pages/auth/MainPage"));
 const BookMain = lazy(() => import("@/pages/book/MainPage"));
 const BooKPhoto = lazy(() => import("@/pages/book/PhotoPage"));
+const Topic = lazy(() => import("@/pages/book/createBook/TopicPage"));
+const Hero = lazy(() => import("@/pages/book/HeroPage"));
 
 const PageRouter = () => {
     return (
@@ -34,6 +36,8 @@ const PageRouter = () => {
                             <Route path={PAGE_URL.Home} element={<Home />} />
                             <Route path={PAGE_URL.BookMain} element={<BookMain />} />
                             <Route path={PAGE_URL.BookPhoto} element={<BooKPhoto />} />
+                            <Route path={PAGE_URL.Topic} element={<Topic />} />
+                            <Route path={PAGE_URL.Hero} element={<Hero />} />
                         </Route>
                     </Routes>
                 </AuthRouter>

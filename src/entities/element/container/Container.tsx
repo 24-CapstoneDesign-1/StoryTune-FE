@@ -21,15 +21,24 @@ const BookContainer = styled.div`
     background-color: #FFFFFF;
     border: 1px solid black;
     border-radius: 10px;
-    width: 200px;
-    height: 300px;
+    width: 220px;
+    height: 400px;
     box-shadow: 5px 5px 5px gray;
+    margin: 10px;
+    @media (max-width: 768px) {
+        width: 180px;
+        height: 270px;
+    }
 `;
 const ImageContainer = styled.img`
-    width: 100%;
+    width: 220px;
     height: 75%;
     object-fit: cover;
     border-radius: 10px;
+    @media (max-width: 768px) {
+        width: 145px;
+        height: 200px;
+    }
 `;
 const TitleContainer = styled.div`
     font-weight: bold;
@@ -63,3 +72,25 @@ export const Book = ({
         </BookContainer>
     );
 };
+
+export const MainContainer = styled.div`
+    background-color: #FFFCAD;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+`;
+export const InputContainer = styled.input`
+    width: 300px;
+    height: 30px;
+    padding-left: 15px;
+    padding-right: 45px;
+    border-radius: 30px;
+    border: 1px solid gray;
+    box-shadow: 3px 3px 5px gray;
+    outline: none;
+    @media (max-width: 768px) {
+        width: 230px;
+        height: 40px;
+    }
+`;

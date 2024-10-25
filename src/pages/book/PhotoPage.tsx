@@ -3,6 +3,8 @@ import { InfoHeader } from "@/widgets";
 import { useState } from "react";
 import { CiRedo } from "react-icons/ci";
 import { FaCaretRight } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { PAGE_URL } from "@/shared";
 
 const MainContainer = styled.div`
   background-color: #FFFCAD;
@@ -92,6 +94,7 @@ const NextContainer = styled.div`
   font-weight: bold;
 `;
 const PhotoPage = () => {
+  const navigate = useNavigate();
   const [images, setImages] = useState<string[]>(Array(10).fill("")); // 10개의 빈 이미지 슬롯을 준비
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
@@ -131,7 +134,7 @@ const PhotoPage = () => {
           <RerollButton />
           다시 고르고 싶어요
         </RerollContainer>
-        <NextContainer>
+        <NextContainer onClick={() => navigate(PAGE_URL.Hero)}>
           <NextButton />
           다 골랐어요!
         </NextContainer>

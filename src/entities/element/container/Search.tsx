@@ -5,6 +5,9 @@ const SearchContainer = styled.div`
     display: flex;
     justify-content: center;
     margin-top: 20px;
+    @media (max-width: 768px) {
+        margin-top: 10px;
+    }
 `;
 const SearchInput = styled.input`
     width: 300px;
@@ -15,6 +18,10 @@ const SearchInput = styled.input`
     border: 1px solid gray;
     box-shadow: 3px 3px 5px gray;
     outline: none;
+    @media (max-width: 768px) {
+        width: 230px;
+        height: 40px;
+    }
 `;
 const SearchButtonCustom = styled(SearchButton)`
     position: relative;
