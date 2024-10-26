@@ -1,6 +1,7 @@
 import { MenuButton, SearchButton } from "@/entities";
 import styled from "@emotion/styled";
 import { IoChevronBack } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 const HeaderContainer = styled.header`
     display: flex;
@@ -44,9 +45,10 @@ export const Header = () => {
 };
 
 export const InfoHeader = ({type} : {type : string}) => {
+    const navigate = useNavigate();
     return (
         <HeaderContainer>
-            <BackButton />
+            <BackButton onClick={() => navigate(-1)}/>
             <Title>
                 {type}
             </Title>

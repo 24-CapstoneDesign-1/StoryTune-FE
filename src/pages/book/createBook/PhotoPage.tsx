@@ -43,6 +43,9 @@ const ImageContainer = styled.div`
   grid-template-columns: repeat(5, 1fr);
   gap: 20px;
   margin-top: 20px;
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 `;
 
 const AddImageBlock = styled.label<{ hasImage: boolean }>`
@@ -59,6 +62,10 @@ const AddImageBlock = styled.label<{ hasImage: boolean }>`
   position: relative;
   border: 1px solid #000000;
   box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.5);
+  @media (max-width: 768px) {
+    width: 150px;
+    height: 150px;
+  }
 `;
 
 const HiddenInput = styled.input`
@@ -72,6 +79,11 @@ const ButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
   width: 30%;
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    width: 75%;
+    margin-top: 20px;
+  }
 `;
 const NextButton = styled(FaCaretRight)`
   font-size: 2rem;

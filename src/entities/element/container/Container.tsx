@@ -26,8 +26,8 @@ const BookContainer = styled.div`
     box-shadow: 5px 5px 5px gray;
     margin: 10px;
     @media (max-width: 768px) {
-        width: 180px;
-        height: 270px;
+        width: 170px;
+        height: 255px;
     }
 `;
 const ImageContainer = styled.img`
@@ -36,8 +36,8 @@ const ImageContainer = styled.img`
     object-fit: cover;
     border-radius: 10px;
     @media (max-width: 768px) {
-        width: 145px;
-        height: 200px;
+        width: 135px;
+        height: 180px;
     }
 `;
 const TitleContainer = styled.div`
@@ -90,7 +90,7 @@ export const InputContainer = styled.input`
     box-shadow: 3px 3px 5px gray;
     outline: none;
     @media (max-width: 768px) {
-        width: 230px;
+        width: 240px;
         height: 40px;
     }
 `;

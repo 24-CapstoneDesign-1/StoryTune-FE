@@ -19,7 +19,7 @@ const SearchInput = styled.input`
     box-shadow: 3px 3px 5px gray;
     outline: none;
     @media (max-width: 768px) {
-        width: 230px;
+        width: 250px;
         height: 40px;
     }
 `;
@@ -27,6 +27,10 @@ const SearchButtonCustom = styled(SearchButton)`
     position: relative;
     right: 60px;
     top: 6px;
+    @media (max-width: 768px) {
+        right: 60px;
+        top: 10px;
+    }
 `;
 export const Search = () => {
     return (

@@ -13,6 +13,7 @@ const TitleContainer = styled.div`
 const BookListContainer = styled.div`
     display: flex;
     flex-direction: row;
+    justify-content: space-evenly;
     width: 100%;
     overflow-x: auto;
     overflow-y: hidden;

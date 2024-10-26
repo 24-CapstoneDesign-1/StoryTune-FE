@@ -4,6 +4,7 @@ export {
     Button,
     MenuButton,
     SearchButton,
+    SquareButton,
  } from "./element/button/Button";
 export {
     Title,

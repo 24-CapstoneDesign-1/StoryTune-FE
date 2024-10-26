@@ -27,9 +27,16 @@ const TitleContainer = styled.div`
 `;
 const MainTitle = styled.h1`
     margin-bottom: 0px;
+    @media (max-width: 768px) {
+        font-size: 1.5rem;
+    }
 `;
 const SubTitle = styled.h3`
     margin-top: 0px;
+    @media (max-width: 768px) {
+        margin-top: 5px;
+        font-size: 1.15rem;
+    }
 `;
 
 const CustomButton = styled(Button)`

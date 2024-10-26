@@ -38,3 +38,24 @@ export const SearchButton = styled(IoSearchSharp)`
     font-size: 1.5rem;
     margin-left: 20px;
 `;
+
+export const SquareButton = styled.button`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #D2FFFF;
+    border-radius: 10px;
+    color: black;
+    font-weight: bold;
+    width: 200px;
+    height: 100px;
+    font-size: 1.5rem;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.25);
+    border: 0.3px solid #000000;
+    white-space: pre-line;
+    @media (max-width: 768px) {
+        width: 150px;
+        height: 75px;
+        font-size: 1.2rem;
+    }
+`;
