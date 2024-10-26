@@ -1,5 +1,7 @@
 import styled from "@emotion/styled";
 import { IoMenu, IoSearchSharp } from "react-icons/io5";
+import { PiRecordFill } from "react-icons/pi";
+import { FaCaretLeft, FaCaretRight } from "react-icons/fa6";
 
 export const Button = styled.button<{
     width?: string;
@@ -39,7 +41,10 @@ export const SearchButton = styled(IoSearchSharp)`
     margin-left: 20px;
 `;
 
-export const SquareButton = styled.button`
+export const SquareButton = styled.button<{
+    width?: string;
+    height?: string;
+}>`
     display: flex;
     justify-content: center;
     align-items: center;
@@ -47,8 +52,8 @@ export const SquareButton = styled.button`
     border-radius: 10px;
     color: black;
     font-weight: bold;
-    width: 200px;
-    height: 100px;
+    height: ${(props) => props.height || "100px"};
+    width: ${(props) => props.width || "200px"};
     font-size: 1.5rem;
     box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.25);
     border: 0.3px solid #000000;
@@ -58,4 +63,38 @@ export const SquareButton = styled.button`
         height: 75px;
         font-size: 1.2rem;
     }
+`;
+
+export const RecordIcon = styled(PiRecordFill)`
+    font-size: 60px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+`;
+
+export const CircleButton = styled.button`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #D2FFFF;
+    border-radius: 50%;
+    color: black;
+    font-weight: bold;
+    width: 140px;
+    height: 140px;
+    font-size: 1.5rem;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.25);
+    border: 0.3px solid #000000;
+    white-space: pre-line;
+    @media (max-width: 768px) {
+        width: 100px;
+        height: 100px;
+        font-size: 1.2rem;
+    }
+`;
+
+export const LeftButton = styled(FaCaretLeft)`
+
+`;
+export const RightButton = styled(FaCaretRight)`
+
 `;

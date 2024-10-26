@@ -8,4 +8,5 @@ export enum PAGE_URL {
     Hero = "/book/hero",
     Topic = "/book/topic",
     Name = "/book/naming",
+    Story = "/book/story",
 }

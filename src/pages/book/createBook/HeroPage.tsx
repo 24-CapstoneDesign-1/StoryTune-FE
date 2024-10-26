@@ -130,7 +130,7 @@ const HeroPage = () => {
                             {`마음에 들지 않아요.
                             다시 이름을 알려줄게요!`}
                         </ButtonSubContainer>
-                        <ButtonSubContainer onClick={() => setProgress(progress+1)}>
+                        <ButtonSubContainer onClick={() => navigate(PAGE_URL.Story)}>
                             {`마음에 들어요!
                             이어서 하기`}
                         </ButtonSubContainer>

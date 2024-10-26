@@ -5,6 +5,10 @@ export {
     MenuButton,
     SearchButton,
     SquareButton,
+    RecordIcon,
+    CircleButton,
+    LeftButton,
+    RightButton,
  } from "./element/button/Button";
 export {
     Title,

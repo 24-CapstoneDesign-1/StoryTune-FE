@@ -1,6 +1,5 @@
-import { Button, MainContainer, SquareButton, Title } from "@/entities";
+import { Button, MainContainer, SquareButton, Title, RecordIcon } from "@/entities";
 import { InfoHeader } from "@/widgets";
-import { PiRecordFill } from "react-icons/pi";
 import styled from "@emotion/styled";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -41,11 +40,7 @@ const InputContianer = styled.div`
     justify-content: center;
     align-items: center;
 `;
-const RecordIcon = styled(PiRecordFill)`
-    font-size: 60px;
-    margin-top: 20px;
-    margin-bottom: 20px;
-`;
+
 const CustomButton = styled(Button)`
     border-radius: 30px;
     background-color: #FFFFFF;

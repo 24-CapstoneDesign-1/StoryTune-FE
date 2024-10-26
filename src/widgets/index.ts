@@ -8,3 +8,6 @@ export {
 export {
     Rerollplay,
 } from "./button/Rerollplay";
+export {
+    LeftRight,
+} from "./button/LeftRight";
