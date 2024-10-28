@@ -26,7 +26,7 @@ const BookContainer = styled.div`
     box-shadow: 5px 5px 5px gray;
     margin: 10px;
     @media (max-width: 768px) {
-        width: 170px;
+        width: 135px;
         height: 255px;
     }
 `;
@@ -82,7 +82,7 @@ export const MainContainer = styled.div`
 `;
 export const InputContainer = styled.input`
     width: 300px;
-    height: 30px;
+    height: 40px;
     padding-left: 15px;
     padding-right: 45px;
     border-radius: 30px;

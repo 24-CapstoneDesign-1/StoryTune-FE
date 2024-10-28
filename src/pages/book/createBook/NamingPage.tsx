@@ -1,8 +1,8 @@
-import { Button, MainContainer, SquareButton, Title, RecordIcon } from "@/entities";
+import { Button, MainContainer, SquareButton, Title, RecordIcon, InputContainer } from "@/entities";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { PAGE_URL } from "@/shared";
 
 const SubContainer = styled.div`
@@ -42,7 +42,7 @@ const InputContianer = styled.div`
 `;
 
 const CustomButton = styled(Button)`
-    border-radius: 30px;
+    border-radius: 20px;
     background-color: #FFFFFF;
     color: black;
     font-weight: bold;
@@ -63,20 +63,39 @@ const ButtonContainer = styled.div`
 `;
 const NamingPage = () => {
     const navigate = useNavigate();
-    const [name, setName] = useState("a");
+    const location = useLocation();
+    const [image, setImage] = useState(location.state.image);
+    const [curIndex, setCurIndex] = useState(location.state.index);
+    const [name, setName] = useState("");
+    const [typing, setTyping] = useState(false);
+    const [finalName, setFinalName] = useState("");
     return (
         <MainContainer>
             <InfoHeader type="나만의 동화 만들기" />
             <SubContainer>
                 <PhotoContainer>
                     <CustomTitle>이 친구의 이름은 무엇인가요?</CustomTitle>
-                    <Photo src="../public/images/temp.svg" />
+                    <Photo src={image} />
                 </PhotoContainer>
-                {name.length === 0 ? (
+                {finalName.length === 0 ? (
                     <InputContianer>
-                        <RecordIcon />
-                        <CustomTitle>아이콘을 클릭해서 알려주세요!</CustomTitle>
-                        <CustomButton width="400px" height="50px">직접 입력할래요!</CustomButton>
+                        {!typing ? (
+                            <>
+                                <RecordIcon />
+                                <CustomTitle>아이콘을 클릭해서 알려주세요!</CustomTitle>
+                                <CustomButton width="400px" height="50px" onClick={() => setTyping(!typing)}>직접 입력할래요!</CustomButton>
+                            </>
+                        ): (
+                            <>
+                                <InputContainer placeholder="이름을 입력해 주세요" value={name} onChange={(e) => setName(e.target.value)}></InputContainer>
+                                <div style={{height: "60px"}}></div>
+                                <SquareButton width="350px" onClick={() => {
+                                    setTyping(!typing)
+                                    setFinalName(name)
+                                }}>이름을 입력했어요!</SquareButton>
+                            </>
+                        )}
+                        
                     </InputContianer>
                 ) : (
                     <InputContianer>
@@ -84,7 +103,7 @@ const NamingPage = () => {
                         <ButtonContainer>
                             <SquareButton>{`이름이 틀렸어요.
                             다시 말하기`}</SquareButton>
-                            <SquareButton onClick={() => navigate(PAGE_URL.Hero)}>{`맞아요!
+                            <SquareButton onClick={() => navigate(PAGE_URL.HeroNaming, {state: {index: curIndex, name: finalName}})}>{`맞아요!
                             이어서 하기`}</SquareButton>
                         </ButtonContainer>
                     </InputContianer>

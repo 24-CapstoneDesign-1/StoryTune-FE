@@ -4,6 +4,7 @@ export {
 } from "./header/Header";
 export { 
     BookList,
+    SearchBookList,
 } from "./books/BookList";
 export {
     Rerollplay,

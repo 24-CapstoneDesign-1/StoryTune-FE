@@ -9,4 +9,8 @@ export enum PAGE_URL {
     Topic = "/book/topic",
     Name = "/book/naming",
     Story = "/book/story",
+    Search = "/search",
+    Title = "/book/title",
+    Maked = "/book/maked",
+    HeroNaming = "/book/heroNaming",
 }

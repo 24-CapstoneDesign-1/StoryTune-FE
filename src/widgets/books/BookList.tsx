@@ -20,6 +20,14 @@ const BookListContainer = styled.div`
     white-space: nowrap;
     padding-bottom: 10px;
 `;
+const SearchBookListContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    white-space: nowrap;
+    flex-wrap: wrap;
+    padding-bottom: 10px;
+`;
 const SubTitleContainer = styled.div`
     width: 80%;
 `;
@@ -51,5 +59,25 @@ export const BookList = ( {title, subTitle, bookList}
                 ))}
             </BookListContainer>
         </div>
+    );
+};
+
+export const SearchBookList = ( {title, bookList} : {
+    title: string,
+    bookList: BookListProps[]
+}) => {
+    return (
+        <>
+            <TitleContainer>
+                <SubTitleContainer>
+                    <h1>{title}</h1>
+                </SubTitleContainer>
+            </TitleContainer>
+            <SearchBookListContainer>
+                {bookList.map((book, index) => (
+                    <Book key={index} {...book} />
+                ))}
+            </SearchBookListContainer>
+        </>
     );
 };

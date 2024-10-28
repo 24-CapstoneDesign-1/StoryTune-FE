@@ -16,8 +16,22 @@ interface LeftRightProps {
 export const LeftRight = ({progress, setProgress}: LeftRightProps) => {
     return (
         <ButtonContainer>
-            <LeftButton onClick={() => setProgress(progress-1)}/>
-            <RightButton onClick={() => setProgress(progress+1)}/>
+            {progress === 0 ? (
+                <>
+                    <LeftButton visibility={"hidden"}/>
+                    <RightButton onClick={() => setProgress(progress+1)}/>
+                </>
+            ) : (progress === 1 ? (
+                <>
+                    <LeftButton onClick={() => setProgress(progress-1)}/>
+                    <RightButton onClick={() => setProgress(progress+1)}/>
+                </>
+            ) : (
+                <>
+                    <LeftButton onClick={() => setProgress(progress-1)}/>
+                    <RightButton visibility={"hidden"}/>
+                </>
+            ))}
         </ButtonContainer>
     )
 };

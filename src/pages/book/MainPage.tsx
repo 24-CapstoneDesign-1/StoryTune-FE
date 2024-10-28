@@ -12,7 +12,7 @@ const MainSubContainer = styled.div`
 const SearchButtonContainer = styled.div`
     width: 80%;
     display: flex;
-    margin: 20px 0 5px 0;
+    margin: 20px 0 10px 0;
 `;
 const TitleContainer = styled.div`
     display: flex;
@@ -50,17 +50,23 @@ const CustomButton = styled(Button)`
 
 const MainPage = () => {
     const navigate = useNavigate();
+    const [search, setSearch] = useState("");
     const [bookList, setBookList] = useState([
         {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
         {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
         {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
         {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
     ]);
+
+    const handleSearch = () => {
+        if (search.trim()) navigate(PAGE_URL.Search, { state: { search } });
+    };
+
     return (
         <MainContainer>
             <InfoHeader type="나만의 동화 만들기" />
             <SearchButtonContainer>
-                <Search />
+                <Search value={search} change={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)} onSearch={handleSearch}/>
             </SearchButtonContainer>
             <MainSubContainer>
                 <BookList title="다른 친구들은 어떤 책으로 만들었을까?" bookList={bookList} /> 

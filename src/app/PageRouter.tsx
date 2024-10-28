@@ -22,6 +22,10 @@ const Topic = lazy(() => import("@/pages/book/createBook/TopicPage"));
 const Hero = lazy(() => import("@/pages/book/createBook/HeroPage"));
 const Name = lazy(() => import("@/pages/book/createBook/NamingPage"));
 const Story = lazy(() => import("@/pages/book/createBook/StoryPage"));
+const Title = lazy(() => import("@/pages/book/createBook/TitlePage"));
+const Maked = lazy(() => import ("@/pages/book/createBook/MakedPage"));
+const HeroNaming = lazy(() => import("@/pages/book/createBook/HeroNamingPage"));
+const Search = lazy(() => import("@/pages/search/SearchPage"));
 
 const PageRouter = () => {
     return (
@@ -42,6 +46,10 @@ const PageRouter = () => {
                             <Route path={PAGE_URL.Hero} element={<Hero />} />
                             <Route path={PAGE_URL.Name} element={<Name />} />
                             <Route path={PAGE_URL.Story} element={<Story />} />
+                            <Route path={PAGE_URL.Title} element={<Title />} />
+                            <Route path={PAGE_URL.Maked} element={<Maked />} />
+                            <Route path={PAGE_URL.HeroNaming} element={<HeroNaming />} />
+                            <Route path={PAGE_URL.Search} element={<Search />} />
                         </Route>
                     </Routes>
                 </AuthRouter>

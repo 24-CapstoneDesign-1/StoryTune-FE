@@ -108,7 +108,7 @@ const HeroListContainer = styled.div`
 const StoryPage = () => {
     const navigate = useNavigate();
     const [record, setRecord] = useState<string>("");
-    const [progress, setProgress] = useState<number>(1);
+    const [progress, setProgress] = useState<number>(0);
     const [hero, setHero] = useState<string[]>(["토끼", "사자", "호랑이", "곰", "여우", "늑대", "사슴", "코끼리", "기린", "원숭이"]);
     return (
         <MainContainer>

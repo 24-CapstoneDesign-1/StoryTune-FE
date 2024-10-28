@@ -79,6 +79,7 @@ const ButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
   width: 30%;
+  margin-top: 40px;
   @media (max-width: 768px) {
     font-size: 1rem;
     width: 75%;
@@ -105,6 +106,13 @@ const NextContainer = styled.div`
   font-size: 1.2rem;
   font-weight: bold;
 `;
+const SubContainer = styled.div`
+  display: flex;
+  width: 80%;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+`;
 const PhotoPage = () => {
   const navigate = useNavigate();
   const [images, setImages] = useState<string[]>(Array(10).fill("")); // 10개의 빈 이미지 슬롯을 준비
@@ -125,32 +133,35 @@ const PhotoPage = () => {
   return (
     <MainContainer>
       <InfoHeader type="나만의 동화 만들기" />
-      <TitleContainer>OO이의 동화책에 들어갈 사진을 골라주세요!</TitleContainer>
-      <TitleSubContainer>사진 업로드 하러 가기</TitleSubContainer>
-      <ImageContainer>
-        {images.map((image, index) => (
-          <AddImageBlock key={index} htmlFor={`upload-${index}`} hasImage={!!image}>
-            {image ? <Image src={image} alt={`Uploaded ${index}`} /> : "?"}
-            <HiddenInput
-              type="file"
-              id={`upload-${index}`}
-              accept="image/*"
-              capture="environment"
-              onChange={(e) => handleImageChange(e, index)}
-            />
-          </AddImageBlock>
-        ))}
-      </ImageContainer>
-      <ButtonContainer>
-        <RerollContainer>
-          <RerollButton />
-          다시 고르고 싶어요
-        </RerollContainer>
-        <NextContainer onClick={() => navigate(PAGE_URL.Hero)}>
-          <NextButton />
-          다 골랐어요!
-        </NextContainer>
-      </ButtonContainer>
+      <SubContainer>
+        <TitleContainer>OO이의 동화책에 들어갈 사진을 골라주세요!</TitleContainer>
+        {/* <TitleSubContainer>사진 업로드 하러 가기</TitleSubContainer> */}
+        <ImageContainer>
+          {images.map((image, index) => (
+            <AddImageBlock key={index} htmlFor={`upload-${index}`} hasImage={!!image}>
+              {image ? <Image src={image} alt={`Uploaded ${index}`} /> : "?"}
+              <HiddenInput
+                type="file"
+                id={`upload-${index}`}
+                accept="image/*"
+                capture="environment"
+                onChange={(e) => handleImageChange(e, index)}
+              />
+            </AddImageBlock>
+          ))}
+        </ImageContainer>
+        <ButtonContainer>
+          <RerollContainer onClick={() => setImages(Array(10).fill(""))}>
+            <RerollButton />
+            다시 고르고 싶어요
+          </RerollContainer>
+          <NextContainer onClick={() => navigate(PAGE_URL.Hero)}>
+            <NextButton />
+            다 골랐어요!
+          </NextContainer>
+        </ButtonContainer>
+      </SubContainer>
+      <div style={{height: "100px"}}></div>
     </MainContainer>
   );
 };
