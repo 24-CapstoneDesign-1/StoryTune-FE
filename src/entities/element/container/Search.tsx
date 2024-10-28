@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
 import { SearchButton } from "../button/Button";
 
-const SearchContainer = styled.div`
+const SearchContainer = styled.div<{ width?: string }>`
     display: flex;
-    width: 400px;
+    width: ${(props) => props.width || "400px"};
     justify-content: center;
     margin-top: 20px;
     @media (max-width: 768px) {
@@ -35,12 +35,13 @@ const SearchButtonCustom = styled(SearchButton)`
     }
 `;
 interface SearchProps {
+    width?: string;
     ref?: React.RefObject<HTMLInputElement>;
     value: string;
     change : React.ChangeEventHandler<HTMLInputElement>;
     onSearch: () => void;
 }
-export const Search = ({ ref, value, change, onSearch } : SearchProps) => {
+export const Search = ({ width, ref, value, change, onSearch } : SearchProps) => {
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
@@ -50,7 +51,7 @@ export const Search = ({ ref, value, change, onSearch } : SearchProps) => {
     
 
     return (
-        <SearchContainer>
+        <SearchContainer width={width}>
             <SearchInput ref={ref} defaultValue={value} type="text" placeholder="찾고 싶은 책을 입력해 주세요." onChange={change} onKeyPress={handleKeyPress}/>
             <SearchButtonCustom />
         </SearchContainer>
