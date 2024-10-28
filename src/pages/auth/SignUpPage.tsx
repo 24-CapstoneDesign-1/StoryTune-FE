@@ -298,6 +298,7 @@ const SignUpPage = () => {
                         />
                         <ValidInput>
                             {errors?.passwordValid?.message ? errors?.passwordValid?.message : '\u00A0'}
+                            {errors?.passwordValid?.message ? errors?.passwordValid?.message : '\u00A0'}
                         </ValidInput>
                         <NextConatiner>
                             <Button width="400px" height="50px">회원가입 하기</Button>
