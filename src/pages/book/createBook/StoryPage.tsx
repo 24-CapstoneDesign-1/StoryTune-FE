@@ -60,6 +60,7 @@ const HeroContainer = styled.div`
     align-items: center;
     height: 100vh;
     width: 50%;
+    margin-bottom: 20px;
     @media (max-width: 768px) {
         height: 100%;
         margin-top: 30px;

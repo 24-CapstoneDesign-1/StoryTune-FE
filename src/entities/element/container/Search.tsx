@@ -3,7 +3,7 @@ import { SearchButton } from "../button/Button";
 
 const SearchContainer = styled.div`
     display: flex;
-    width: 100%;
+    width: 400px;
     justify-content: center;
     margin-top: 20px;
     @media (max-width: 768px) {
