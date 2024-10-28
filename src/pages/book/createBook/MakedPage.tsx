@@ -51,6 +51,9 @@ const ButtonSubContainer = styled.div`
     flex-direction: column;
     justify-content: space-between;
     height: 40%;
+    @media (max-width: 768px) {
+        height: 200px;
+    }
 `;
 
 const MakedPage = () => {

@@ -26,8 +26,8 @@ const BookContainer = styled.div`
     box-shadow: 5px 5px 5px gray;
     margin: 10px;
     @media (max-width: 768px) {
-        width: 135px;
-        height: 255px;
+        width: 123px;
+        height: 245px;
     }
 `;
 const ImageContainer = styled.img`
@@ -36,8 +36,8 @@ const ImageContainer = styled.img`
     object-fit: cover;
     border-radius: 10px;
     @media (max-width: 768px) {
-        width: 135px;
-        height: 180px;
+        width: 123px;
+        height: 170px;
     }
 `;
 const TitleContainer = styled.div`

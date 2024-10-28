@@ -36,6 +36,12 @@ const SearchMainContainer = styled.div`
         width: 100%;
     }
 `;
+
+const SearchInputContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    width: 100%;
+`;
 const SearchPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -64,7 +70,9 @@ const SearchPage = () => {
         <MainContainer>
             <InfoHeader type="검색하기" />
             <SearchMainContainer>
-                <Search value={search} ref={searchInputRef} change={(e) => setSearch(e.target.value)} onSearch={() => {}} />
+                <SearchInputContainer>
+                    <Search value={search} ref={searchInputRef} change={(e) => setSearch(e.target.value)} onSearch={() => {}} />
+                </SearchInputContainer>
                 {search ? (
                     <SearchContainer>
                         <SearchSubContainer>

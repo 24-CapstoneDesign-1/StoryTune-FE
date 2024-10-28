@@ -59,7 +59,7 @@ export const SquareButton = styled.button<{
     border: 0.3px solid #000000;
     white-space: pre-line;
     @media (max-width: 768px) {
-        width: 150px;
+        width: 230px;
         height: 75px;
         font-size: 1.2rem;
     }

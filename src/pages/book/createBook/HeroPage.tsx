@@ -36,9 +36,10 @@ const ImageBlock = styled.label`
     }
 `;
 const Image = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
 `;
 const ImageContainer = styled.div`
   display: grid;
