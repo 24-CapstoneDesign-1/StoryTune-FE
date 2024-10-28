@@ -1,13 +1,15 @@
 import styled from "@emotion/styled";
-import { Button } from "@/entities";
+import { Button, Title, ValidInput } from "@/entities";
 import { useNavigate } from "react-router-dom";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { PAGE_URL } from "@/shared";
 
 const SignInContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 80vh;
+    height: 100vh;
+    background-color: #D2FFFF;
 `;
 
 const SignInSubContainer = styled.div`
@@ -19,35 +21,84 @@ const SignInForm = styled.form`
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
 `;
 
 const SignInInput = styled.input`
-    width: 300px;
+    width: 400px;
+    height: 23px;
     padding: 10px;
-    margin-bottom: 20px;
     border-radius: 10px;
     border: 1px solid black;
+    font-size: 1rem;
+    outline: none;
+    @media (max-width: 768px) {
+        width: 300px;
+    }
 `;
 const SignUpButton = styled.div`
     font-size: 1rem;
     color: grey;
     margin: 20px 5px 0px 0px;
+    &:hover {
+        cursor: pointer;
+    }
+    @media (max-width: 768px) {
+        font-size: 0.8rem;
+    }
 `;
 const SignUpContainer = styled.div`
     display: flex;
     justify-content: center;
 `;
+
+const LoginButton = styled(Button)`
+    width: 300px;
+    height: 50px;
+`;
+
+interface SignInFormInput {
+    userId: string;
+    password: string;
+}
+
 const SignInPage = () => {
     const navigate = useNavigate();
+    const { register, handleSubmit, setError, formState: { errors }, } = useForm<SignInFormInput>()
+
+    const onSubmit: SubmitHandler<SignInFormInput> = (data) => {
+        // signin({
+        //     userId: data.userId,
+        //   password: data.password,
+        // }).then(() => navigate("/home"));
+        navigate(PAGE_URL.Home);
+      }
 
     return (
         <SignInContainer>
             <SignInSubContainer>
-                <h1>Sign In</h1>
-                <SignInForm>
-                    <SignInInput type="text" placeholder="아이디" />
-                    <SignInInput type="password" placeholder="비밀번호" />
-                    <Button type="submit" width="250px">Sign In</Button>
+                <Title>Story Tune</Title>
+                <SignInForm onSubmit={handleSubmit(onSubmit)}>
+                    <SignInInput type="text" placeholder="아이디" 
+                    {...register("userId", { required: '* 아이디를 입력해주세요.', maxLength: 20, minLength: {
+                        value: 0,
+                        message: '아이디를 입력해주세요.',
+                      }, })}
+                    />
+                    <ValidInput>
+                        {errors?.userId?.message ? errors?.userId?.message : '\u00A0'}
+                    </ValidInput>
+                    <SignInInput type="password" placeholder="비밀번호" 
+                    {...register("password", { required: '* 비밀번호를 입력해주세요.', maxLength: 20, minLength: {
+                        value: 0,
+                        message: '비밀번호를 입력해주세요.',
+                      }, })}
+                    />
+                    <ValidInput>
+                        {errors?.password?.message ? errors?.password?.message : '\u00A0'}
+                    </ValidInput>
+                    <br />
+                    <LoginButton type="submit" width="300px" height="50px">로그인 하기</LoginButton>
                 </SignInForm>
                 <SignUpContainer>
                     <SignUpButton onClick={() => navigate(PAGE_URL.SignUp)}>회원가입</SignUpButton>
