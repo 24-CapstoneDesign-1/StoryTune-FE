@@ -4,6 +4,7 @@ import { ValidInput } from "@/entities";
 import { useState } from "react";
 import { useNavigate, } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form"
+import { FaEyeSlash, FaEye } from "react-icons/fa";
 import { PAGE_URL } from "@/shared";
 
 const SignUpContainer = styled.div`
@@ -78,7 +79,7 @@ const DuplicateButton = styled.div`
     align-items: center;
     height: 30px;
     width: 100px;
-    border-radius: 10px;
+    border-radius: 5px;
     color: white;
     border: none;
     outline: none;
@@ -89,6 +90,23 @@ const DuplicateButton = styled.div`
 `;
 const IdInputContainer = styled.div`
     display: flex;
+`;
+
+const EyeSlash = styled(FaEyeSlash)`
+    font-size: 1rem;
+    position: absolute;
+    right: 15px;
+    top: 25px;
+`;
+const Eye = styled(FaEye)`
+    font-size: 1rem;
+    position: absolute;
+    right: 15px;
+    top: 25px;
+`;
+
+const PasswordContainer = styled.div`
+    position: relative;
 `;
 
 interface SignUpFormInput {
@@ -102,31 +120,35 @@ interface SignUpFormInput {
 
 const SignUpPage = () => {
     const [progress, setProgress] = useState(0);
+    const [isPasswordVisible, setIsPasswordVisible] = useState(true);
     const [gender, setGender] = useState('');
     const navigate = useNavigate();
 
     const { register, handleSubmit, setError, setValue, formState: { errors }, } = useForm<SignUpFormInput>()
     const onSubmit: SubmitHandler<SignUpFormInput> = (data) => {
         try {
-            onValid(data);
+            if (onValid(data)){
+                navigate(PAGE_URL.SignIn);
+            }
             // signin({
             //     userId: data.userId,
             //     password: data.password,
             // }).then(() => navigate("/home"));
-            navigate(PAGE_URL.SignIn);
         }
         catch (error) {
         console.error(error)
         }
     }
 
-    const onValid = (data : SignUpFormInput) => {
+    const onValid = (data : SignUpFormInput): boolean => {
+        let error = false;
         if (data.name === '') {
             setError(
                 'name',
                 { message: '이름이 입력되어 있지 않습니다.' },
                 { shouldFocus: true },
             );
+            error = true
         }
         if (data.age === 0) {
             setError(
@@ -134,6 +156,7 @@ const SignUpPage = () => {
                 { message: '나이가 입력되어 있지 않습니다.' },
                 { shouldFocus: true },
             );
+            error = true
         }
         if (data.gender === '') {
             setError(
@@ -141,6 +164,7 @@ const SignUpPage = () => {
                 { message: '성별이 입력되어 있지 않습니다.' },
                 { shouldFocus: true },
             );
+            error = true
         }
         if (data.userId === '') {      
             setError(
@@ -148,6 +172,7 @@ const SignUpPage = () => {
             { message: '아이디가 입력되어 있지 않습니다.' },
             { shouldFocus: true },
             );
+            error = true
         }
         if (data.password === '') {
             setError(
@@ -155,6 +180,7 @@ const SignUpPage = () => {
             { message: '비밀번호가 입력되어 있지 않습니다.' },
             { shouldFocus: true },
             );
+            error = true
         }
         if (data.passwordValid === '') {
             setError(
@@ -162,14 +188,17 @@ const SignUpPage = () => {
             { message: '비밀번호 확인이 입력되어 있지 않습니다.' },
             { shouldFocus: true },
             );
+            error = true
         }
-        if (data.password !== data.passwordValid) {
+        else if (data.password !== data.passwordValid) {
             setError(
-            'passwordValid',
-            { message: '비밀번호가 일치하지 않습니다.' },
-            { shouldFocus: true },
+                'passwordValid', 
+                { message: '비밀번호가 일치하지 않습니다.' }, 
+                { shouldFocus: true }
             );
+            error = true
         }
+        return !error;
     }
 
     const handleGenderSelection = (selectedGender: string) => {
@@ -232,7 +261,7 @@ const SignUpPage = () => {
                         <BackButton src="./images/back.svg" onClick={() => setProgress(progress - 1)} />
                         <label>아이디</label>
                         <IdInputContainer>
-                            <SignUpInput type="text" placeholder="아이디를 입력하세요" 
+                            <SignUpInput type="text"
                             {...register("userId", { required: '* 아이디를 입력해주세요.', maxLength: 20, minLength: {
                                 value: 0,
                                 message: '아이디를 입력해주세요.',
@@ -243,25 +272,32 @@ const SignUpPage = () => {
                         <ValidInput>
                             {errors?.userId?.message ? errors?.userId?.message : '\u00A0'}
                         </ValidInput>
-                        <label>비밀번호</label>
-                        <SignUpInput type="password" placeholder="비밀번호를 입력하세요"
-                        {...register("password", { required: '* 비밀번호를 입력해주세요.', maxLength: 20, minLength: {
-                            value: 0,
-                            message: '비밀번호를 입력해주세요.',
-                        },})}
-                        />
-                        <ValidInput>
-                            {errors?.password?.message ? errors?.password?.message : '\u00A0'}
-                        </ValidInput>
+                        <PasswordContainer>
+                            <label>비밀번호</label>
+                            <SignUpInput type={isPasswordVisible ? "password" : "text"}
+                            {...register("password", { required: '* 비밀번호를 입력해주세요.', maxLength: 20, minLength: {
+                                value: 0,
+                                message: '비밀번호를 입력해주세요.',
+                            },})}
+                            />
+                            {isPasswordVisible ? (
+                                <EyeSlash onClick={() => setIsPasswordVisible(!isPasswordVisible)} />
+                            ) : (
+                                <Eye onClick={() => setIsPasswordVisible(!isPasswordVisible)} />
+                            )}
+                            <ValidInput>
+                                {errors?.password?.message ? errors?.password?.message : '\u00A0'}
+                            </ValidInput>
+                        </PasswordContainer>
                         <label>비밀번호 확인</label>
-                        <SignUpInput type="password" placeholder="비밀번호를 다시 입력하세요"
+                        <SignUpInput type="password"
                         {...register("passwordValid", { required: '* 비밀번호를 다시 입력해주세요.', maxLength: 20, minLength: {
                             value: 0,
                             message: '비밀번호를 다시 입력해주세요.',
                         },})}
                         />
                         <ValidInput>
-                            {errors?.passwordValid?.message ? errors?.password?.message : '\u00A0'}
+                            {errors?.passwordValid?.message ? errors?.passwordValid?.message : '\u00A0'}
                         </ValidInput>
                         <NextConatiner>
                             <Button width="400px" height="50px">회원가입 하기</Button>
