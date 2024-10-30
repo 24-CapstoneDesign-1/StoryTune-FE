@@ -6,6 +6,8 @@ import { useNavigate, } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form"
 import { FaEyeSlash, FaEye } from "react-icons/fa";
 import { PAGE_URL } from "@/shared";
+import { Link } from 'react-router-dom';
+
 
 const SignUpContainer = styled.div`
     display: flex;
@@ -206,6 +208,7 @@ const SignUpPage = () => {
         setValue('gender', selectedGender);
     };
 
+    
     return (
         <SignUpContainer>
             <Title>Story Tune</Title>

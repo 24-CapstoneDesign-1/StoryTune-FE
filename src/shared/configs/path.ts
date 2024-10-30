@@ -13,4 +13,9 @@ export enum PAGE_URL {
     Title = "/book/title",
     Maked = "/book/maked",
     HeroNaming = "/book/heroNaming",
+    MyPage = "/mypage",
+    MyInfo = "/mypage/myInfo",
+    ChangeInfo = "/mypage/changeInfo",
+    AddFriend = "mypage/addFriend"
+
 }

@@ -98,3 +98,12 @@ export const LeftButton = styled(FaCaretLeft)`
 export const RightButton = styled(FaCaretRight)`
 
 `;
+
+export const LogoutButton = styled.button`
+    width: 90%;
+    margin-top: 20px;
+    background-color: #FFEB3B;
+    color: black;
+    font-weight: bold;
+    border-radius: 10px;
+`;

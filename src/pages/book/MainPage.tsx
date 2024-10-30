@@ -1,61 +1,16 @@
-import { InfoHeader, BookList } from "@/widgets";
+import { Header } from "@/widgets";
 import { useState } from "react";
-import styled from "@emotion/styled";
-import { Button, Search, MainContainer } from "@/entities";
-import { PAGE_URL } from "@/shared";
 import { useNavigate } from "react-router-dom";
+import { PAGE_URL } from "@/shared";
 
-const MainSubContainer = styled.div`
-    width: 80%;
-`;
-
-const SearchButtonContainer = styled.div`
-    width: 80%;
-    display: flex;
-    margin: 20px 0 10px 0;
-`;
-const TitleContainer = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 20px;
-    @media (max-width: 768px) {
-        font-size: 0.7rem;
-    }
-`;
-
-const ButtonContainer = styled.div`
-    display: flex;
-    justify-content: space-evenly;
-    margin-top: 20px;
-    @media (max-width: 768px) {
-        flex-direction: column;
-        align-items: center;
-    }
-`;
-
-const CustomButton = styled(Button)`
-    color: black;
-    background-color: #FFFFFF;
-    font-weight: bold;
-    border-radius: 15px;
-    @media (max-width: 768px) {
-        font-size: 1rem;
-        width: 230px;
-        height: 50px;
-        margin: 10px;
-    }
-`;
-
-
-const MainPage = () => {
+const HomePage = () => {
     const navigate = useNavigate();
     const [search, setSearch] = useState("");
     const [bookList, setBookList] = useState([
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
+        { title: "피노키오", createdAt: "2024.01.02", photo: "pinocchio-cover.jpg" },
+        { title: "피노키오", createdAt: "2024.01.02", photo: "pinocchio-cover.jpg" },
+        { title: "피노키오", createdAt: "2024.01.02", photo: "pinocchio-cover.jpg" },
+        { title: "피노키오", createdAt: "2024.01.02", photo: "pinocchio-cover.jpg" },
     ]);
 
     const handleSearch = () => {
@@ -63,28 +18,59 @@ const MainPage = () => {
     };
 
     return (
-        <MainContainer>
-            <InfoHeader type="나만의 동화 만들기" />
-            <SearchButtonContainer>
-                <Search value={search} change={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)} onSearch={handleSearch}/>
-            </SearchButtonContainer>
-            <MainSubContainer>
-                <BookList title="다른 친구들은 어떤 책으로 만들었을까?" bookList={bookList} /> 
-            </MainSubContainer>
-            <MainSubContainer>
-            <TitleContainer>
-                <div>
-                    <h1>나만의 동화를 만들고 싶어요!</h1>
+        <>
+            <Header />
+            <div style={{ padding: "1rem", backgroundColor: "#FFF9C4" }}>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+                    <input 
+                        type="text" 
+                        placeholder="검색하기" 
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        style={{ 
+                            width: '85%', 
+                            padding: '0.5rem', 
+                            borderRadius: '1rem', 
+                            border: '1px solid #ccc' 
+                        }} 
+                    />
+                    <button 
+                        onClick={handleSearch}
+                        style={{ marginLeft: '0.5rem', fontSize: '1.2rem', background: 'none', border: 'none' }}
+                    >
+                        🔍
+                    </button>
                 </div>
-            </TitleContainer>
-                <ButtonContainer>
-                    <CustomButton width="250px" height="70px" onClick={() => navigate(PAGE_URL.Topic)}>동화 만들러 가기</CustomButton>
-                    <CustomButton width="250px" height="70px">이어서 만들래요!</CustomButton>
-                </ButtonContainer>
-            </MainSubContainer>
-            <div style={{height: "100px"}}></div>
-        </ MainContainer>
-    )
+
+                <section>
+                    <h2 style={{ marginLeft: '1rem' }}>내가 만든 책</h2>
+                    <div style={{ display: 'flex', gap: '1rem', padding: '1rem', overflowX: 'auto' }}>
+                        {bookList.map((book, index) => (
+                            <div key={index} style={{ minWidth: '150px', textAlign: 'center', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '8px', backgroundColor: '#FFF' }}>
+                                <img src={book.photo} alt={book.title} style={{ width: '100%', borderRadius: '8px 8px 0 0' }} />
+                                <p>{book.title}</p>
+                                <small>{book.createdAt}</small>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+
+                <section style={{ marginTop: '2rem' }}>
+                    <h2 style={{ marginLeft: '1rem' }}>동화 목록</h2>
+                    <div style={{ display: 'flex', gap: '1rem', padding: '1rem', overflowX: 'auto' }}>
+                        {bookList.map((book, index) => (
+                            <div key={index} style={{ minWidth: '150px', textAlign: 'center', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '8px', backgroundColor: '#FFF' }}>
+                                <img src={book.photo} alt={book.title} style={{ width: '100%', borderRadius: '8px 8px 0 0' }} />
+                                <p>{book.title}</p>
+                                <small>{book.createdAt}</small>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            </div>
+        </>
+    );
 };
 
-export default MainPage;
+export default HomePage;
