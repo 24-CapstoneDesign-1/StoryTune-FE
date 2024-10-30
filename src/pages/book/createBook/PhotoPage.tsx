@@ -5,6 +5,7 @@ import { CiRedo } from "react-icons/ci";
 import { FaCaretRight } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { PAGE_URL } from "@/shared";
+import { set } from "react-hook-form";
 
 const MainContainer = styled.div`
   background-color: #FFFCAD;
@@ -115,7 +116,7 @@ const SubContainer = styled.div`
 `;
 const PhotoPage = () => {
   const navigate = useNavigate();
-  const [images, setImages] = useState<string[]>(Array(10).fill("")); // 10개의 빈 이미지 슬롯을 준비
+  const [images, setImages] = useState<string[]>(Array(10).fill(""));
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const file = e.target.files?.[0];
@@ -130,19 +131,50 @@ const PhotoPage = () => {
     }
   };
 
+  const handleMultiImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const newImages = [...images];
+
+    files.forEach((file, index) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (index < newImages.length) {
+          newImages[index] = reader.result as string;
+          setImages([...newImages]);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
   return (
     <MainContainer>
       <InfoHeader type="나만의 동화 만들기" />
       <SubContainer>
         <TitleContainer>OO이의 동화책에 들어갈 사진을 골라주세요!</TitleContainer>
-        {/* <TitleSubContainer>사진 업로드 하러 가기</TitleSubContainer> */}
+        <TitleSubContainer onClick={() => {
+          setImages(Array(10).fill(""));
+          document.getElementById("upload-multi")?.click();
+        }}>
+          <div>사진 업로드 하러 가기</div>
+        </TitleSubContainer>
+        <HiddenInput
+          type="file"
+          id="upload-multi"
+          accept="image/*"
+          multiple
+          onChange={handleMultiImageUpload}
+        />
         <ImageContainer>
           {images.map((image, index) => (
-            <AddImageBlock key={index} htmlFor={`upload-${index}`} hasImage={!!image}>
+            <AddImageBlock
+              key={index}
+              hasImage={!!image}
+            >
               {image ? <Image src={image} alt={`Uploaded ${index}`} /> : "?"}
               <HiddenInput
                 type="file"
-                id={`upload-${index}`}
+                id={`block-${index}`}
                 accept="image/*"
                 onChange={(e) => handleImageChange(e, index)}
               />
