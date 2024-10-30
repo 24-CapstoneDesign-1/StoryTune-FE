@@ -8,7 +8,7 @@ const SubContainer = styled.div`
     display: flex;
     justify-content: space-between;
     width: 70%;
-    height: 90vh;
+    height: 85vh;
     @media (max-width: 768px) {
         flex-direction: column;
         height: 100%;

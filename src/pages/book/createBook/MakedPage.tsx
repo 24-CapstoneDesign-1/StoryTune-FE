@@ -50,7 +50,7 @@ const ButtonSubContainer = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 40%;
+    height: 250px;
     @media (max-width: 768px) {
         height: 200px;
     }

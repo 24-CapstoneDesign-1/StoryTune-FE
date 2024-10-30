@@ -7,7 +7,7 @@ import { PAGE_URL } from "@/shared";
 import { on } from "events";
 
 const SubContainer = styled.div`
-    height: 90vh;
+    height: 100vh;
     width: 50%;
     display: flex;
     flex-direction: column;

@@ -204,6 +204,7 @@ const NextContainer = styled.div`
 const SubContainer = styled.div`
   display: flex;
   width: 80%;
+  height: 1000px;
   flex-direction: column;
   align-items: center;
   margin-top: 20px;

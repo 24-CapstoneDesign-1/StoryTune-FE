@@ -82,7 +82,7 @@ const MainPage = () => {
                     <CustomButton width="250px" height="70px">이어서 만들래요!</CustomButton>
                 </ButtonContainer>
             </MainSubContainer>
-            <div style={{height: "100px"}}></div>
+            <div style={{height: "140px"}}></div>
         </ MainContainer>
     )
 };

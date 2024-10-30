@@ -120,7 +120,7 @@ const HeroPage = () => {
                         </ButtonSubContainer>
                     </ButtonContainer>
             </SubContainer>
-            <div style={{height: "50px"}}></div>
+            <div style={{height: "300px"}}></div>
         </MainContainer>
     )
 };
