@@ -144,7 +144,6 @@ const PhotoPage = () => {
                 type="file"
                 id={`upload-${index}`}
                 accept="image/*"
-                capture="environment"
                 onChange={(e) => handleImageChange(e, index)}
               />
             </AddImageBlock>
@@ -161,7 +160,6 @@ const PhotoPage = () => {
           </NextContainer>
         </ButtonContainer>
       </SubContainer>
-      <div style={{height: "100px"}}></div>
     </MainContainer>
   );
 };
