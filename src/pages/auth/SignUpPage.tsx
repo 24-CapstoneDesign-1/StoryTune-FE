@@ -232,7 +232,7 @@ const SignUpPage = () => {
                         <BackButton src="./images/back.svg" onClick={() => setProgress(progress - 1)} />
                         <label>아이디</label>
                         <IdInputContainer>
-                            <SignUpInput type="text" placeholder="아이디를 입력하세요" 
+                            <SignUpInput type="text"
                             {...register("userId", { required: '* 아이디를 입력해주세요.', maxLength: 20, minLength: {
                                 value: 0,
                                 message: '아이디를 입력해주세요.',
@@ -244,7 +244,7 @@ const SignUpPage = () => {
                             {errors?.userId?.message ? errors?.userId?.message : '\u00A0'}
                         </ValidInput>
                         <label>비밀번호</label>
-                        <SignUpInput type="password" placeholder="비밀번호를 입력하세요"
+                        <SignUpInput type="password"
                         {...register("password", { required: '* 비밀번호를 입력해주세요.', maxLength: 20, minLength: {
                             value: 0,
                             message: '비밀번호를 입력해주세요.',
@@ -254,7 +254,7 @@ const SignUpPage = () => {
                             {errors?.password?.message ? errors?.password?.message : '\u00A0'}
                         </ValidInput>
                         <label>비밀번호 확인</label>
-                        <SignUpInput type="passwordValid" placeholder="비밀번호를 다시 입력하세요"
+                        <SignUpInput type="passwordValid"
                         {...register("passwordValid", { required: '* 비밀번호를 다시 입력해주세요.', maxLength: 20, minLength: {
                             value: 0,
                             message: '비밀번호를 다시 입력해주세요.',

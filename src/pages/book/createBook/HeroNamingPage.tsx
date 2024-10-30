@@ -158,6 +158,7 @@ const HeroNamingPage = () => {
                         </ButtonSubContainer>
                     </ButtonContainer>
             </SubContainer>
+            <div style={{height: "50px"}}></div>
         </MainContainer>
     )
 };
