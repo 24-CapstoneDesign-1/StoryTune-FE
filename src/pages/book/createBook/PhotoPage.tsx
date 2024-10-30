@@ -1,11 +1,99 @@
 import styled from "@emotion/styled";
 import { InfoHeader } from "@/widgets";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { CiRedo } from "react-icons/ci";
 import { FaCaretRight } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 import { PAGE_URL } from "@/shared";
-import { set } from "react-hook-form";
+
+const PhotoPage = () => {
+  const navigate = useNavigate();
+  const [images, setImages] = useState<string[]>(Array(10).fill(""));
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImages((prevImages) => {
+          const newImages = [...prevImages];
+          newImages[index] = reader.result as string;
+          return newImages;
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleMultiImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    
+    files.forEach((file, index) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImages((prevImages) => {
+          const newImages = [...prevImages];
+          if (index < newImages.length) {
+            newImages[index] = reader.result as string;
+          }
+          return newImages;
+        });
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  return (
+    <MainContainer>
+      <InfoHeader type="나만의 동화 만들기" />
+      <SubContainer>
+        <TitleContainer>OO이의 동화책에 들어갈 사진을 골라주세요!</TitleContainer>
+        <TitleSubContainer onClick={() => {
+          setImages(Array(10).fill(""));
+          document.getElementById("upload-multi")?.click();
+        }}>
+          <div>사진 업로드 하러 가기</div>
+        </TitleSubContainer>
+        <HiddenInput
+          type="file"
+          id="upload-multi"
+          accept="image/*"
+          multiple
+          onChange={handleMultiImageUpload}
+        />
+        <ImageContainer>
+          {images.map((image, index) => (
+            <AddImageBlock
+              key={index}
+              hasImage={!!image}
+              htmlFor={`block-${index}`}
+            >
+              {image ? <Image src={image} alt={`Uploaded ${index}`} /> : "?"}
+              <HiddenInput
+                type="file"
+                id={`block-${index}`}
+                accept="image/*"
+                onChange={(e) => handleImageChange(e, index)}
+              />
+            </AddImageBlock>
+          ))}
+        </ImageContainer>
+        <ButtonContainer>
+          <RerollContainer onClick={() => setImages(Array(10).fill(""))}>
+            <RerollButton />
+            다시 고르고 싶어요
+          </RerollContainer>
+          <NextContainer onClick={() => navigate(PAGE_URL.Hero)}>
+            <NextButton />
+            다 골랐어요!
+          </NextContainer>
+        </ButtonContainer>
+      </SubContainer>
+    </MainContainer>
+  );
+};
+
+export default PhotoPage;
 
 const MainContainer = styled.div`
   background-color: #FFFCAD;
@@ -63,6 +151,7 @@ const AddImageBlock = styled.label<{ hasImage: boolean }>`
   position: relative;
   border: 1px solid #000000;
   box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
   @media (max-width: 768px) {
     width: 150px;
     height: 150px;
@@ -76,6 +165,7 @@ const HiddenInput = styled.input`
 const RerollButton = styled(CiRedo)`
   font-size: 2rem;
 `;
+
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
@@ -87,9 +177,11 @@ const ButtonContainer = styled.div`
     margin-top: 20px;
   }
 `;
+
 const NextButton = styled(FaCaretRight)`
   font-size: 2rem;
 `;
+
 const RerollContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -99,6 +191,7 @@ const RerollContainer = styled.div`
   font-size: 1.2rem;
   font-weight: bold;
 `;
+
 const NextContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -107,6 +200,7 @@ const NextContainer = styled.div`
   font-size: 1.2rem;
   font-weight: bold;
 `;
+
 const SubContainer = styled.div`
   display: flex;
   width: 80%;
@@ -114,86 +208,3 @@ const SubContainer = styled.div`
   align-items: center;
   margin-top: 20px;
 `;
-const PhotoPage = () => {
-  const navigate = useNavigate();
-  const [images, setImages] = useState<string[]>(Array(10).fill(""));
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const newImages = [...images];
-        newImages[index] = reader.result as string;
-        setImages(newImages);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleMultiImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    const newImages = [...images];
-
-    files.forEach((file, index) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (index < newImages.length) {
-          newImages[index] = reader.result as string;
-          setImages([...newImages]);
-        }
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
-  return (
-    <MainContainer>
-      <InfoHeader type="나만의 동화 만들기" />
-      <SubContainer>
-        <TitleContainer>OO이의 동화책에 들어갈 사진을 골라주세요!</TitleContainer>
-        <TitleSubContainer onClick={() => {
-          setImages(Array(10).fill(""));
-          document.getElementById("upload-multi")?.click();
-        }}>
-          <div>사진 업로드 하러 가기</div>
-        </TitleSubContainer>
-        <HiddenInput
-          type="file"
-          id="upload-multi"
-          accept="image/*"
-          multiple
-          onChange={handleMultiImageUpload}
-        />
-        <ImageContainer>
-          {images.map((image, index) => (
-            <AddImageBlock
-              key={index}
-              hasImage={!!image}
-            >
-              {image ? <Image src={image} alt={`Uploaded ${index}`} /> : "?"}
-              <HiddenInput
-                type="file"
-                id={`block-${index}`}
-                accept="image/*"
-                onChange={(e) => handleImageChange(e, index)}
-              />
-            </AddImageBlock>
-          ))}
-        </ImageContainer>
-        <ButtonContainer>
-          <RerollContainer onClick={() => setImages(Array(10).fill(""))}>
-            <RerollButton />
-            다시 고르고 싶어요
-          </RerollContainer>
-          <NextContainer onClick={() => navigate(PAGE_URL.Hero)}>
-            <NextButton />
-            다 골랐어요!
-          </NextContainer>
-        </ButtonContainer>
-      </SubContainer>
-    </MainContainer>
-  );
-};
-
-export default PhotoPage;
