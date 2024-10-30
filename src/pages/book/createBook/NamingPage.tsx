@@ -15,13 +15,13 @@ const SubContainer = styled.div`
 `;
 
 const CustomTitle = styled(Title)`
-    font-size: 1.8rem;
+    font-size: 1.4rem;
 `;
 const Photo = styled.img`
     width: 400px;
     height: 400px;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin-top: 5px;
+    margin-bottom: 50px;
 `;
 const PhotoContainer = styled.div`
     display: flex;
@@ -88,8 +88,8 @@ const NamingPage = () => {
                         ): (
                             <>
                                 <InputContainer placeholder="이름을 입력해 주세요" value={name} onChange={(e) => setName(e.target.value)}></InputContainer>
-                                <div style={{height: "60px"}}></div>
-                                <SquareButton width="350px" onClick={() => {
+                                <div style={{height: "50px"}}></div>
+                                <SquareButton width="230px" height="60px" onClick={() => {
                                     setTyping(!typing)
                                     setFinalName(name)
                                 }}>이름을 입력했어요!</SquareButton>
@@ -101,9 +101,9 @@ const NamingPage = () => {
                     <InputContianer>
                         <CustomButton width="400px" height="50px">{name}</CustomButton>
                         <ButtonContainer>
-                            <SquareButton>{`이름이 틀렸어요.
+                            <SquareButton width="135px" height="70px">{`이름이 틀렸어요.
                             다시 말하기`}</SquareButton>
-                            <SquareButton onClick={() => navigate(PAGE_URL.HeroNaming, {state: {index: curIndex, name: finalName}})}>{`맞아요!
+                            <SquareButton width="135px" height="70px" onClick={() => navigate(PAGE_URL.HeroNaming, {state: {index: curIndex, name: finalName}})}>{`맞아요!
                             이어서 하기`}</SquareButton>
                         </ButtonContainer>
                     </InputContianer>

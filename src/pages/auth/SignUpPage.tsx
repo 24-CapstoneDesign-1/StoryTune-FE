@@ -6,6 +6,7 @@ import { useNavigate, } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form"
 import { FaEyeSlash, FaEye } from "react-icons/fa";
 import { PAGE_URL } from "@/shared";
+import { useUserStore } from "@/shared/stores/useUserStore";
 
 const SignUpContainer = styled.div`
     display: flex;
@@ -123,11 +124,15 @@ const SignUpPage = () => {
     const [isPasswordVisible, setIsPasswordVisible] = useState(true);
     const [gender, setGender] = useState('');
     const navigate = useNavigate();
+    const userStore = useUserStore((state) => state);
 
     const { register, handleSubmit, setError, setValue, formState: { errors }, } = useForm<SignUpFormInput>()
     const onSubmit: SubmitHandler<SignUpFormInput> = (data) => {
         try {
             if (onValid(data)){
+                userStore.setName(data.name);
+                userStore.setAge(data.age);
+                userStore.setGender(data.gender === "남" ? "MALE" : "FEMALE");
                 navigate(PAGE_URL.SignIn);
             }
             // signin({
