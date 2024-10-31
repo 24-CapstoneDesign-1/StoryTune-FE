@@ -2,7 +2,9 @@ import styled from "@emotion/styled";
 import { Button, Title, ValidInput } from "@/entities";
 import { useNavigate } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { FaEyeSlash, FaEye } from "react-icons/fa";
 import { PAGE_URL } from "@/shared";
+import { useState } from "react";
 
 const SignInContainer = styled.div`
     display: flex;
@@ -57,6 +59,23 @@ const LoginButton = styled(Button)`
     height: 50px;
 `;
 
+const EyeSlash = styled(FaEyeSlash)`
+    font-size: 1rem;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+`;
+const Eye = styled(FaEye)`
+    font-size: 1rem;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+`;
+
+const PasswordContainer = styled.div`
+    position: relative;
+`;
+
 interface SignInFormInput {
     userId: string;
     password: string;
@@ -64,6 +83,7 @@ interface SignInFormInput {
 
 const SignInPage = () => {
     const navigate = useNavigate();
+    const [isPasswordVisible, setIsPasswordVisible] = useState(true);
     const { register, handleSubmit, setError, formState: { errors }, } = useForm<SignInFormInput>()
 
     const onSubmit: SubmitHandler<SignInFormInput> = (data) => {
@@ -71,8 +91,9 @@ const SignInPage = () => {
         //     userId: data.userId,
         //   password: data.password,
         // }).then(() => navigate("/home"));
+        console.log(data);
         navigate(PAGE_URL.Home);
-      }
+    }
 
     return (
         <SignInContainer>
@@ -88,12 +109,19 @@ const SignInPage = () => {
                     <ValidInput>
                         {errors?.userId?.message ? errors?.userId?.message : '\u00A0'}
                     </ValidInput>
-                    <SignInInput type="password" placeholder="비밀번호" 
-                    {...register("password", { required: '* 비밀번호를 입력해주세요.', maxLength: 20, minLength: {
-                        value: 0,
-                        message: '비밀번호를 입력해주세요.',
-                      }, })}
-                    />
+                    <PasswordContainer>
+                        <SignInInput type={isPasswordVisible ? "password" : "text"} placeholder="비밀번호" 
+                        {...register("password", { required: '* 비밀번호를 입력해주세요.', maxLength: 20, minLength: {
+                            value: 0,
+                            message: '비밀번호를 입력해주세요.',
+                        }, })}
+                        />
+                        {isPasswordVisible ? (
+                            <EyeSlash onClick={() => setIsPasswordVisible(!isPasswordVisible)} />
+                        ) : (
+                            <Eye onClick={() => setIsPasswordVisible(!isPasswordVisible)} />
+                        )}
+                    </PasswordContainer>
                     <ValidInput>
                         {errors?.password?.message ? errors?.password?.message : '\u00A0'}
                     </ValidInput>
