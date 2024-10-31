@@ -101,9 +101,9 @@ const NamingPage = () => {
                     <InputContianer>
                         <CustomButton width="400px" height="50px">{name}</CustomButton>
                         <ButtonContainer>
-                            <SquareButton width="135px" height="70px">{`이름이 틀렸어요.
+                            <SquareButton width="160px" height="100px">{`이름이 틀렸어요.
                             다시 말하기`}</SquareButton>
-                            <SquareButton width="135px" height="70px" onClick={() => navigate(PAGE_URL.HeroNaming, {state: {index: curIndex, name: finalName}})}>{`맞아요!
+                            <SquareButton width="160px" height="100px" onClick={() => navigate(PAGE_URL.HeroNaming, {state: {index: curIndex, name: finalName}})}>{`맞아요!
                             이어서 하기`}</SquareButton>
                         </ButtonContainer>
                     </InputContianer>
