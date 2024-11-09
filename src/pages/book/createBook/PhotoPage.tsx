@@ -43,6 +43,20 @@ const PhotoPage = () => {
     });
   };
 
+  const handleNextButton = () => {
+    var isCancel = false
+    images.forEach((image) => {
+      if (!image && !isCancel) {
+        alert("모든 사진을 업로드해주세요!");
+        isCancel = true;
+        return;
+      }
+    });
+    if (!isCancel) {
+      navigate(PAGE_URL.Hero);
+    }
+  }
+
   return (
     <MainContainer>
       <InfoHeader type="나만의 동화 만들기" />
@@ -83,7 +97,7 @@ const PhotoPage = () => {
             <RerollButton />
             다시 고르고 싶어요
           </RerollContainer>
-          <NextContainer onClick={() => navigate(PAGE_URL.Hero)}>
+          <NextContainer onClick={handleNextButton}>
             <NextButton />
             다 골랐어요!
           </NextContainer>

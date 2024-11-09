@@ -1,7 +1,7 @@
 import { CircleButton, MainContainer, RecordIcon, SquareButton, Title } from "@/entities";
 import { InfoHeader, LeftRight } from "@/widgets";
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const SubContainer = styled.div`
@@ -119,12 +119,12 @@ const StoryPage = () => {
                     <CustomTitle>이 사진을 보고 떠오르는 이야기를 들려주세요!</CustomTitle>
                     <Photo src="../public/images/temp.svg" />
                 </PhotoContainer>
-                {progress === 0 ? (
+                {(progress % 3) === 0 ? (
                     <RecordContainer>
                         <RecordIcon />
                         <CustomTitle>아이콘을 클릭해서 알려주세요!</CustomTitle>
                     </RecordContainer>
-                ) : (progress === 1 ? (
+                ) : ((progress % 3) === 1 ? (
                     <HeroContainer>
                          <CustomTitle>등장인물의 대사인가요?</CustomTitle>
                          <ButtonContainer>
@@ -144,6 +144,9 @@ const StoryPage = () => {
                 ))}
             </SubContainer>
             <LeftRight progress={progress} setProgress={setProgress}/>
+            <>
+                {progress}
+            </>
             <div style={{height: "100px"}}></div>
         </MainContainer>
     )
