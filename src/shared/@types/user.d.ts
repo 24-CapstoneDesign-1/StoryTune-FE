@@ -1,28 +1,43 @@
 declare namespace User {
-  
-    export interface BasicInfo {
+    //dto
+    export interface SignInReqDto {
+        username: string;
+        password: string;
+    }
+
+    export interface SignInResDto {
+        result: {
+            accessToken: string;
+            refreshToken: string;
+        }
+    }
+    
+    export interface SignUpReqDto {
+        username: string;
+        password: string;
         name: string;
         age: number;
-        gender: "MALE" | "FEMALE";
+        gender: string;
     }
 
-    export interface AllInfo extends BasicInfo {}
+    export interface SignUpResDto {
+        result: {}
+    };
 
-    //Store
+    export interface BasicInfo {
+        username: string;
+        name: string;
+        age: number;
+        gender: string;
+    }
+
+    //store
     export interface UserStore extends BasicInfo {
-      setName: (value: string) => void;
-      setAge: (value: number) => void;
-      setGender: (value: "MALE" | "FEMALE") => void;
-      getUserAllInfo: () => AllInfo;
-      setUserAllInfo: (value: AllInfo) => void;
+        setUserAllInfo: (value: BasicInfo) => void;
+        getUserAllInfo: () => BasicInfo;
+        setUsername: (value: string) => void;
+        setName: (value: string) => void;
+        setAge: (value: number) => void;
+        setGender: (value: string) => void;
     }
-  
-    //DTO
-    export interface SignInResDto {
-      result: {
-        signupComplete: boolean;
-        token_type: string;
-        access_token: string;
-      };
-    }
-  }
+}
