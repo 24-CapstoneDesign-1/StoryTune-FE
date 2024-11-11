@@ -22,7 +22,6 @@ const SignUpForm = styled.form`
     background-color: white;
     border-radius: 20px;
     width: 350px;
-    height: 60vh;
     padding: 40px 70px;
     @media (max-width: 768px) {
         width: 220px;

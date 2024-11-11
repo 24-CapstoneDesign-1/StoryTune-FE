@@ -5,10 +5,12 @@ import { useState } from "react";
 import { CiRedo } from "react-icons/ci";
 import { FaCaretRight } from "react-icons/fa";
 import { PAGE_URL } from "@/shared";
+import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 
 const PhotoPage = () => {
   const navigate = useNavigate();
   const [images, setImages] = useState<string[]>(Array(10).fill(""));
+  const bookStore = useBookStore();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const file = e.target.files?.[0];
@@ -42,6 +44,20 @@ const PhotoPage = () => {
       reader.readAsDataURL(file);
     });
   };
+
+  const handleNextButton = () => {
+    var isCancel = false
+    images.forEach((image) => {
+      if (!image && !isCancel) {
+        alert("모든 사진을 업로드해주세요!");
+        isCancel = true;
+        return;
+      }
+    });
+    if (!isCancel) {
+      navigate(PAGE_URL.Hero);
+    }
+  }
 
   return (
     <MainContainer>
@@ -83,7 +99,12 @@ const PhotoPage = () => {
             <RerollButton />
             다시 고르고 싶어요
           </RerollContainer>
-          <NextContainer onClick={() => navigate(PAGE_URL.Hero)}>
+          <NextContainer onClick={() => {
+            images.map((image, index) => {
+              bookStore.setImage(index, image);
+            })
+            handleNextButton();
+          }}>
             <NextButton />
             다 골랐어요!
           </NextContainer>
@@ -204,6 +225,7 @@ const NextContainer = styled.div`
 const SubContainer = styled.div`
   display: flex;
   width: 80%;
+  height: 1000px;
   flex-direction: column;
   align-items: center;
   margin-top: 20px;

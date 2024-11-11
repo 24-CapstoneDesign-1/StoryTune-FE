@@ -26,6 +26,7 @@ const Title = lazy(() => import("@/pages/book/createBook/TitlePage"));
 const Maked = lazy(() => import ("@/pages/book/createBook/MakedPage"));
 const HeroNaming = lazy(() => import("@/pages/book/createBook/HeroNamingPage"));
 const Search = lazy(() => import("@/pages/search/SearchPage"));
+const Index = lazy(() => import("@/pages/book/createBook/IndexPage"));
 
 const PageRouter = () => {
     return (
@@ -49,6 +50,7 @@ const PageRouter = () => {
                             <Route path={PAGE_URL.Title} element={<Title />} />
                             <Route path={PAGE_URL.Maked} element={<Maked />} />
                             <Route path={PAGE_URL.HeroNaming} element={<HeroNaming />} />
+                            <Route path={PAGE_URL.Index} element={<Index />} />
                             <Route path={PAGE_URL.Search} element={<Search />} />
                         </Route>
                     </Routes>

@@ -4,6 +4,7 @@ import styled from "@emotion/styled";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { PAGE_URL } from "@/shared";
+import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 
 const SubContainer = styled.div`
     display: flex;
@@ -69,6 +70,8 @@ const NamingPage = () => {
     const [name, setName] = useState("");
     const [typing, setTyping] = useState(false);
     const [finalName, setFinalName] = useState("");
+    const bookStore = useBookStore();
+
     return (
         <MainContainer>
             <InfoHeader type="나만의 동화 만들기" />
@@ -101,9 +104,12 @@ const NamingPage = () => {
                     <InputContianer>
                         <CustomButton width="400px" height="50px">{name}</CustomButton>
                         <ButtonContainer>
-                            <SquareButton width="135px" height="70px">{`이름이 틀렸어요.
+                            <SquareButton width="160px" height="100px" onClick={() => setFinalName("")}>{`이름이 틀렸어요.
                             다시 말하기`}</SquareButton>
-                            <SquareButton width="135px" height="70px" onClick={() => navigate(PAGE_URL.HeroNaming, {state: {index: curIndex, name: finalName}})}>{`맞아요!
+                            <SquareButton width="160px" height="100px" onClick={() => {
+                                bookStore.setHero(curIndex, finalName);
+                                navigate(PAGE_URL.HeroNaming, {state: {index: curIndex, name: finalName}})
+                            }}>{`맞아요!
                             이어서 하기`}</SquareButton>
                         </ButtonContainer>
                     </InputContianer>

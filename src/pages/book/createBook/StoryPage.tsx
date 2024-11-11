@@ -1,14 +1,95 @@
 import { CircleButton, MainContainer, RecordIcon, SquareButton, Title } from "@/entities";
+import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { InfoHeader, LeftRight } from "@/widgets";
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+const StoryPage = () => {
+    const navigate = useNavigate();
+    const [record, setRecord] = useState<string>("");
+    const [progress, setProgress] = useState<number>(0);
+    const bookStore = useBookStore();
+    const [hero, setHero] = useState<string[]>(bookStore.getAllHero());
+    const [isRecord, setIsRecord] = useState<boolean>(false);
+    const [recordProgress, setRecordProgress] = useState<boolean>(false);
+
+    return (
+        <MainContainer>
+            <InfoHeader type="나만의 동화 만들기" />
+            <SubContainer>
+                <PhotoContainer>
+                    <CustomTitle>이 사진을 보고 떠오르는 이야기를 들려주세요!</CustomTitle>
+                    <Photo src="../public/images/temp.svg" />
+                </PhotoContainer>
+                {(progress % 3) === 0 ? (
+                    <>
+                        {(!isRecord) ? (
+                            <>
+                                <RecordContainer>
+                                    <RecordIcon onClick={() => setIsRecord(true)}/>
+                                    <CustomTitle>아이콘을 클릭해서 알려주세요!</CustomTitle>
+                                </RecordContainer>
+                            </>
+                        ) : (
+                            <>
+                                {(!recordProgress) ? (
+                                    <RecordContainer>
+                                        <CustomTitle>이야기를 만들어 주세요</CustomTitle>
+                                        <textarea onChange={(e) => setRecord(e.target.value)} value={record} style={{width: "80%", height: "60%"}}/>
+                                        <SquareButton onClick={() => {
+                                            setRecordProgress(true);
+                                        }}>완료</SquareButton>
+                                    </RecordContainer>
+                                ) : (
+                                    <>
+                                        <RecordContainer>
+                                            <CustomTitle>{record}</CustomTitle>
+                                            <SquareButton onClick={() => {
+                                                setIsRecord(false);
+                                                setRecordProgress(false);
+                                                bookStore.setStory(Math.floor(progress / 3) + 1, record);
+                                                setProgress(progress+1);
+                                            }}>다음</SquareButton>
+                                        </RecordContainer>
+                                    </>
+                                )}
+
+                            </>
+                        )}
+                    </>
+                ) : ((progress % 3) === 1 ? (
+                    <HeroContainer>
+                         <CustomTitle>등장인물의 대사인가요?</CustomTitle>
+                         <ButtonContainer>
+                            <CircleButton onClick={() => setProgress(progress+1)}>네</CircleButton>
+                            <CircleButton onClick={() => setProgress(progress + 2)}>아니요</CircleButton>
+                         </ButtonContainer>
+                    </HeroContainer>
+                ) : (
+                    <LineContainer>
+                        <CustomTitle>누구의 대사인가요?</CustomTitle>
+                        <HeroListContainer>
+                            {hero.map((name, index) => (
+                                <SquareButton width="50px" height="50px" key={index} onClick={() => {
+                                    setProgress(progress+1);
+                                }}>{name}</SquareButton>
+                            ))}
+                        </HeroListContainer>
+                    </LineContainer>
+                ))}
+            </SubContainer>
+            <LeftRight progress={progress} setProgress={setProgress}/>
+            <div style={{height: "100px"}}></div>
+        </MainContainer>
+    )
+}
 
 const SubContainer = styled.div`
     display: flex;
     justify-content: space-between;
     width: 70%;
-    height: 90vh;
+    height: 85vh;
     @media (max-width: 768px) {
         flex-direction: column;
         height: 100%;
@@ -20,6 +101,10 @@ const CustomTitle = styled(Title)`
     font-size: 1.8rem;
     margin-top: 20px;
     padding: 0px 20px 0px 20px;
+    @media (max-width: 768px) {
+        font-size: 1.4rem;
+        margin-top: 0px;
+    }
 `;
 
 const PhotoContainer = styled.div`
@@ -39,6 +124,10 @@ const Photo = styled.img`
     height: 400px;
     margin-top: 20px;
     margin-bottom: 20px;
+    @media (max-width: 768px) {
+        width: 300px;
+        height: 300px;
+    }
 `;
 
 const RecordContainer = styled.div`
@@ -49,7 +138,7 @@ const RecordContainer = styled.div`
     height: 100vh;
     @media (max-width: 768px) {
         height: 100%;
-        margin-top: 30px;
+        margin-top: 0px;
     }
 `;
 
@@ -63,7 +152,6 @@ const HeroContainer = styled.div`
     margin-bottom: 20px;
     @media (max-width: 768px) {
         height: 100%;
-        margin-top: 30px;
         width: 100%;
     }
 `;
@@ -71,7 +159,7 @@ const HeroContainer = styled.div`
 const ButtonContainer = styled.div`
     display: flex;
     justify-content: space-between;
-    margin-top: 50px;
+    margin-top: 0px;
     width: 90%;
     @media (max-width: 768px) {
         width: 70%;
@@ -88,7 +176,6 @@ const LineContainer = styled.div`
     @media (max-width: 768px) {
         height: 100%;
         width: 100%;
-        margin-top: 30px;
     }
 `;
 
@@ -104,48 +191,10 @@ const HeroListContainer = styled.div`
         width: 100%;
         height: 50px;
     }
+    @media (max-width: 768px) {
+        margin-top: 0px;
+    }
 `;
 
-const StoryPage = () => {
-    const navigate = useNavigate();
-    const [record, setRecord] = useState<string>("");
-    const [progress, setProgress] = useState<number>(0);
-    const [hero, setHero] = useState<string[]>(["토끼", "사자", "호랑이", "곰", "여우", "늑대", "사슴", "코끼리", "기린", "원숭이"]);
-    return (
-        <MainContainer>
-            <InfoHeader type="나만의 동화 만들기" />
-            <SubContainer>
-                <PhotoContainer>
-                    <CustomTitle>이 사진을 보고 떠오르는 이야기를 들려주세요!</CustomTitle>
-                    <Photo src="../public/images/temp.svg" />
-                </PhotoContainer>
-                {progress === 0 ? (
-                    <RecordContainer>
-                        <RecordIcon />
-                        <CustomTitle>아이콘을 클릭해서 알려주세요!</CustomTitle>
-                    </RecordContainer>
-                ) : (progress === 1 ? (
-                    <HeroContainer>
-                         <CustomTitle>등장인물의 대사인가요?</CustomTitle>
-                         <ButtonContainer>
-                            <CircleButton onClick={() => setProgress(progress+1)}>네</CircleButton>
-                            <CircleButton>아니요</CircleButton>
-                         </ButtonContainer>
-                    </HeroContainer>
-                ) : (
-                    <LineContainer>
-                        <CustomTitle>누구의 대사인가요?</CustomTitle>
-                        <HeroListContainer>
-                            {hero.map((name, index) => (
-                                <SquareButton width="50px" height="50px" key={index}>{name}</SquareButton>
-                            ))}
-                        </HeroListContainer>
-                    </LineContainer>
-                ))}
-            </SubContainer>
-            <LeftRight progress={progress} setProgress={setProgress}/>
-            <div style={{height: "100px"}}></div>
-        </MainContainer>
-    )
-}
+
 export default StoryPage;
