@@ -123,7 +123,7 @@ const TitlePage = () => {
                             <InputContianer>
                                 <CustomButton width="400px" height="50px">{name}</CustomButton>
                                 <ButtonContainer>
-                                    <SquareButton width="160px" height="100px">{`제목이 틀렸어요.
+                                    <SquareButton width="160px" height="100px" onClick={() => setFinalName("")}>{`제목이 틀렸어요.
                                     다시 말하기`}</SquareButton>
                                     <SquareButton width="160px" height="100px" onClick={() => setProgress(progress+1)}>{`맞아요!
                                     이어서 하기`}</SquareButton>

@@ -5,10 +5,12 @@ import { useState } from "react";
 import { CiRedo } from "react-icons/ci";
 import { FaCaretRight } from "react-icons/fa";
 import { PAGE_URL } from "@/shared";
+import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 
 const PhotoPage = () => {
   const navigate = useNavigate();
   const [images, setImages] = useState<string[]>(Array(10).fill(""));
+  const bookStore = useBookStore();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const file = e.target.files?.[0];
@@ -97,7 +99,12 @@ const PhotoPage = () => {
             <RerollButton />
             다시 고르고 싶어요
           </RerollContainer>
-          <NextContainer onClick={handleNextButton}>
+          <NextContainer onClick={() => {
+            images.map((image, index) => {
+              bookStore.setImage(index, image);
+            })
+            handleNextButton();
+          }}>
             <NextButton />
             다 골랐어요!
           </NextContainer>

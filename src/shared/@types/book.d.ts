@@ -3,15 +3,22 @@ declare namespace Book {
 
 
     export interface BasicBookInfo {
-        image: string[];
-        name: string[];
+        image: string;
+        name: string;
+        story: string;
     }
 
-    //store
-    export interface BookStore extends BasicBookInfo {
-        setBookAllInfo: (value: BasicInfo) => void;
-        getBookAllInfo: () => BasicInfo;
-        setImage: (value: string[]) => void;
-        setName: (value: string[]) => void;    
+    export interface BookStore {
+        books: { [id: number]: BasicBookInfo };
+        heros: { [id: number]: string };
+        setImage: (id: number, image: string) => void;
+        setName: (id: number, name: string) => void;
+        setSubject: (subject: string) => void;
+        setHero: (id: number, hero: string) => void;
+        setStory: (id: number, story: string) => void;
+        getHero: (id: number) => string | undefined;
+        getAllHero: () => string[];
+        getBook: (id: number) => BasicBookInfo | undefined;
+        getAllBook: () => BasicBookInfo[];
     }
 }
