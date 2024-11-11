@@ -56,3 +56,35 @@ export const LeftRight = ({progress, setProgress}: LeftRightProps) => {
         </ButtonContainer>
     )
 };
+
+export const PageOffset = ({page, setPage}: {page : number; setPage :  Dispatch<SetStateAction<number>>}) => {
+    return (
+        <ButtonContainer>
+            {page === 1 ? (
+                <>
+                    <LeftButton visibility={"hidden"}/>
+                    <PageContainer>
+                        {page}
+                    </PageContainer>
+                    <RightButton onClick={() => setPage(page+1)}/>
+                </>
+            ) : (page === 10 ? (
+                <>
+                    <LeftButton onClick={() => setPage(page-1)}/>
+                    <PageContainer>
+                        {page}
+                    </PageContainer>
+                    <RightButton visibility={"hidden"}/>
+                </>
+            ) : (
+                <>
+                    <LeftButton onClick={() => setPage(page-1)}/>
+                    <PageContainer>
+                        {page}
+                    </PageContainer>
+                    <RightButton onClick={() => setPage(page+1)}/>
+                </>
+            ))}
+        </ButtonContainer>
+    )
+};

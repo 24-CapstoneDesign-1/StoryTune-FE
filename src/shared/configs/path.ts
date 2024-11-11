@@ -15,4 +15,5 @@ export enum PAGE_URL {
     Maked = "/book/maked",
     HeroNaming = "/book/heroNaming",
     Index = "/book/index",
+    Book = "/book",
 }
