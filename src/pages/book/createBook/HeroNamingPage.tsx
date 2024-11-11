@@ -153,7 +153,7 @@ const HeroNamingPage = () => {
                             {`마음에 들지 않아요.
                             다시 이름을 알려줄게요!`}
                         </ButtonSubContainer>
-                        <ButtonSubContainer onClick={() => navigate(PAGE_URL.Story)}>
+                        <ButtonSubContainer onClick={() => navigate(PAGE_URL.Topic)}>
                             {`마음에 들어요!
                             이어서 하기`}
                         </ButtonSubContainer>

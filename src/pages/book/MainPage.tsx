@@ -78,7 +78,7 @@ const MainPage = () => {
                 </div>
             </TitleContainer>
                 <ButtonContainer>
-                    <CustomButton width="250px" height="70px" onClick={() => navigate(PAGE_URL.Topic)}>동화 만들러 가기</CustomButton>
+                    <CustomButton width="250px" height="70px" onClick={() => navigate(PAGE_URL.SelectBook)}>동화 만들러 가기</CustomButton>
                     <CustomButton width="250px" height="70px">이어서 만들래요!</CustomButton>
                 </ButtonContainer>
             </MainSubContainer>

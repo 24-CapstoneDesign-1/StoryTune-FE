@@ -16,7 +16,7 @@ const TopicPage = () => {
     };
     
     const onPlay = () => {
-        navigate(PAGE_URL.BookPhoto);
+        navigate(PAGE_URL.Story);
     };
     const bookStore = useBookStore();
 
