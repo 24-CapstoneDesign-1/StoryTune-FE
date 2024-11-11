@@ -21,6 +21,10 @@ const CustomTitle = styled(Title)`
     font-size: 1.8rem;
     margin-top: 20px;
     padding: 0px 20px 0px 20px;
+    @media (max-width: 768px) {
+        font-size: 1.4rem;
+        margin-top: 0px;
+    }
 `;
 
 const PhotoContainer = styled.div`
@@ -40,6 +44,9 @@ const Photo = styled.img`
     height: 400px;
     margin-top: 20px;
     margin-bottom: 20px;
+    @media (max-width: 768px) {
+        margin-top: 0px;
+    }
 `;
 
 const RecordContainer = styled.div`
@@ -50,7 +57,7 @@ const RecordContainer = styled.div`
     height: 100vh;
     @media (max-width: 768px) {
         height: 100%;
-        margin-top: 30px;
+        margin-top: 0px;
     }
 `;
 

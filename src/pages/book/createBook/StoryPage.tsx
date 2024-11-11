@@ -80,9 +80,6 @@ const StoryPage = () => {
                 ))}
             </SubContainer>
             <LeftRight progress={progress} setProgress={setProgress}/>
-            <PageContainer>
-                {Math.floor(progress / 3) + 1}
-            </PageContainer>
             <div style={{height: "100px"}}></div>
         </MainContainer>
     )
@@ -104,6 +101,10 @@ const CustomTitle = styled(Title)`
     font-size: 1.8rem;
     margin-top: 20px;
     padding: 0px 20px 0px 20px;
+    @media (max-width: 768px) {
+        font-size: 1.4rem;
+        margin-top: 0px;
+    }
 `;
 
 const PhotoContainer = styled.div`
@@ -123,6 +124,10 @@ const Photo = styled.img`
     height: 400px;
     margin-top: 20px;
     margin-bottom: 20px;
+    @media (max-width: 768px) {
+        width: 300px;
+        height: 300px;
+    }
 `;
 
 const RecordContainer = styled.div`
@@ -133,7 +138,7 @@ const RecordContainer = styled.div`
     height: 100vh;
     @media (max-width: 768px) {
         height: 100%;
-        margin-top: 30px;
+        margin-top: 0px;
     }
 `;
 
@@ -147,7 +152,6 @@ const HeroContainer = styled.div`
     margin-bottom: 20px;
     @media (max-width: 768px) {
         height: 100%;
-        margin-top: 30px;
         width: 100%;
     }
 `;
@@ -155,7 +159,7 @@ const HeroContainer = styled.div`
 const ButtonContainer = styled.div`
     display: flex;
     justify-content: space-between;
-    margin-top: 50px;
+    margin-top: 0px;
     width: 90%;
     @media (max-width: 768px) {
         width: 70%;
@@ -172,7 +176,6 @@ const LineContainer = styled.div`
     @media (max-width: 768px) {
         height: 100%;
         width: 100%;
-        margin-top: 30px;
     }
 `;
 
@@ -188,14 +191,10 @@ const HeroListContainer = styled.div`
         width: 100%;
         height: 50px;
     }
+    @media (max-width: 768px) {
+        margin-top: 0px;
+    }
 `;
 
-const PageContainer = styled.div`
-    display: flex;
-    justify-content: center;
-    font-size: 1rem;
-    margin-top: 20px;
-    font-weight: bold;
-`;
 
 export default StoryPage;

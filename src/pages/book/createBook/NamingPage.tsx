@@ -104,7 +104,7 @@ const NamingPage = () => {
                     <InputContianer>
                         <CustomButton width="400px" height="50px">{name}</CustomButton>
                         <ButtonContainer>
-                            <SquareButton width="160px" height="100px">{`이름이 틀렸어요.
+                            <SquareButton width="160px" height="100px" onClick={() => setFinalName("")}>{`이름이 틀렸어요.
                             다시 말하기`}</SquareButton>
                             <SquareButton width="160px" height="100px" onClick={() => {
                                 bookStore.setHero(curIndex, finalName);

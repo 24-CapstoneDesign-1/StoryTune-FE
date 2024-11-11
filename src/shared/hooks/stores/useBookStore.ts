@@ -5,7 +5,7 @@ export const useBookStore = create<Book.BookStore>() (
     immer((set, get) => ({
         books: {},
         heros: {},
-
+        index: 0,
         setStory: (id, story) =>
             set((state) => ({
                 books: {
@@ -36,10 +36,13 @@ export const useBookStore = create<Book.BookStore>() (
                 },
             }),
         ),
+        setIndex: (index) => set((state) => ({ index })),
+
         setSubject: (subject) => set((state) => ({ subject })),
         getHero: (id) => get().heros[id],
         getAllHero: () => Object.values(get().heros),
         getBook: (id) => get().books[id],
+        getIndex: () => get().index,
         getAllBook: () => Object.values(get().books),
     }))
 );
