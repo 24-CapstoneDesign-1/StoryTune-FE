@@ -27,6 +27,8 @@ const Maked = lazy(() => import ("@/pages/book/createBook/MakedPage"));
 const HeroNaming = lazy(() => import("@/pages/book/createBook/HeroNamingPage"));
 const Search = lazy(() => import("@/pages/search/SearchPage"));
 const Index = lazy(() => import("@/pages/book/createBook/IndexPage"));
+const SelectBook = lazy(() => import("@/pages/book/SelectBookPage"));
+const Book = lazy(() => import("@/pages/book/BookPage"));
 
 const PageRouter = () => {
     return (
@@ -42,6 +44,7 @@ const PageRouter = () => {
                             {/* <Route index element={<Navigate to={PAGE_URL.Home} replace />} /> */}
                             <Route path={PAGE_URL.Home} element={<Home />} />
                             <Route path={PAGE_URL.BookMain} element={<BookMain />} />
+                            <Route path={PAGE_URL.SelectBook} element={<SelectBook />} />
                             <Route path={PAGE_URL.BookPhoto} element={<BooKPhoto />} />
                             <Route path={PAGE_URL.Topic} element={<Topic />} />
                             <Route path={PAGE_URL.Hero} element={<Hero />} />
@@ -52,6 +55,7 @@ const PageRouter = () => {
                             <Route path={PAGE_URL.HeroNaming} element={<HeroNaming />} />
                             <Route path={PAGE_URL.Index} element={<Index />} />
                             <Route path={PAGE_URL.Search} element={<Search />} />
+                            <Route path={PAGE_URL.Book} element={<Book />} />
                         </Route>
                     </Routes>
                 </AuthRouter>

@@ -4,6 +4,7 @@ export enum PAGE_URL {
     SignIn = "/signin",
     SignUp = "/signup",
     BookMain = "/book/main",
+    SelectBook = "/book/select",
     BookPhoto = "/book/photo",
     Hero = "/book/hero",
     Topic = "/book/topic",
@@ -14,4 +15,5 @@ export enum PAGE_URL {
     Maked = "/book/maked",
     HeroNaming = "/book/heroNaming",
     Index = "/book/index",
+    Book = "/book",
 }

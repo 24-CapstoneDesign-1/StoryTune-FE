@@ -57,13 +57,15 @@ export const Book = ({
     title,
     createdAt,
     photo,
+    clickEvent,
 }: {
     title: string;
     createdAt: string;
     photo: string;
+    clickEvent: () => void;
 }) => {
     return (
-        <BookContainer>
+        <BookContainer onClick={clickEvent}>
             <ImageContainer src={photo} />
             <InfoContainer>
                 <TitleContainer>{title}</TitleContainer>

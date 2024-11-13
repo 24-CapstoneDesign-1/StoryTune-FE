@@ -1,6 +1,8 @@
 import { MainContainer, SquareButton, Title } from "@/entities";
+import { PAGE_URL } from "@/shared";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
+import { useNavigate } from "react-router-dom";
 
 
 const SubContainer = styled.div`
@@ -64,6 +66,7 @@ const ButtonSubContainer = styled.div`
 `;
 
 const MakedPage = () => {
+    const navigate = useNavigate();
     return (
         <MainContainer>
             <InfoHeader type="나만의 동화 만들기" />
@@ -74,8 +77,8 @@ const MakedPage = () => {
                 </PhotoContainer>
                 <ButtonContainer>
                     <ButtonSubContainer>
-                        <SquareButton mobileWidth="300px">내가 만든 동화 보러 가기</SquareButton>
-                        <SquareButton mobileWidth="300px">영어 동화로 바꾸고 싶어요!</SquareButton>
+                        <SquareButton width="300px" mobileWidth="300px" onClick={() => navigate(PAGE_URL.Book)}>내가 만든 동화 보러 가기</SquareButton>
+                        <SquareButton width="300px" mobileWidth="300px">영어 동화로 바꾸고 싶어요!</SquareButton>
                     </ButtonSubContainer>
                 </ButtonContainer>
             </SubContainer>

@@ -28,19 +28,8 @@ export const useBookStore = create<Book.BookStore>() (
                 },
             }),
         ),
-        setHero: (id, hero) =>
-            set((state) => ({
-                heros: {
-                    ...state.heros,
-                    [id]: hero,
-                },
-            }),
-        ),
         setIndex: (index) => set((state) => ({ index })),
-
         setSubject: (subject) => set((state) => ({ subject })),
-        getHero: (id) => get().heros[id],
-        getAllHero: () => Object.values(get().heros),
         getBook: (id) => get().books[id],
         getIndex: () => get().index,
         getAllBook: () => Object.values(get().books),

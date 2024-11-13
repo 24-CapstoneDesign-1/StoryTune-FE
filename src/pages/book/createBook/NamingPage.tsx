@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { PAGE_URL } from "@/shared";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
+import { useHeroStore } from "@/shared/hooks/stores/useHeroStore";
 
 const SubContainer = styled.div`
     display: flex;
@@ -70,7 +71,7 @@ const NamingPage = () => {
     const [name, setName] = useState("");
     const [typing, setTyping] = useState(false);
     const [finalName, setFinalName] = useState("");
-    const bookStore = useBookStore();
+    const heroStore = useHeroStore();
 
     return (
         <MainContainer>
@@ -92,7 +93,7 @@ const NamingPage = () => {
                             <>
                                 <InputContainer placeholder="이름을 입력해 주세요" value={name} onChange={(e) => setName(e.target.value)}></InputContainer>
                                 <div style={{height: "50px"}}></div>
-                                <SquareButton width="230px" height="60px" onClick={() => {
+                                <SquareButton mobileWidth="230px" mobileHeight="60px" onClick={() => {
                                     setTyping(!typing)
                                     setFinalName(name)
                                 }}>이름을 입력했어요!</SquareButton>
@@ -107,7 +108,7 @@ const NamingPage = () => {
                             <SquareButton width="160px" height="100px" onClick={() => setFinalName("")}>{`이름이 틀렸어요.
                             다시 말하기`}</SquareButton>
                             <SquareButton width="160px" height="100px" onClick={() => {
-                                bookStore.setHero(curIndex, finalName);
+                                heroStore.setName(curIndex, finalName);
                                 navigate(PAGE_URL.HeroNaming, {state: {index: curIndex, name: finalName}})
                             }}>{`맞아요!
                             이어서 하기`}</SquareButton>
