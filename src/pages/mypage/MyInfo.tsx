@@ -4,7 +4,6 @@ import { PAGE_URL } from "@/shared";
 import { useLocation } from 'react-router-dom';
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
-import { API } from "@/shared"
 
 const MyInfoContainer = styled.div`
     display: flex;
@@ -23,6 +22,13 @@ const InfoItem = styled.div`
     margin: 10px 0;
 `;
 
+const dummyData = {
+    name: "김철수",
+    userId: "kim123",
+    age: 7,
+    gender: "남",
+};
+
 const MyInfo = () => {
     const [userInfo, setUserInfo] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
@@ -30,9 +36,8 @@ const MyInfo = () => {
 
     useEffect(() => {
         const fetchUserInfo = async () => {
-            try {
-                const response = await API.get('/myinfo'); 
-                setUserInfo(response.data);
+            try { 
+                setUserInfo(dummyData);
             } catch (err) {
                 console.error(err);
                 setError("사용자 정보를 불러오는 데 실패했습니다.");

@@ -5,7 +5,6 @@ import { useLocation } from 'react-router-dom';
 import styled from "@emotion/styled";
 import { MainContainer } from "@/entities";
 import { Title} from "@/entities";
-/*import { LogoutButton } from "@/entities";*/
 import { API } from "@/shared";
 import { useEffect, useState } from "react";
 
@@ -18,7 +17,7 @@ const TitleContainer = styled.div`
 
 const MenuContainer = styled.div`
   display: flex;
-  width: 100%;
+  width: 90%;
   flex-direction : column;
   margin-top: 20px;
   @media (max-width: 768px) {
@@ -27,7 +26,7 @@ const MenuContainer = styled.div`
 `;
 
 const MenuSubContainer = styled.p`
-    padding: 15px 0;
+    padding: 10px 0;
     border-bottom: 1px solid #ccc;
     font-size: 1.1rem;
     font-weight: bold;
@@ -42,26 +41,26 @@ const UserName = styled.h2`
 `;
 
 const LogoutButton = styled.button`
-    width: 90%;
-    margin-top: 20px;
+    width: 100%;
+    margin-top: 40px;
     background-color: #FFEB3B;
     color: black;
     font-weight: bold;
-    border-radius: 10px;
+    border-radius: 5px;
 `;
 
 const MyPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const params = new URLSearchParams(location.search);
-    const name = params.get('name');
-    const [userInfo, setUserInfo] = useState<any>(null);
-    const [error, setError] = useState<string | null>(null);
-    
+    const name = params.get('name') || '김철수';
+    // const [userInfo, setUserInfo] = useState<any>(null);
+    // const [error, setError] = useState<string | null>(null);
+    /*
     const fetchUserInfo = async () => {
         try {
-            const response = await API.get('/myinfo'); 
-            setUserInfo(response.data);
+            //const response = await API.get('/myinfo'); 
+            //setUserInfo(response.data);
         } catch (err) {
             console.error(err);
             setError("사용자 정보를 불러오는 데 실패했습니다.");
@@ -71,18 +70,19 @@ const MyPage = () => {
     useEffect(() => {
         fetchUserInfo(); 
     }, []);
+    */
 
 return (
     <MainContainer>
         <InfoHeader type="마이페이지" />
             <TitleContainer>
-                <UserName>{userInfo.name}</UserName>
+                <UserName>{name}</UserName>
             </TitleContainer>
             <MenuContainer>
                 <MenuSubContainer onClick={() => navigate(PAGE_URL.MyInfo)}>내 정보</MenuSubContainer>
-                <MenuSubContainer onClick={() => navigate(PAGE_URL.Maked)}>내가 만든 책</MenuSubContainer>
-                <MenuSubContainer onClick={() => navigate(PAGE_URL.ChangeInfo)}>아이디/비밀번호 변경</MenuSubContainer>
-                <MenuSubContainer onClick={() => navigate(PAGE_URL.AddFriend)}>친구 추가</MenuSubContainer>
+                <MenuSubContainer onClick={() => navigate(PAGE_URL.Maked)}>내 책장</MenuSubContainer>
+                <MenuSubContainer onClick={() => navigate(PAGE_URL.ChangeInfo)}>내 정보 수정</MenuSubContainer>
+                <MenuSubContainer onClick={() => navigate(PAGE_URL.FriendList)}>친구 목록</MenuSubContainer>
             </MenuContainer>
             <div style={{ display: "flex", justifyContent: "center" }}>
                 <LogoutButton onClick={() => {/* handle logout */}}>로그아웃</LogoutButton>

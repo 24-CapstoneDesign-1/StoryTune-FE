@@ -29,7 +29,11 @@ const Search = lazy(() => import("@/pages/search/SearchPage"));
 const MyPage = lazy(() => import("@/pages/mypage/MyPage"));
 const MyInfo = lazy(() => import("@/pages/mypage/MyInfo"));
 const ChangeInfo = lazy(() => import("@/pages/mypage/ChangeInfoPage"));
-const AddFriend = lazy(() => import("@/pages/mypage/AddFriendPage"));
+const FriendList = lazy(() => import("@/pages/mypage/FriendListPage"));
+const RolePlay = lazy(() => import("@/pages/roleplay/MainPage"));
+const FriendPlay = lazy(() => import("@/pages/roleplay/FriendPlayPage"));
+const SelectRole = lazy(() => import("@/pages/roleplay/RoleSelectPage"));
+
 
 const PageRouter = () => {
     return (
@@ -53,10 +57,15 @@ const PageRouter = () => {
                         <Route path={PAGE_URL.Maked} element={<Maked />} />
                         <Route path={PAGE_URL.HeroNaming} element={<HeroNaming />} />
                         <Route path={PAGE_URL.Search} element={<Search />} />
+                        
                         <Route path={PAGE_URL.MyPage} element={<MyPage />} />
                         <Route path={PAGE_URL.MyInfo} element={<MyInfo />} />
                         <Route path={PAGE_URL.ChangeInfo} element={<ChangeInfo />} />
-                        <Route path={PAGE_URL.AddFriend} element={<AddFriend />} />
+                        <Route path={PAGE_URL.FriendList} element={<FriendList />} />
+                        
+                        <Route path={PAGE_URL.RolePlay} element={<RolePlay />} />
+                        <Route path={PAGE_URL.SelectRole} element={<SelectRole />} />
+                        <Route path={PAGE_URL.FriendPlay} element={<FriendPlay />} />
                         {/* <Route index element={<Navigate to={PAGE_URL.Home} replace />} /> */}
                             
                             

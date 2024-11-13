@@ -58,12 +58,12 @@ const ChangeInfoPage = () => {
 
     const onSubmit: SubmitHandler<any> = async (data) => {
         try {
-            await API.put('/change-password', { 
-                currentPassword: data.currentPassword,
-                newPassword: data.newPassword,
-            });
+            //await API.put('/change-password', { 
+            //    currentPassword: data.currentPassword,
+            //    newPassword: data.newPassword,
+            //});
             alert("비밀번호가 변경되었습니다.");
-            navigate("/myInfo"); 
+            navigate("/mypage"); 
         } catch (error) {
             console.error(error);
             setError("currentPassword", { message: "비밀번호를 변경할 수 없습니다." });
@@ -73,8 +73,16 @@ const ChangeInfoPage = () => {
     return (
         <ChangeInfoContainer>
             <ChangeInfoSubContainer>
-                <Title>비밀번호 변경</Title>
+                <Title>내 정보 변경</Title>
                 <ChangeInfoForm onSubmit={handleSubmit(onSubmit)}>
+                    <ChangeInfoForm onSubmit={handleSubmit(onSubmit)}>
+                        <ChangeInfoInput placeholder="닉네임" 
+                        {...register("nickname", { required: '* 닉네임을 입력해주세요.' })}
+                    />
+                    </ChangeInfoForm>
+                    <ValidInput>
+                        {errors?.nickname?.message ? String(errors?.nickname?.message) : '\u00A0'}
+                    </ValidInput>
                     <PasswordContainer>
                         <ChangeInfoInput 
                             type={isPasswordVisible ? "password" : "text"} 
@@ -96,7 +104,7 @@ const ChangeInfoPage = () => {
                     <ValidInput>
                         {errors?.newPassword?.message ? String(errors?.newPassword?.message) : '\u00A0'}
                     </ValidInput>
-                    <SubmitButton type="submit">비밀번호 변경</SubmitButton>
+                    <SubmitButton type="submit">변경사항 저장하기</SubmitButton>
                 </ChangeInfoForm>
             </ChangeInfoSubContainer>
         </ChangeInfoContainer>
