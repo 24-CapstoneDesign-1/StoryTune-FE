@@ -1,6 +1,7 @@
 import { MainContainer } from "@/entities";
 import { PAGE_URL } from "@/shared";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
+import { useHeroStore } from "@/shared/hooks/stores/useHeroStore";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
@@ -108,6 +109,7 @@ const HeroNamingPage = () => {
         {image: "../images/temp.svg", name: ""},
     ]);
     const bookStore = useBookStore();
+    const heroStore = useHeroStore();
 
     useEffect(() => {
         if (location.state) {
@@ -135,12 +137,12 @@ const HeroNamingPage = () => {
                             navigate(PAGE_URL.Name, {state: {image: image.image, index: index}});
                         }}>
                             <Image src={image.image} />
-                            {bookStore.getHero(index)?.length === undefined ? (
+                            {heroStore.getName(index)?.length === undefined ? (
                                 <>
                                 </>
                             ) : (
                                 <NameContainer>
-                                    {bookStore.getHero(index)}
+                                    {heroStore.getName(index)}
                                 </NameContainer>
                             )}
                         </ImageBlock>

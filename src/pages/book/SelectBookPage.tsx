@@ -62,17 +62,6 @@ const SelectBookPage = () => {
             <MainSubContainer>
                 <SelectBookList title="동화책을 선택해 주세요!" bookList={bookList}/>
             </MainSubContainer>
-            <MainSubContainer>
-            <TitleContainer>
-                <div>
-                    <h1>나만의 동화를 만들고 싶어요!</h1>
-                </div>
-            </TitleContainer>
-                <ButtonContainer>
-                    <CustomButton width="250px" height="70px" onClick={() => navigate(PAGE_URL.Topic)}>동화 만들러 가기</CustomButton>
-                    <CustomButton width="250px" height="70px">이어서 만들래요!</CustomButton>
-                </ButtonContainer>
-            </MainSubContainer>
             <div style={{height: "140px"}}></div>
         </MainContainer>
     )
@@ -90,8 +79,7 @@ const BookListContainer = styled.div`
     flex-direction: row;
     justify-content: space-evenly;
     width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
+    flex-wrap: wrap;
     white-space: nowrap;
     padding-bottom: 10px;
 `;
@@ -102,13 +90,20 @@ const NewButtonContainer = styled.div`
     margin-top: 20px;
     font-weight: bold;
     @media (max-width: 768px) {
-        flex-direction: column;
         align-items: center;
+        margin-bottom: 20px;
     }
 `;
 
 const PlayButton = styled(FaPlay)`
     margin-left: 10px;
+`;
+
+const TitleSubContainer = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 330px;
 `;
 
 interface BookListProps {
@@ -137,13 +132,15 @@ const SelectBookList = ( {title, bookList}
         <div>
             <TitleContainer>
                 <SubTitleContainer>
-                    <h1>{title}</h1>
+                    <TitleSubContainer>
+                        <h1>{title}</h1>
+                        <NewButtonContainer onClick={() => navigate(PAGE_URL.BookPhoto)}>
+                            새로 만들기
+                            <PlayButton />
+                        </NewButtonContainer>
+                    </TitleSubContainer>
                     <Search value={search} change={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)} onSearch={handleSearch}/>
                 </SubTitleContainer>
-                <NewButtonContainer onClick={() => navigate(PAGE_URL.BookPhoto)}>
-                    새로 만들기
-                    <PlayButton />
-                </NewButtonContainer>
             </TitleContainer>
             <BookListContainer>
                 {bookList.map((book, index) => (

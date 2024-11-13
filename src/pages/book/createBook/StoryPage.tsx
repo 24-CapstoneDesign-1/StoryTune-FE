@@ -1,5 +1,6 @@
 import { CircleButton, MainContainer, RecordIcon, SquareButton, Title } from "@/entities";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
+import { useHeroStore } from "@/shared/hooks/stores/useHeroStore";
 import { InfoHeader, LeftRight } from "@/widgets";
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
@@ -9,8 +10,9 @@ const StoryPage = () => {
     const navigate = useNavigate();
     const [record, setRecord] = useState<string>("");
     const [progress, setProgress] = useState<number>(0);
+    const heroStore = useHeroStore();
     const bookStore = useBookStore();
-    const [hero, setHero] = useState<string[]>(bookStore.getAllHero());
+    const [hero, setHero] = useState<string[]>(heroStore.getAllName());
     const [isRecord, setIsRecord] = useState<boolean>(false);
     const [recordProgress, setRecordProgress] = useState<boolean>(false);
 
