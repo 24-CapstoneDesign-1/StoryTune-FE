@@ -5,6 +5,8 @@ import { InfoHeader, LeftRight } from "@/widgets";
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { RxChatBubble } from "react-icons/rx";
+import { before } from "node:test";
 
 const StoryPage = () => {
     const navigate = useNavigate();
@@ -29,6 +31,16 @@ const StoryPage = () => {
                         {(!isRecord) ? (
                             <>
                                 <RecordContainer>
+                                    <ImageContainer>
+                                        <HelpImg src="../public/images/help.svg" onClick={() => {console.log('click')}}/>
+                                        <BalloonContainer>
+                                            <MessageContainer>
+                                                <MessageBox>
+                                                    도움이 필요해요!
+                                                </MessageBox>
+                                            </MessageContainer>
+                                        </BalloonContainer>
+                                    </ImageContainer>
                                     <RecordIcon onClick={() => setIsRecord(true)}/>
                                     <CustomTitle>아이콘을 클릭해서 알려주세요!</CustomTitle>
                                 </RecordContainer>
@@ -86,6 +98,87 @@ const StoryPage = () => {
         </MainContainer>
     )
 }
+
+const ImageContainer = styled.div`
+
+`;
+const HelpImg = styled.img`
+    position: absolute;
+    top: 120px;
+    right: 40px;
+    width: 80px;
+    @media (max-width: 768px) {
+        width: 60px;
+        top: 490px;
+        right: 10px;
+    }
+`;
+
+const BalloonContainer = styled.div`
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    @media (max-width: 768px) {
+        width: 100%;
+        height: 70px;
+    }
+`;
+
+const MessageContainer = styled.div`
+    flex-shrink: 1;
+    height: 250px;
+    width: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-right: 5%;
+    
+    &::before {
+        content: "";
+        position: absolute;
+        top: 22%;
+        right: 8em;
+        border: 1em solid transparent;
+        border-left: 1em solid black;
+        transform: translateY(-50%);
+        z-index: 0;
+    }
+    @media (max-width: 768px) {
+        width: 100%;
+        height: 100%;
+        padding-right: 0px;
+        &::before {
+            top: 63%;
+            right: 4em;
+            border-left: 0.5em solid black;
+        }
+    }
+`;
+const MessageBox = styled.div`
+    display: flex;
+    position: absolute;
+    font-size: 1.5rem;
+    font-weight: bold;
+    top: 17%;
+    right: 6.6em;
+    width: 20%;
+    height: 10%;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid black;
+    border-radius: 15px;
+    padding-left: 1.8em;
+    padding-right: 1.8em;
+    @media (max-width: 768px) {
+        height: 50px;
+        width: 120px;
+        font-size: 1rem;
+        top: 59.6%;
+        right: 5.51em;
+    }
+`;
 
 const SubContainer = styled.div`
     display: flex;
