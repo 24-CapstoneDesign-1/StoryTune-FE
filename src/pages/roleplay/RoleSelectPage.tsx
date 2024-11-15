@@ -1,8 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { MainContainer } from "@/entities";
+import { MainContainer, SquareButton } from "@/entities";
 import { InfoHeader } from "@/widgets";
+import { useNavigate } from 'react-router-dom';
+import { PAGE_URL } from '@/shared';
+
+const NextButton = styled(SquareButton)`
+    margin-top : 50px;
+    font-size : 15px;
+    height: 7vh;
+    width : 30vh;
+    background-color: #f5f5f5;
+`;
 
 const SubContainer = styled.div`
     display: flex;
@@ -57,6 +67,7 @@ interface Friend {
 const roles = ['여주', '남주', '조연1', '조연2', '행인1', '행인2'];
 
 const SelectRolePage = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   // const friends: Friend[] = location.state?.friends || [];
   const friends: Friend[] = [
@@ -65,6 +76,7 @@ const SelectRolePage = () => {
     { id: 'user3', name: '박영수' },
     { id: 'user4', name: '최수영' },
   ];
+
 
   const [assignedRoles, setAssignedRoles] = useState<{ friend: Friend; role: string }[]>([]);
 
@@ -105,6 +117,7 @@ const SelectRolePage = () => {
           </AssignedRoleContainer>
         ))}
       </RoleContainer>
+      <NextButton onClick={() => navigate(PAGE_URL.FriendPlay)}>동화책 고르러 가기</NextButton>
       </PageContainer>
     </MainContainer>
   );
