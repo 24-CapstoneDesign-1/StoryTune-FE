@@ -1,4 +1,4 @@
-import { Button, MainContainer, SquareButton, Title, RecordIcon, InputContainer } from "@/entities";
+import { Button, MainContainer, SquareButton, Title, RecordIcon, InputContainer, Record } from "@/entities";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
 import { useState } from "react";
@@ -85,7 +85,7 @@ const NamingPage = () => {
                     <InputContianer>
                         {!typing ? (
                             <>
-                                <RecordIcon />
+                                <Record />
                                 <CustomTitle>아이콘을 클릭해서 알려주세요!</CustomTitle>
                                 <CustomButton width="400px" height="50px" onClick={() => setTyping(!typing)}>직접 입력할래요!</CustomButton>
                             </>

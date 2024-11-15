@@ -150,7 +150,7 @@ const MessageContainer = styled.div`
         height: 100%;
         padding-right: 0px;
         &::before {
-            top: 63%;
+            top: 75%;
             right: 4em;
             border-left: 0.5em solid black;
         }
@@ -175,7 +175,7 @@ const MessageBox = styled.div`
         height: 50px;
         width: 120px;
         font-size: 1rem;
-        top: 59.6%;
+        top: 71.2%;
         right: 5.51em;
     }
 `;

@@ -1,6 +1,12 @@
 declare namespace Book {
     //dto
+    export interface BookRecordReq {
+        file: FormData;
+    }
 
+    export interface BookRecordRes {
+        text: string;
+    }
 
     export interface BasicBookInfo {
         image: string;

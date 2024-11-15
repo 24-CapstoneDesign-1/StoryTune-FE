@@ -10,6 +10,9 @@ export {
     LeftButton,
     RightButton,
  } from "./element/button/Button";
+ export {
+    Record,
+ } from "./element/button/Record";
 export {
     Title,
     ValidInput,

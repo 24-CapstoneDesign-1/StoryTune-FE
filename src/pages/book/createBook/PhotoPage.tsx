@@ -47,16 +47,17 @@ const PhotoPage = () => {
 
   const handleNextButton = () => {
     var isCancel = false
-    images.forEach((image) => {
-      if (!image && !isCancel) {
-        alert("모든 사진을 업로드해주세요!");
-        isCancel = true;
-        return;
-      }
-    });
-    if (!isCancel) {
-      navigate(PAGE_URL.Hero);
-    }
+    // images.forEach((image) => {
+    //   if (!image && !isCancel) {
+    //     alert("모든 사진을 업로드해주세요!");
+    //     isCancel = true;
+    //     return;
+    //   }
+    // });
+    // if (!isCancel) {
+    //   navigate(PAGE_URL.Hero);
+    // }
+    navigate(PAGE_URL.Hero);
   }
 
   return (
