@@ -17,7 +17,8 @@ export enum PAGE_URL {
     MyInfo = "/mypage/myInfo",
     ChangeInfo = "/mypage/changeInfo",
     FriendList = "/mypage/friendList",
-    RolePlay = "/roleplay/main",
+    RolePlayMain = "/roleplay/main",
     SelectRole = "/roleplay/selectrole",
-    FriendPlay = "/roleplay/friendplay"
+    FriendPlay = "/roleplay/friendplay",
+    RolePlay = "/roleplay/roleplay"
 }

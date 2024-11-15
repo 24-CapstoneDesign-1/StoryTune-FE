@@ -56,7 +56,7 @@ interface Friend {
 
 const roles = ['여주', '남주', '조연1', '조연2', '행인1', '행인2'];
 
-const SelectRolePage = () => {
+const RolePlayPage = () => {
   const location = useLocation();
   // const friends: Friend[] = location.state?.friends || [];
   const friends: Friend[] = [
@@ -93,21 +93,8 @@ const SelectRolePage = () => {
   return (
     <MainContainer>
       <InfoHeader type="역할 놀이" />
-      <PageContainer>
-        <SubContainer>
-        <p>역할 배정이 끝났어요!</p>
-        </SubContainer>
-      <RoleContainer>
-        {assignedRoles.map(({ friend, role }, index) => (
-          <AssignedRoleContainer key={`${friend.id}-${index}`}>
-            <div style={{ fontWeight: 'bold', fontSize: '20px' }}>{friend.name}</div>
-            <div>{role}</div>
-          </AssignedRoleContainer>
-        ))}
-      </RoleContainer>
-      </PageContainer>
-    </MainContainer>
+      </MainContainer>
   );
 };
 
-export default SelectRolePage;
+export default RolePlayPage;

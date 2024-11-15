@@ -62,6 +62,21 @@ const ModalContainer = styled.div`
   justify-content: center;
   align-items: center;
 `;
+const FriendsList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+`;
+
+const FriendItem = styled.li`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+`;
 
 const ModalContent = styled.div`
   background-color: white;
@@ -109,12 +124,27 @@ const Modal : React.FC<ModalProps>= ({ open, onClose, onNavigate, title, childre
 const MainPage = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [invitedFriends, setInvitedFriends] = useState<any[]>([]); //친구 초대해서 저장
+
+  const friends = [
+    { id: 1, name: '김가현' },
+    { id: 2, name: '김나현' },
+    { id: 3, name: '강지혜' },
+  ];
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
   const NextPage = () => {
     closeModal();
-    navigate(PAGE_URL.SelectRole);
+    navigate(PAGE_URL.SelectRole, { state: { friends: invitedFriends } });
+  };
+
+  const handleInviteFriend = (friendId: number) => {
+    const invitedFriend = friends.find(friend => friend.id === friendId);
+    if (invitedFriend && !invitedFriends.includes(invitedFriend)) {
+      setInvitedFriends([...invitedFriends, invitedFriend]);
+    }
   };
   
   return (
@@ -127,7 +157,21 @@ const MainPage = () => {
                 </ButtonSubContainer>
 
       <Modal open={isModalOpen} onClose={closeModal} onNavigate={NextPage} title="친구 초대하기">
-        친구 초대
+      <div>
+            <h3>친구 목록</h3>
+            <FriendsList>
+              {friends.map(friend => (
+                <FriendItem key={friend.id}>
+                  <span>{friend.name}</span>
+                  {invitedFriends.some(invited => invited.id === friend.id) ? (
+                    <span>초대된 친구</span>
+                  ) : (
+                    <SmallSquareButton onClick={() => handleInviteFriend(friend.id)}>친구 초대</SmallSquareButton>
+                  )}
+                </FriendItem>
+              ))}
+              </FriendsList>
+          </div>
       </Modal>
         </SubContainer>
     </MainContainer>
