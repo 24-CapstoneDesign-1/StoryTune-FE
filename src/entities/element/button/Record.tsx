@@ -14,7 +14,7 @@ export const Record = () => {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         
         // 원하는 형식 지정 (예: 'audio/webm', 'audio/ogg' 등)
-        mediaRecorder.current = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+        mediaRecorder.current = new MediaRecorder(stream, { mimeType: 'audio/ogg' });
         chunks.current = [];
         
         mediaRecorder.current.ondataavailable = (event) => {
@@ -22,7 +22,7 @@ export const Record = () => {
         };
         
         mediaRecorder.current.onstop = () => {
-            const audioBlob = new Blob(chunks.current, { type: 'audio/webm' }); // webm 형식으로 설정
+            const audioBlob = new Blob(chunks.current, { type: 'audio/ogg' }); // webm 형식으로 설정
             setAudioBlob(audioBlob);
         };
         
@@ -48,7 +48,7 @@ export const Record = () => {
             <RecordIcon onClick={recording ? handleStopRecording : handleStartRecording}/>
             
             {audioBlob && (
-                <a href={URL.createObjectURL(audioBlob)} download="recording.webm">
+                <a href={URL.createObjectURL(audioBlob)} download="recording.ogg">
                     Download Recording
                 </a>
             )}
