@@ -20,6 +20,8 @@ const PhotoPage = () => {
         setImages((prevImages) => {
           const newImages = [...prevImages];
           newImages[index] = reader.result as string;
+          const blob = new Blob([newImages[index]], {type: file.type});
+          console.log(blob);
           return newImages;
         });
       };
@@ -101,6 +103,7 @@ const PhotoPage = () => {
             다시 고르고 싶어요
           </RerollContainer>
           <NextContainer onClick={() => {
+            console.log(images);
             images.map((image, index) => {
               bookStore.setImage(index, image);
             })

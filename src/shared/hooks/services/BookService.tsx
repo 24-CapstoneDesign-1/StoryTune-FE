@@ -12,5 +12,12 @@ export const BookService = () => {
         return data;
     };
 
-    return { record };
+    const bookList = async () => {
+        const { data } = (await API.get(
+            "/api/book"
+        )) as AxiosResponse<Book.BookListRes>;
+        return data;
+    };
+
+    return { record, bookList };
 };

@@ -3,7 +3,7 @@ import { immer } from "zustand/middleware/immer";
 
 export const useHeroStore = create<Hero.HeroStore>() (
     immer((set, get) => ({
-        name: [""],
+        name: [],
         setName(idx, name) {
             set((state) => {
                 state.name[idx] = name;

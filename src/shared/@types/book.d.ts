@@ -13,6 +13,14 @@ declare namespace Book {
         name: string;
         story: string;
     }
+    export interface BookListRes {
+        result: {
+            bookId: number;
+            cover: string;
+            title: string;
+            author: string;
+        }
+    }
 
     export interface BookStore {
         books: { [id: number]: BasicBookInfo };
@@ -24,6 +32,7 @@ declare namespace Book {
         setStory: (id: number, story: string) => void;
         setIndex: (index: number) => void;
         getBook: (id: number) => BasicBookInfo | undefined;
+        getImage: (id: number) => string;
         getAllBook: () => BasicBookInfo[];
         getIndex: () => number;
     }

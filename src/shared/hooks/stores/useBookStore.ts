@@ -31,6 +31,7 @@ export const useBookStore = create<Book.BookStore>() (
         setIndex: (index) => set((state) => ({ index })),
         setSubject: (subject) => set((state) => ({ subject })),
         getBook: (id) => get().books[id],
+        getImage: (id) => get().books[id].image,
         getIndex: () => get().index,
         getAllBook: () => Object.values(get().books),
     }))

@@ -24,7 +24,10 @@ const StoryPage = () => {
             <SubContainer>
                 <PhotoContainer>
                     <CustomTitle>이 사진을 보고 떠오르는 이야기를 들려주세요!</CustomTitle>
-                    <Photo src="../public/images/temp.svg" />
+                    <Photo src={bookStore.getImage(0)} />
+                    <>
+                    {console.log(bookStore.getImage(0))}
+                    </>
                 </PhotoContainer>
                 {(progress % 3) === 0 ? (
                     <>
@@ -108,9 +111,9 @@ const HelpImg = styled.img`
     right: 40px;
     width: 80px;
     @media (max-width: 768px) {
-        width: 60px;
-        top: 490px;
-        right: 10px;
+        width: 40px;
+        top: 500px;
+        right: 30px;
     }
 `;
 
@@ -146,14 +149,7 @@ const MessageContainer = styled.div`
         z-index: 0;
     }
     @media (max-width: 768px) {
-        width: 100%;
-        height: 100%;
-        padding-right: 0px;
-        &::before {
-            top: 75%;
-            right: 4em;
-            border-left: 0.5em solid black;
-        }
+    display: none;
     }
 `;
 const MessageBox = styled.div`

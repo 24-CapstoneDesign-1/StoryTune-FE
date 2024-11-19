@@ -108,7 +108,6 @@ const HeroNamingPage = () => {
         {image: "../images/temp.svg", name: ""},
         {image: "../images/temp.svg", name: ""},
     ]);
-    const bookStore = useBookStore();
     const heroStore = useHeroStore();
 
     useEffect(() => {
