@@ -8,6 +8,7 @@ const SearchContainer = styled.div`
     margin-top: 20px;
     @media (max-width: 768px) {
         margin-top: 10px;
+        width: 350px;
     }
 `;
 const SearchInput = styled.input`

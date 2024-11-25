@@ -4,8 +4,6 @@ import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
 import { useState } from "react";
-import { CiRedo } from "react-icons/ci";
-import { FaCaretRight } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 
 const IndexPage = () => {

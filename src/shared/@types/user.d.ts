@@ -21,7 +21,9 @@ declare namespace User {
     }
 
     export interface SignUpResDto {
-        result: {}
+        result: {
+            text: string;
+        }
     };
 
     export interface BasicInfo {

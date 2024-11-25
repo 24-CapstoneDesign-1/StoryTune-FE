@@ -34,25 +34,25 @@ export const getAccess = (): string | null => {
   return localStorage.getItem(storageAccessKey);
 };
 
-API.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    if (error.response && [401, 403].includes(error.response.status)) {
-      resetAccess();
-      location.href = PAGE_URL.SignIn;
-    }
-    return Promise.reject(error);
-  }
-);
+// API.interceptors.response.use(
+//   (response) => response,
+//   async (error) => {
+//     if (error.response && [401, 403].includes(error.response.status)) {
+//       resetAccess();
+//       location.href = PAGE_URL.SignIn;
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 
-FORMAPI.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    if (error.response && [401, 403].includes(error.response.status)) {
-      resetAccess();
-      location.href = PAGE_URL.SignIn;
-    }
-    return Promise.reject(error);
-  }
-);
+// FORMAPI.interceptors.response.use(
+//   (response) => response,
+//   async (error) => {
+//     if (error.response && [401, 403].includes(error.response.status)) {
+//       resetAccess();
+//       location.href = PAGE_URL.SignIn;
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 

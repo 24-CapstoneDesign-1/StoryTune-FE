@@ -9,7 +9,7 @@ import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 
 const PhotoPage = () => {
   const navigate = useNavigate();
-  const [images, setImages] = useState<string[]>(Array(10).fill(""));
+  const [images, setImages] = useState<string[]>([]);
   const bookStore = useBookStore();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
@@ -18,9 +18,13 @@ const PhotoPage = () => {
       const reader = new FileReader();
       reader.onload = () => {
         setImages((prevImages) => {
-          const newImages = [...prevImages];
-          newImages[index] = reader.result as string;
-          return newImages;
+          const updatedImages = [...prevImages];
+          // 인덱스까지 배열 확장
+          while (updatedImages.length <= index) {
+            updatedImages.push("");
+          }
+          updatedImages[index] = URL.createObjectURL(file); // 이미지 URL 저장
+          return updatedImages;
         });
       };
       reader.readAsDataURL(file);
@@ -36,7 +40,7 @@ const PhotoPage = () => {
         setImages((prevImages) => {
           const newImages = [...prevImages];
           if (index < newImages.length) {
-            newImages[index] = reader.result as string;
+            newImages[index] = URL.createObjectURL(new Blob([reader.result as string], {type: file.type}));
           }
           return newImages;
         });
@@ -46,17 +50,18 @@ const PhotoPage = () => {
   };
 
   const handleNextButton = () => {
-    var isCancel = false
-    images.forEach((image) => {
-      if (!image && !isCancel) {
-        alert("모든 사진을 업로드해주세요!");
-        isCancel = true;
-        return;
-      }
-    });
-    if (!isCancel) {
-      navigate(PAGE_URL.Hero);
-    }
+    // var isCancel = false
+    // images.forEach((image) => {
+    //   if (!image && !isCancel) {
+    //     alert("모든 사진을 업로드해주세요!");
+    //     isCancel = true;
+    //     return;
+    //   }
+    // });
+    // if (!isCancel) {
+    //   navigate(PAGE_URL.Hero);
+    // }
+    navigate(PAGE_URL.Hero);
   }
 
   return (
@@ -78,13 +83,9 @@ const PhotoPage = () => {
           onChange={handleMultiImageUpload}
         />
         <ImageContainer>
-          {images.map((image, index) => (
-            <AddImageBlock
-              key={index}
-              hasImage={!!image}
-              htmlFor={`block-${index}`}
-            >
-              {image ? <Image src={image} alt={`Uploaded ${index}`} /> : "?"}
+        {Array.from({ length: Math.max(images.length, 10) }).map((_, index) => (
+            <AddImageBlock key={index} hasImage={!!images[index]} htmlFor={`block-${index}`}>
+              {images[index] ? <Image src={images[index]} alt={`Uploaded ${index}`} /> : "?"}
               <HiddenInput
                 type="file"
                 id={`block-${index}`}
@@ -100,6 +101,7 @@ const PhotoPage = () => {
             다시 고르고 싶어요
           </RerollContainer>
           <NextContainer onClick={() => {
+            console.log(images);
             images.map((image, index) => {
               bookStore.setImage(index, image);
             })

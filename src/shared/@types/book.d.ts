@@ -1,11 +1,25 @@
 declare namespace Book {
     //dto
+    export interface BookRecordReq {
+        file: FormData;
+    }
 
+    export interface BookRecordRes {
+        text: string;
+    }
 
     export interface BasicBookInfo {
         image: string;
         name: string;
         story: string;
+    }
+    export interface BookListRes {
+        result: {
+            bookId: number;
+            cover: string;
+            title: string;
+            author: string;
+        }
     }
 
     export interface BookStore {
@@ -18,6 +32,7 @@ declare namespace Book {
         setStory: (id: number, story: string) => void;
         setIndex: (index: number) => void;
         getBook: (id: number) => BasicBookInfo | undefined;
+        getImage: (id: number) => string;
         getAllBook: () => BasicBookInfo[];
         getIndex: () => number;
     }

@@ -1,6 +1,5 @@
 import { MainContainer } from "@/entities";
 import { PAGE_URL } from "@/shared";
-import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { useHeroStore } from "@/shared/hooks/stores/useHeroStore";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
@@ -108,7 +107,6 @@ const HeroNamingPage = () => {
         {image: "../images/temp.svg", name: ""},
         {image: "../images/temp.svg", name: ""},
     ]);
-    const bookStore = useBookStore();
     const heroStore = useHeroStore();
 
     useEffect(() => {

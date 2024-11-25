@@ -23,8 +23,9 @@ const PageContainer = styled.div`
 interface LeftRightProps {
     progress: number;
     setProgress: Dispatch<SetStateAction<number>>;
+    pageNum: number;
 }
-export const LeftRight = ({progress, setProgress}: LeftRightProps) => {
+export const LeftRight = ({progress, setProgress, pageNum}: LeftRightProps) => {
     const navigate = useNavigate();
     return (
         <ButtonContainer>
@@ -36,7 +37,7 @@ export const LeftRight = ({progress, setProgress}: LeftRightProps) => {
                     </PageContainer>
                     <RightButton onClick={() => setProgress(progress+1)}/>
                 </>
-            ) : (progress === 29 ? (
+            ) : ((progress + 1) / 3 === pageNum ? (
                 <>
                     <LeftButton onClick={() => setProgress(progress-1)}/>
                     <PageContainer>

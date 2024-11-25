@@ -9,7 +9,11 @@ export {
     CircleButton,
     LeftButton,
     RightButton,
+    StopIcon,
  } from "./element/button/Button";
+ export {
+    Record,
+ } from "./element/button/Record";
 export {
     Title,
     ValidInput,
