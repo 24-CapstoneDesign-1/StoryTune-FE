@@ -90,7 +90,7 @@ const HomePage = () => {
                     }}
                     onClick={() => navigate(PAGE_URL.BookMain)}
                 >
-                    <FaPlus size={32} color="#FF8A65" />
+                    <FaPencilAlt size={32} color="#FF8A65" />
                     <p style={{ marginTop: "0.5rem", fontSize: "0.9rem", color: "#5D4037" }}>동화책 만들기</p>
                 </div>
                 
@@ -107,7 +107,7 @@ const HomePage = () => {
                     onClick={() => navigate(PAGE_URL.Maked)}
                 >
                     <FaBookOpen size={32} color="#FF8A65" />
-                    <p style={{ marginTop: "0.5rem", fontSize: "0.9rem", color: "#5D4037" }}>책 읽기</p>
+                    <p style={{ marginTop: "0.5rem", fontSize: "0.9rem", color: "#5D4037" }}>동화책 읽어보기</p>
                 </div>
             </section>
 
