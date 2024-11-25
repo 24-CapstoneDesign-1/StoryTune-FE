@@ -1,10 +1,9 @@
-import { Button, MainContainer, SquareButton, Title, RecordIcon, InputContainer, Record } from "@/entities";
+import { Button, MainContainer, SquareButton, Title, InputContainer, Record } from "@/entities";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { PAGE_URL } from "@/shared";
-import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { useHeroStore } from "@/shared/hooks/stores/useHeroStore";
 
 const SubContainer = styled.div`

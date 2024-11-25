@@ -10,24 +10,32 @@ export const useBookStore = create<Book.BookStore>() (
             set((state) => ({
                 books: {
                     ...state.books,
-                    [id]: story,
+                    [id]: {
+                        ...state.books[id],
+                        story,
+                    },
                 },
             })),
         setName: (id, name) =>
             set((state) => ({
                 books: {
                     ...state.books,
-                    [id]: name,
+                    [id]: {
+                        ...state.books[id],
+                        name,
+                    },
                 },
             })),
         setImage: (id, image) =>
             set((state) => ({
                 books: {
                     ...state.books,
-                    [id]: image,
+                    [id]: {
+                        ...state.books[id],
+                        image,
+                    },
                 },
-            }),
-        ),
+            })),
         setIndex: (index) => set((state) => ({ index })),
         setSubject: (subject) => set((state) => ({ subject })),
         getBook: (id) => get().books[id],

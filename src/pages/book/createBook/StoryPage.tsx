@@ -3,13 +3,9 @@ import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { useHeroStore } from "@/shared/hooks/stores/useHeroStore";
 import { InfoHeader, LeftRight } from "@/widgets";
 import styled from "@emotion/styled";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { RxChatBubble } from "react-icons/rx";
-import { before } from "node:test";
+import { useState } from "react";
 
 const StoryPage = () => {
-    const navigate = useNavigate();
     const [record, setRecord] = useState<string>("");
     const [progress, setProgress] = useState<number>(0);
     const heroStore = useHeroStore();
@@ -17,17 +13,14 @@ const StoryPage = () => {
     const [hero, setHero] = useState<string[]>(heroStore.getAllName());
     const [isRecord, setIsRecord] = useState<boolean>(false);
     const [recordProgress, setRecordProgress] = useState<boolean>(false);
-
+    const pageNum = bookStore.getAllBook().length;
     return (
         <MainContainer>
             <InfoHeader type="나만의 동화 만들기" />
             <SubContainer>
                 <PhotoContainer>
                     <CustomTitle>이 사진을 보고 떠오르는 이야기를 들려주세요!</CustomTitle>
-                    <Photo src={bookStore.getImage(0)} />
-                    <>
-                    {console.log(bookStore.getImage(0))}
-                    </>
+                    <Photo src={bookStore.getImage(Math.floor(progress / 3))} />
                 </PhotoContainer>
                 {(progress % 3) === 0 ? (
                     <>
@@ -96,7 +89,7 @@ const StoryPage = () => {
                     </LineContainer>
                 ))}
             </SubContainer>
-            <LeftRight progress={progress} setProgress={setProgress}/>
+            <LeftRight progress={progress} setProgress={setProgress} pageNum={pageNum}/>
             <div style={{height: "100px"}}></div>
         </MainContainer>
     )
