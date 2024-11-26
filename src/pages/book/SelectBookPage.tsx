@@ -20,6 +20,7 @@ const TitleContainer = styled.div`
     justify-content: space-between;
     align-items: center;
     margin-top: 20px;
+    width: 100%;
     @media (max-width: 768px) {
         font-size: 0.7rem;
     }
@@ -77,7 +78,6 @@ const SubTitleContainer = styled.div`
 const BookListContainer = styled.div`
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
     width: 100%;
     flex-wrap: wrap;
     white-space: nowrap;
@@ -103,7 +103,7 @@ const TitleSubContainer = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 330px;
+    width: 120%;
 `;
 
 interface BookListProps {

@@ -12,7 +12,7 @@ export const useBookStore = create<Book.BookStore>() (
                     ...state.books,
                     [id]: {
                         ...state.books[id],
-                        story,
+                        story : story,
                     },
                 },
             })),
@@ -36,11 +36,20 @@ export const useBookStore = create<Book.BookStore>() (
                     },
                 },
             })),
+        setHero: (id, hero) =>
+            set((state) => ({
+                heros: {
+                    ...state.heros,
+                    [id]: hero,
+                },
+            })),
+
         setIndex: (index) => set((state) => ({ index })),
         setSubject: (subject) => set((state) => ({ subject })),
         getBook: (id) => get().books[id],
         getImage: (id) => get().books[id].image,
         getIndex: () => get().index,
         getAllBook: () => Object.values(get().books),
+        getHero: (id) => get().heros[id],
     }))
 );

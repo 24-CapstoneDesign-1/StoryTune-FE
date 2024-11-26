@@ -101,7 +101,6 @@ const PhotoPage = () => {
             다시 고르고 싶어요
           </RerollContainer>
           <NextContainer onClick={() => {
-            console.log(images);
             images.map((image, index) => {
               bookStore.setImage(index, image);
             })

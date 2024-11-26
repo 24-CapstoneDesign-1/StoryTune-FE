@@ -19,6 +19,7 @@
     "lamejs": "^1.2.1",
     "mic-recorder": "^4.9.0",
     "mic-recorder-to-mp3": "^2.2.2",
+    "openai": "^4.73.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.0",
