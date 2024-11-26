@@ -92,7 +92,7 @@ const ActionButton = styled.button<{ accept?: boolean, reject?: boolean }>`
   `}
 `;
 
-const FriendsPage = () => {
+const FriendListPage = () => {
   const [friends, setFriends] = useState([
     { id: "gildong_1", name: "홍길동" },
     { id: "gildong_2", name: "김철수" },
@@ -183,17 +183,16 @@ const FriendsPage = () => {
             <FriendCard key={result.id} onClick={() => handleSendRequest(result)}>
               <FaUserPlus size={32} color="#FF8A65" />
               <FriendName>{result.name}</FriendName>
-              <small style={{ backgroundColor: "#757575", padding: "2px 4px", borderRadius: "4px" }}>
+              <small style={{ backgroundColor: "#E6E6E6" }}>
                 {result.id}
                </small>
-
             </FriendCard>
           ))}
         </div>
         </Section>
       </SearchContainer>
 
-      {/* 친구 목록 */}
+
       <Section>
         <h2>친구 목록</h2>
         <div>
@@ -201,7 +200,7 @@ const FriendsPage = () => {
             <FriendCard key={friend.id}>
               <FaUserCheck size={32} color="#FF8A65" />
               <FriendName>{friend.name}</FriendName>
-            <small style={{ backgroundColor: "#757575", padding: "2px 4px", borderRadius: "4px" }}>
+            <small style={{ backgroundColor: "#E6E6E6", padding: "2px 4px", borderRadius: "4px" }}>
             {friend.id}
             </small>
 
@@ -210,7 +209,6 @@ const FriendsPage = () => {
         </div>
       </Section>
 
-      {/* 받은 요청 */}
       <Section>
         <h2>받은 친구 요청</h2>
         <div>
@@ -218,7 +216,7 @@ const FriendsPage = () => {
             <FriendCard key={request.id}>
               <FaUserPlus size={32} color="#FF8A65" />
               <FriendName>{request.name}</FriendName>
-              <small style={{ backgroundColor: "#757575", padding: "2px 4px", borderRadius: "4px" }}>
+              <small style={{ backgroundColor: "#E6E6E6", padding: "2px 4px", borderRadius: "4px" }}>
                 {request.id}
               </small>
 
@@ -244,4 +242,4 @@ const FriendsPage = () => {
   );
 };
 
-export default FriendsPage;
+export default FriendListPage;

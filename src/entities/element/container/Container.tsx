@@ -74,7 +74,7 @@ export const Book = ({
 };
 
 export const MainContainer = styled.div`
-    background-color: #FFFCAD;
+    background-color: #fff9c4;
     display: flex;
     flex-direction: column;
     align-items: center;

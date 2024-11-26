@@ -12,7 +12,7 @@ const ChangeInfoContainer = styled.div`
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #D2FFFF;
+    background-color: #fff9c4;
 `;
 
 const ChangeInfoSubContainer = styled.div`
@@ -43,6 +43,7 @@ const ChangeInfoInput = styled.input`
 const SubmitButton = styled(Button)`
     width: 300px;
     height: 50px;
+    background-color: #5d4037;
 `;
 
 const PasswordContainer = styled.div`

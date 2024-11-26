@@ -4,62 +4,95 @@ import { PAGE_URL } from "@/shared";
 import { useLocation } from 'react-router-dom';
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
+import { MainContainer } from "@/entities";
 
-const MyInfoContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    background-color: #D2FFFF;
-    border-radius: 10px;
+const PageContainer = styled.div`
+  background-color: #fff9c4;
+  min-height: 100vh;
+  padding: 1.5rem;
 `;
 
-const InfoTitle = styled.h2`
-    margin-bottom: 20px;
+const InfoCard = styled.div`
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  width: 500px;
+  padding: 20px;
+  margin: 15px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 `;
 
 const InfoItem = styled.div`
-    margin: 10px 0;
+  font-size: 1.2rem;
+  color: #5d4037;
+  margin: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 5px 0;
+  border-bottom: 1px solid #ccc;
+  
+  &:last-child {
+    border-bottom: none;
+  }
 `;
 
 const dummyData = {
-    name: "김철수",
-    userId: "kim123",
-    age: 7,
-    gender: "남",
+  name: "김철수",
+  userId: "kim123",
+  age: 7,
+  gender: "남",
 };
 
 const MyInfo = () => {
-    const [userInfo, setUserInfo] = useState<any>(null);
-    const [error, setError] = useState<string | null>(null);
-    const navigate = useNavigate();
+  const [userInfo, setUserInfo] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchUserInfo = async () => {
-            try { 
-                setUserInfo(dummyData);
-            } catch (err) {
-                console.error(err);
-                setError("사용자 정보를 불러오는 데 실패했습니다.");
-            }
-        };
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        setUserInfo(dummyData);
+      } catch (err) {
+        console.error(err);
+        setError("사용자 정보를 불러오는 데 실패했습니다.");
+      }
+    };
 
-        fetchUserInfo();
-    }, [navigate]);
+    fetchUserInfo();
+  }, [navigate]);
 
-    if (error) {
-        return <div>{error}</div>;
-    }
+  if (error) {
+    return <div>{error}</div>;
+  }
 
-    return (
-        <MyInfoContainer>
-            <InfoTitle>내 정보</InfoTitle>
-            <InfoItem>이름: {userInfo.name}</InfoItem>
-            <InfoItem>아이디: {userInfo.userId}</InfoItem>
-            <InfoItem>나이: {userInfo.age}</InfoItem>
-            <InfoItem>성별: {userInfo.gender}</InfoItem>
-        </MyInfoContainer>
-    );
+  return (
+    <MainContainer>
+      <InfoHeader type="내 정보" />
+      <PageContainer>
+      <InfoCard>
+        <InfoItem>
+          <span>이름</span>
+          <span>{userInfo?.name}</span>
+        </InfoItem>
+        <InfoItem>
+          <span>아이디</span>
+          <span>{userInfo?.userId}</span>
+        </InfoItem>
+        <InfoItem>
+          <span>나이</span>
+          <span>{userInfo?.age}</span>
+        </InfoItem>
+        <InfoItem>
+          <span>성별</span>
+          <span>{userInfo?.gender}</span>
+        </InfoItem>
+      </InfoCard>
+    </PageContainer>
+    </MainContainer>
+  );
 };
 
 export default MyInfo;
