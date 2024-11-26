@@ -1,95 +1,97 @@
-import { InfoHeader } from "@/widgets";
-import { useNavigate } from "react-router-dom";
-import { PAGE_URL } from "@/shared";
-import { useLocation } from 'react-router-dom';
+import React, { useState } from "react";
 import styled from "@emotion/styled";
-import { MainContainer } from "@/entities";
-import { Title} from "@/entities";
-import { API } from "@/shared";
-import { useEffect, useState } from "react";
+import { Button, Title } from "@/entities";
 
-const TitleContainer = styled.div`
+const AddFriendContainer = styled.div`
     display: flex;
     flex-direction: column;
-    align-self: flex-start;
-    margin: 20px;
+    align-items: center;
+    height: 100vh;
+    background-color: #D2FFFF;
 `;
 
-const MenuContainer = styled.div`
-  display: flex;
-  width: 90%;
-  flex-direction : column;
-  margin-top: 20px;
-  @media (max-width: 768px) {
-    width: 100%;
-  }
+const UserList = styled.ul`
+    list-style: none;
+    padding: 0;
 `;
 
-const MenuSubContainer = styled.p`
-    padding: 10px 0;
-    border-bottom: 1px solid #ccc;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    &:hover {
-        color: #555;
-    }
+const UserItem = styled.li`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 400px;
+    margin: 5px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: white;
 `;
 
-const UserName = styled.h2`
-    font-weight: bold;
-`;
+const FriendListPage = () => {
+    const [myFriends, setMyFriends] = useState<any[]>([
+        { id: "user0", name: "김정우" },
+        { id: "user01", name: "이지원" },
+        { id: "user02", name: "최가은" },
+    ]);
+    const [receivedRequests, setReceivedRequests] = useState<any[]>([
+        { id: "user10", name: "박지성" },
+        { id: "user11", name: "정다은" },
+    ]);
+    const [activeTab, setActiveTab] = useState("friends");
 
-const LogoutButton = styled.button`
-    width: 100%;
-    margin-top: 40px;
-    background-color: #FFEB3B;
-    color: black;
-    font-weight: bold;
-    border-radius: 5px;
-`;
-
-const MyPage = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const params = new URLSearchParams(location.search);
-    const name = params.get('name') || '김철수';
-    // const [userInfo, setUserInfo] = useState<any>(null);
-    // const [error, setError] = useState<string | null>(null);
-    /*
-    const fetchUserInfo = async () => {
-        try {
-            //const response = await API.get('/myinfo'); 
-            //setUserInfo(response.data);
-        } catch (err) {
-            console.error(err);
-            setError("사용자 정보를 불러오는 데 실패했습니다.");
+    const handleAcceptRequest = (userId: string) => {
+        const acceptedFriend = receivedRequests.find(request => request.id === userId);
+        if (acceptedFriend) {
+            setReceivedRequests(receivedRequests.filter(request => request.id !== userId));
+            setMyFriends([...myFriends, acceptedFriend]); // 친구 목록 업데이트
+            alert(`${acceptedFriend.name}님을 친구로 추가했습니다.`);
         }
     };
 
-    useEffect(() => {
-        fetchUserInfo(); 
-    }, []);
-    */
+    const handleDeclineRequest = (userId: string) => {
+        setReceivedRequests(receivedRequests.filter(request => request.id !== userId));
+        alert(`${userId}님의 요청을 거절했습니다.`);
+    };
 
-return (
-    <MainContainer>
-        <InfoHeader type="마이페이지" />
-            <TitleContainer>
-                <UserName>{name}</UserName>
-            </TitleContainer>
-            <MenuContainer>
-                <MenuSubContainer onClick={() => navigate(PAGE_URL.MyInfo)}>내 정보</MenuSubContainer>
-                <MenuSubContainer onClick={() => navigate(PAGE_URL.Maked)}>내 책장</MenuSubContainer>
-                <MenuSubContainer onClick={() => navigate(PAGE_URL.ChangeInfo)}>내 정보 수정</MenuSubContainer>
-                <MenuSubContainer onClick={() => navigate(PAGE_URL.FriendList)}>친구 목록</MenuSubContainer>
-            </MenuContainer>
-            <div style={{ display: "flex", justifyContent: "center" }}>
-                <LogoutButton onClick={() => {/* handle logout */}}>로그아웃</LogoutButton>
+    const renderContent = () => {
+        if (activeTab === "friends") {
+            return (
+                <UserList>
+                    {myFriends.map(user => (
+                        <UserItem key={user.id}>
+                            <span>{user.name}</span>
+                        </UserItem>
+                    ))}
+                </UserList>
+            );
+        } else if (activeTab === "requests") {
+            return (
+                <UserList>
+                    {receivedRequests.map(request => (
+                        <UserItem key={request.id}>
+                            <span>{request.name}</span>
+                            <Button onClick={() => handleAcceptRequest(request.id)}>수락</Button>
+                            <Button onClick={() => handleDeclineRequest(request.id)}>거절</Button>
+                        </UserItem>
+                    ))}
+                </UserList>
+            );
+        } else {
+            return <p>추천 기능 구현 중...</p>;
+        }
+    };
+
+    return (
+        <AddFriendContainer>
+            <Title>친구 관리</Title>
+            <div>
+                <Button onClick={() => setActiveTab("friends")}>친구 목록</Button>
+                <Button onClick={() => setActiveTab("requests")}>친구 요청</Button>
+                <Button onClick={() => setActiveTab("recommendations")}>추천</Button>
             </div>
-        </MainContainer>
+            <div>{renderContent()}</div>
+        </AddFriendContainer>
     );
 };
 
-        
-export default MyPage;
+export default FriendListPage;

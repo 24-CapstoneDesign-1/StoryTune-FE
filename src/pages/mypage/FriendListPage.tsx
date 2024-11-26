@@ -1,122 +1,247 @@
-import React, { useState , useEffect} from "react";
+import { useState } from "react";
 import styled from "@emotion/styled";
-import { Button, Title, ValidInput } from "@/entities"; 
-import { useNavigate } from "react-router-dom";
+import { FaUserCheck, FaUserPlus } from "react-icons/fa";
 
+const PageContainer = styled.div`
+  background-color: #fff9c4;
+  min-height: 100vh;
+  padding: 1.5rem;
+`;
 
-const AddFriendContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100vh;
-    background-color: #D2FFFF;
+const SearchContainer = styled.div`
+  text-align: center;
+  margin-bottom: 2rem;
 `;
 
 const SearchInput = styled.input`
-    width: 400px;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid black;
-    font-size: 1rem;
-    margin-bottom: 10px;
-    outline: none;
-    @media (max-width: 768px) {
-        width: 300px;
-    }
+  width: 400px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid black;
+  font-size: 1rem;
+  margin-bottom: 10px;
+
+  @media (max-width: 768px) {
+    width: 300px;
+  }
 `;
 
-const SearchButton = styled(Button)`
-    margin-bottom: 20px;
+const SearchButton = styled.button`
+  padding: 10px 20px;
+  background-color: #5d4037;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
 `;
 
-const UserList = styled.ul`
-    list-style: none;
-    padding: 0;
-`;
+const Section = styled.section`
+  margin-bottom: 2rem;
 
-const UserItem = styled.li`
+  h2 {
+    font-size: 1.5rem;
+    color: #5d4037;
+    margin-bottom: 1rem;
+  }
+
+  div {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 400px;
-    margin: 5px 0;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    background-color: white;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
 `;
 
-const FriendListPage = () => {
-    const navigate = useNavigate();
-    const [searchId, setSearchId] = useState("");
-    const [searchResults, setSearchResults] = useState<any[]>([]);
-    const [error, setError] = useState("");
+const FriendCard = styled.div`
+  text-align: center;
+  background-color: #fffde7;
+  border-radius: 16px;
+  padding: 1rem;
+  width: 150px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
 
-    const dummyData = [
-        { id: "user1", name: "송서은" },
-        { id: "user2", name: "박수호" },
-        { id: "user3", name: "이설아" },
-        { id: "user4", name: "김영서" },
-        { id: "user5", name: "김민지" },
-    ];
+const FriendName = styled.p`
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  color: #5d4037;
+`;
 
-    const myFriends = [
-        { id: "user0", name: "김정우" },
-        { id: "user01", name: "이지원" },
-        { id: "user02", name: "최가은" },
-    ];
+const RequestActions = styled.div`
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+`;
 
-    const handleSearch = () => {
-        const results = dummyData.filter(user => 
-            (user.id.includes(searchId) || user.name.includes(searchId)) &&
-            !isFriend(user.id)
-        );
+const ActionButton = styled.button<{ accept?: boolean, reject?: boolean }>`
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 
-        if (results.length > 0) {
-            setSearchResults(results);
-            setError("");
-        } else {
-            setSearchResults([]);
-            setError("존재하지 않는 사용자이거나 이미 친구입니다.");
-        }
-    };
+  ${({ accept }) =>
+    accept &&
+    `
+      background-color: #A5DF00;
+      color: white;
+  `}
 
-    const isFriend = (userId: string) => {
-        return myFriends.some(friend => friend.id === userId);
-    };
+  ${({ reject }) =>
+    reject &&
+    `
+      background-color: #F78181;
+      color: white;
+  `}
+`;
+
+const FriendsPage = () => {
+  const [friends, setFriends] = useState([
+    { id: "gildong_1", name: "홍길동" },
+    { id: "gildong_2", name: "김철수" },
+    { id: "gildong_3", name: "이영희" },
+  ]);
+
+  const [receivedRequests, setReceivedRequests] = useState([
+    { id: "gildong_6", name: "박민수" },
+    { id: "gildong_7", name: "최현정" },
+  ]);
+
+  // 서버에 있는 사용자들
+  const users = [
+    { id: "gildong_6", name: "이@@" },
+    { id: "gildong_7", name: "최@@" },
+    { id: "gildong_8", name: "강@@" },
+  ]; 
 
 
-    const addFriend = (userId: string) => {
-        alert(`친구 요청이 전송되었습니다. (userId: ${userId})`);
-    };
+  const [searchId, setSearchId] = useState("");
+  const [searchResults, setSearchResults] = useState<{ id: string; name: string }[]>([]);
+  const [sentRequests, setSentRequests] = useState<{ id: string; name: string }[]>([]);
+  const [error, setError] = useState("");
 
-    const displayedUsers = searchResults.length > 0 ? searchResults : myFriends;
+  const isFriend = (userId: string) => friends.some((friend) => friend.id === userId);
 
-    return (
-        <AddFriendContainer>
-            <Title>친구 추가</Title>
-            <SearchInput 
-                type="text" 
-                value={searchId} 
-                onChange={(e) => setSearchId(e.target.value)} 
-                placeholder="아이디나 이름으로 검색" 
-            />
-            <SearchButton onClick={handleSearch}>검색</SearchButton>
-            {error && <p>{error}</p>}
-            <UserList>
-                {displayedUsers.map(user => (
-                    <UserItem key={user.id}>
-                        <span>{user.name}</span>
-                        {isFriend(user.id) ? (
-                            <span></span>
-                        ) : (
-                            <Button onClick={() => addFriend(user.id)}>친구 추가</Button>
-                        )}
-                    </UserItem>
-                ))}
-            </UserList>
-        </AddFriendContainer>
+  const hasSentRequest = (userId: string) =>
+    sentRequests.some((request) => request.id === userId);
+
+  const handleSearch = () => {
+    const results = users.filter(
+      (user) =>
+        (user.id.includes(searchId) || user.name.includes(searchId)) &&
+        !isFriend(user.id) &&
+        !hasSentRequest(user.id)
     );
+
+    if (results.length > 0) {
+      setSearchResults(results);
+      setError("");
+    } else {
+      setSearchResults([]);
+      setError("존재하지 않는 사용자이거나 이미 친구입니다.");
+    }
+  };
+
+  const handleSendRequest = (user: { id: string; name: string }) => {
+    setSentRequests([...sentRequests, user]);
+    alert(`"${user.name}"님에게 친구 요청을 보냈습니다.`);
+  };
+
+  const handleAcceptRequest = (id: string) => {
+    const request = receivedRequests.find((req) => req.id === id);
+    if (request) {
+      setFriends([...friends, { id: request.id, name: request.name }]);
+      setReceivedRequests(receivedRequests.filter((req) => req.id !== id));
+      alert(`"${request.name}"님의 요청을 수락했습니다.`);
+    }
+  };
+
+  const handleRejectRequest = (id: string) => {
+    const request = receivedRequests.find((req) => req.id === id);
+    if (request) {
+      setReceivedRequests(receivedRequests.filter((req) => req.id !== id));
+      alert(`"${request.name}"님의 요청을 거절했습니다.`);
+    }
+  };
+
+  return (
+    <PageContainer>
+      <header style={{ textAlign: "center", marginBottom: "2rem" }}>
+                <h1 style={{ fontSize: "2rem", color: "#5D4037", marginBottom: "0.5rem" }}>친구 검색</h1>
+                <p style={{ fontSize: "1rem", color: "#5D4037" }}>친구 목록을 확인하세요!</p>
+      </header> 
+
+      <SearchContainer>
+        <SearchInput
+          type="text"
+          value={searchId}
+          onChange={(e) => setSearchId(e.target.value)}
+          placeholder="아이디나 이름으로 검색하세요."
+        />
+        <SearchButton onClick={handleSearch}>검색</SearchButton>
+        {error && <p style={{color : "red"}}>{error}</p>}
+        <Section>
+        <div>
+        {searchResults.map((result) => (
+            <FriendCard key={result.id} onClick={() => handleSendRequest(result)}>
+              <FaUserPlus size={32} color="#FF8A65" />
+              <FriendName>{result.name}</FriendName>
+              <small style={{ backgroundColor: "#757575", padding: "2px 4px", borderRadius: "4px" }}>
+                {result.id}
+               </small>
+
+            </FriendCard>
+          ))}
+        </div>
+        </Section>
+      </SearchContainer>
+
+      {/* 친구 목록 */}
+      <Section>
+        <h2>친구 목록</h2>
+        <div>
+          {friends.map((friend) => (
+            <FriendCard key={friend.id}>
+              <FaUserCheck size={32} color="#FF8A65" />
+              <FriendName>{friend.name}</FriendName>
+            <small style={{ backgroundColor: "#757575", padding: "2px 4px", borderRadius: "4px" }}>
+            {friend.id}
+            </small>
+
+            </FriendCard>
+          ))}
+        </div>
+      </Section>
+
+      {/* 받은 요청 */}
+      <Section>
+        <h2>받은 친구 요청</h2>
+        <div>
+          {receivedRequests.map((request) => (
+            <FriendCard key={request.id}>
+              <FaUserPlus size={32} color="#FF8A65" />
+              <FriendName>{request.name}</FriendName>
+              <small style={{ backgroundColor: "#757575", padding: "2px 4px", borderRadius: "4px" }}>
+                {request.id}
+              </small>
+
+              <RequestActions>
+                <ActionButton
+                  accept
+                  onClick={() => handleAcceptRequest(request.id)}
+                >
+                  수락
+                </ActionButton>
+                <ActionButton
+                  reject
+                  onClick={() => handleRejectRequest(request.id)}
+                >
+                  거절
+                </ActionButton>
+              </RequestActions>
+            </FriendCard>
+          ))}
+        </div>
+      </Section>
+    </PageContainer>
+  );
 };
 
-export default FriendListPage;
+export default FriendsPage;

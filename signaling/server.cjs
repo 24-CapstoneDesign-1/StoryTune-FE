@@ -29,7 +29,7 @@ wss.on('connection', (socket) => {
       case 'answer':
       case 'ice-candidate':
         if (clients[data.receiverId]) {
-          clients[data.receiverId].send(JSON.stringify(data)); // 특정 클라이언트에 메시지 전달
+          clients[data.receiverId].send(JSON.stringify(data)); 
         }
         break;
 
@@ -49,7 +49,7 @@ wss.on('connection', (socket) => {
   });
 });
 
-// HTTPS 서버 시작
+
 httpsServer.listen(PORT, () => {
   console.log(`HTTPS 서버가 https://localhost:${PORT} 에서 실행 중입니다.`);
 });

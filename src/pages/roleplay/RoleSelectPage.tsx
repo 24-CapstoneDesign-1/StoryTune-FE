@@ -82,7 +82,7 @@ const SelectRolePage = () => {
 
   useEffect(() => {
     if (assignedRoles.length === 0 && friends.length > 0) {
-      const shuffledRoles = [...roles].sort(() => Math.random() - 0.5); // 역할 배열을 랜덤으로 섞음
+      const shuffledRoles = [...roles].sort(() => Math.random() - 0.5); // 역할 랜덤으로 
       const assignRoles = [];
 
       let roleIndex = 0;

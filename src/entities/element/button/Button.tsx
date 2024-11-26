@@ -48,7 +48,7 @@ export const SquareButton = styled.button<{
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #D2FFFF;
+    background-color: #FFFDE7;
     border-radius: 10px;
     color: black;
     font-weight: bold;
