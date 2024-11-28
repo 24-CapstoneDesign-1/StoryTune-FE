@@ -24,7 +24,12 @@ const StoryPage = () => {
     const bookService = BookService().help;
 
     const handleGPTApi = async () => {
-        const res = await bookService({message: "도움이 필요해요!"});
+        // console.log('bookStore.getAllBook(): ', bookStore.getAllBook()[0].name);
+        let content = "";
+        bookStore.getAllBook().forEach((book) => {
+            book.name !== undefined ? content += `${book.name} : ${book.story}\n` : '';
+        });
+        const res = await bookService({ message: content.trim() });
         console.log('res: ', res);
         setHelp(res.choices[0].message.content);
         return res;
@@ -114,11 +119,13 @@ const StoryPage = () => {
                             {hero.map((name, index) => (
                                 <SquareButton width="50px" height="50px" key={index} onClick={() => {
                                     if ((progress + 1) / 3 === pageNum) {
-                                        bookStore.setHero(Math.floor(progress / 3) + 1, name)
+                                        bookStore.setHero(Math.floor(progress / 3), name)
+                                        bookStore.setName(Math.floor(progress / 3), name)
                                         navigate(PAGE_URL.Index)
                                     }
                                     else {
-                                        bookStore.setHero(Math.floor(progress / 3) + 1, name)
+                                        bookStore.setHero(Math.floor(progress / 3), name)
+                                        bookStore.setName(Math.floor(progress / 3), name)
                                         setProgress(progress+1)
                                     }
                                 }}>{name}</SquareButton>

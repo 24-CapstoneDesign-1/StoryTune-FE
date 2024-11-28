@@ -1,5 +1,6 @@
 import { AxiosResponse } from "axios";
 import { API } from "@/shared/configs/axios";
+import { useBookStore } from "../stores/useBookStore";
 
 export const BookService = () => {
 
@@ -20,6 +21,8 @@ export const BookService = () => {
     };
 
     const help = async (body: Book.BookHelpReq) => {
+        const system_content = JSON.stringify(body.message);
+        console.log(system_content)
         const { data } = (await API.post(
             "https://api.openai.com/v1/chat/completions",
             {
@@ -27,21 +30,19 @@ export const BookService = () => {
                 messages: [ // 여기에서 messages로 수정
                     {
                         role: "system",
-                        content: "You are a creative and fun fairy tale writer for children. Based on your current situation (characters, lines, images) and what you have written so far in the fairy tale, write hints to continue the next scene. The hints reflect the mood and images in the fairy tale and should be able to stimulate children's imagination. Keep the dialogue simple and clear. Write them in Korean.\
-                                Observe the images provided, and add short ideas that match the character's personality and emotions. For example, if the story is like this:\
-                                Hyun-soo: I'm so happy\
-                                Yoon-soo: Why are you happy?\
-                                Hyun-soo: Today is the day to go play!\
-                                [Image: theme park background image]\
-                                Write the following hints:\
-                                'Yoon-soo: Oh, it looks fun! What kind of rides are you going to go on?'\
-                                Reflect on different emotions (joy, sadness, surprise, etc.) and situations (adventure, discovery, conflict, etc.), and continue the interest of the story with sentences that children can easily understand. Also, write one sentence about each character."
+                        content: "You are a creative and fun fairy tale writer's helper for children. It helps to create a story of the current scene by writing hints based on the current situation (character name, dialogue, image) and what you have written so far in the fairy tale. The hints should reflect the atmosphere and images in the fairy tale and stimulate a child's imagination. The lines consist of one sentence. They should be written in Korean.\
+                            Observe the images provided and add short ideas that fit your character's personality and emotions by reflecting what has been going on. For example, if the story is like this:\
+                            Hyun-soo: I'm so happy.\"\
+                            Yoon-soo: Why are you happy?\
+                            Hyun-soo: Today is the day to go play!\
+                            [Image: Theme Park Background Image]\
+                            When written as in the above script, write the following hints:\
+                            Yoon-soo: Oh, it looks fun! What kind of rides are you going to go on?'\
+                            Reflect on various emotions (joy, sadness, surprise, etc.) and situations (adventure, discovery, conflict, etc.) and continue the interest of the story with sentences that children can easily understand. Also write one sentence about the character."
                     },
                     {
                         role: "user",
-                        content: "지혜: 나는 오늘 재밌는 활동을 할거야.\
-                                수은: 뭐 할거야?\
-                                지혜: 나는 종이접기를 하고 있어."
+                        content: system_content,
                     }
                 ],
                 temperature: 0.3,

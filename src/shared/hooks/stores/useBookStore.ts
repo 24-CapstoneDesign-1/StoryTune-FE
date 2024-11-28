@@ -22,7 +22,7 @@ export const useBookStore = create<Book.BookStore>() (
                     ...state.books,
                     [id]: {
                         ...state.books[id],
-                        name,
+                        name : name,
                     },
                 },
             })),
