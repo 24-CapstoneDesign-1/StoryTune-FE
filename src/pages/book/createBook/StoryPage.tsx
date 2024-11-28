@@ -1,11 +1,16 @@
 import { CircleButton, MainContainer, RecordIcon, SquareButton, Title } from "@/entities";
+import { PAGE_URL } from "@/shared";
+import { BookService } from "@/shared/hooks/services/BookService";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { useHeroStore } from "@/shared/hooks/stores/useHeroStore";
 import { InfoHeader, LeftRight } from "@/widgets";
 import styled from "@emotion/styled";
 import { useState } from "react";
+import { IoClose } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 const StoryPage = () => {
+    const navigate = useNavigate();
     const [record, setRecord] = useState<string>("");
     const [progress, setProgress] = useState<number>(0);
     const heroStore = useHeroStore();
@@ -13,9 +18,30 @@ const StoryPage = () => {
     const [hero, setHero] = useState<string[]>(heroStore.getAllName());
     const [isRecord, setIsRecord] = useState<boolean>(false);
     const [recordProgress, setRecordProgress] = useState<boolean>(false);
+    const [isHelp, setIsHelp] = useState<boolean>(false);
+    const [help, setHelp] = useState<string>("");
     const pageNum = bookStore.getAllBook().length;
+    const bookService = BookService().help;
+
+    const handleGPTApi = async () => {
+        // console.log('bookStore.getAllBook(): ', bookStore.getAllBook()[0].name);
+        let content = "";
+        bookStore.getAllBook().forEach((book) => {
+            book.name !== undefined ? content += `${book.name} : ${book.story}\n` : '';
+        });
+        const res = await bookService({ message: content.trim() });
+        console.log('res: ', res);
+        setHelp(res.choices[0].message.content);
+        return res;
+    }
     return (
         <MainContainer>
+            <HelpContainer isHelp={isHelp} onClick={() => setIsHelp(false)}>
+                <HelpSubContainer>
+                    <Close onClick={() => setIsHelp(true)}/>
+                    {help}
+                </HelpSubContainer>
+            </HelpContainer>
             <InfoHeader type="나만의 동화 만들기" />
             <SubContainer>
                 <PhotoContainer>
@@ -28,7 +54,14 @@ const StoryPage = () => {
                             <>
                                 <RecordContainer>
                                     <ImageContainer>
-                                        <HelpImg src="../public/images/help.svg" onClick={() => {console.log('click')}}/>
+                                        <HelpImg src="../public/images/help.svg" onClick={() => {
+                                            handleGPTApi().then((res) => {
+                                                // setHelp(res.data.choices[0].message.content);
+                                            }).then(() => {
+                                                setIsHelp(true);
+                                            }
+                                            );
+                                        }}/>
                                         <BalloonContainer>
                                             <MessageContainer>
                                                 <MessageBox>
@@ -58,31 +91,43 @@ const StoryPage = () => {
                                             <SquareButton onClick={() => {
                                                 setIsRecord(false);
                                                 setRecordProgress(false);
-                                                bookStore.setStory(Math.floor(progress / 3) + 1, record);
+                                                bookStore.setStory(Math.floor(progress / 3), record);
                                                 setProgress(progress+1);
                                             }}>다음</SquareButton>
                                         </RecordContainer>
                                     </>
                                 )}
-
                             </>
                         )}
                     </>
                 ) : ((progress % 3) === 1 ? (
                     <HeroContainer>
-                         <CustomTitle>등장인물의 대사인가요?</CustomTitle>
-                         <ButtonContainer>
+                        <CustomTitle>등장인물의 대사인가요?</CustomTitle>
+                        <ButtonContainer>
                             <CircleButton onClick={() => setProgress(progress+1)}>네</CircleButton>
                             <CircleButton onClick={() => setProgress(progress + 2)}>아니요</CircleButton>
-                         </ButtonContainer>
+                        </ButtonContainer>
                     </HeroContainer>
                 ) : (
                     <LineContainer>
                         <CustomTitle>누구의 대사인가요?</CustomTitle>
                         <HeroListContainer>
+                            <>
+                            {console.log((progress + 1) / 3)}
+                            {console.log(bookStore.getAllBook())}
+                            </>
                             {hero.map((name, index) => (
                                 <SquareButton width="50px" height="50px" key={index} onClick={() => {
-                                    setProgress(progress+1);
+                                    if ((progress + 1) / 3 === pageNum) {
+                                        bookStore.setHero(Math.floor(progress / 3), name)
+                                        bookStore.setName(Math.floor(progress / 3), name)
+                                        navigate(PAGE_URL.Index)
+                                    }
+                                    else {
+                                        bookStore.setHero(Math.floor(progress / 3), name)
+                                        bookStore.setName(Math.floor(progress / 3), name)
+                                        setProgress(progress+1)
+                                    }
                                 }}>{name}</SquareButton>
                             ))}
                         </HeroListContainer>
@@ -98,6 +143,37 @@ const StoryPage = () => {
 const ImageContainer = styled.div`
 
 `;
+
+const HelpSubContainer = styled.div`
+    width: 400px;
+    height: 400px;
+    background-color: white;
+    position: absolute;
+    top: 200px;
+    z-index: 100;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    padding-top: 50px;
+    @media (max-width: 768px) {
+        width: 250px;
+        height: 300px;
+        top: 200px;
+        left: 50px;
+    }
+`;
+const HelpContainer = styled.div<{ isHelp: boolean }>`
+    display: ${({ isHelp }) => (isHelp ? "flex" : "none")};
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+`;
 const HelpImg = styled.img`
     position: absolute;
     top: 120px;
@@ -107,6 +183,19 @@ const HelpImg = styled.img`
         width: 40px;
         top: 500px;
         right: 30px;
+    }
+`;
+
+const Close = styled(IoClose)`
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 20px;
+    cursor: pointer;
+    @media (max-width: 768px) {
+        font-size: 20px;
+        top: 20px;
+        right: 20px;
     }
 `;
 
@@ -208,6 +297,8 @@ const Photo = styled.img`
     height: 400px;
     margin-top: 20px;
     margin-bottom: 20px;
+    border-radius: 20px;
+    z-index: 10;
     @media (max-width: 768px) {
         width: 300px;
         height: 300px;
