@@ -7,16 +7,16 @@ const AuthRouter = ({ children }: { children: React.ReactNode }) => {
     const navigate = useNavigate();
     // const { getUserInfo } = AuthService();
 
-    useEffect(() => {
-        (async () => {
-        const access_token = getAccess();
-        if (!access_token) navigate(PAGE_URL.SignIn);
-        else {
-            setAccess(access_token);
-            // await getUserInfo();
-        }
-        })();
-    }, []);
+    // useEffect(() => {
+    //     (async () => {
+    //     const access_token = getAccess();
+    //     if (!access_token) navigate(PAGE_URL.SignIn);
+    //     else {
+    //         setAccess(access_token);
+    //         // await getUserInfo();
+    //     }
+    //     })();
+    // }, []);
 
 
     return <>{children}</>;

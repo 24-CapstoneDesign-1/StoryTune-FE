@@ -10,12 +10,9 @@ export const API = axios.create({
 
 export const FORMAPI = axios.create({
   baseURL: import.meta.env.VITE_SERVER_URL,
-  headers: {
-    "Content-Type": "multipart/form-data",
-  },
 });
 
-const storageAccessKey = "JWT_ACCESS";
+const storageAccessKey = "JWT_ACCESS_TOKEN";
 
 //Auth
 export const storeAccess = (token: string) => {
@@ -23,8 +20,8 @@ export const storeAccess = (token: string) => {
 };
 
 export const setAccess = (token: string) => {
-  API.defaults.headers["Authorization"] = token;
-  FORMAPI.defaults.headers["Authorization"] = token;
+  API.defaults.headers["Authorization"] = `Bearer ${token}`;
+  FORMAPI.defaults.headers["Authorization"] = `Bearer ${token}`;
 };
 
 export const resetAccess = () => {
@@ -37,32 +34,25 @@ export const getAccess = (): string | null => {
   return localStorage.getItem(storageAccessKey);
 };
 
-API.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const {
-      response: {
-        data: { code },
-      },
-      config,
-    } = error;
+// API.interceptors.response.use(
+//   (response) => response,
+//   async (error) => {
+//     if (error.response && [401, 403].includes(error.response.status)) {
+//       resetAccess();
+//       location.href = PAGE_URL.SignIn;
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 
-    if (code === "TOKEN4002") {
-      const token = getAccess();
+// FORMAPI.interceptors.response.use(
+//   (response) => response,
+//   async (error) => {
+//     if (error.response && [401, 403].includes(error.response.status)) {
+//       resetAccess();
+//       location.href = PAGE_URL.SignIn;
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 
-      if (token) {
-        setAccess(token);
-        config.headers["Authorization"] = token;
-
-        return API.request(config);
-      } else {
-        resetAccess();
-        location.href = PAGE_URL.SignIn;
-      }
-    }
-    if (code === "TOKEN4001") {
-      resetAccess();
-      location.href = PAGE_URL.SignIn;
-    }
-  }
-);

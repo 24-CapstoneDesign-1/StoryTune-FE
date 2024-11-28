@@ -1,9 +1,12 @@
-
+import { useUserStore } from "@/shared/hooks/stores/useUserStore";
+import { Header } from "@/widgets"
 const HomePage = () => {
+    const userStore = useUserStore();
+
     return (
-        <div>
-            <h1>Home Page</h1>
-        </div>
+        <>
+            <Header />
+        </>
     );
 };
 
