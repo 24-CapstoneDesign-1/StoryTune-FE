@@ -3,6 +3,7 @@ import { immer } from "zustand/middleware/immer";
 
 export const useBookStore = create<Book.BookStore>() (
     immer((set, get) => ({
+        bookId: 0,
         books: {},
         heros: {},
         index: 0,

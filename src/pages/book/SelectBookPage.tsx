@@ -1,8 +1,9 @@
 import { Book, Button, MainContainer, Search } from "@/entities";
 import { PAGE_URL } from "@/shared";
+import { BookService } from "@/shared/hooks/services/BookService";
 import { BookList, InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaPlay } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 
@@ -49,14 +50,26 @@ const CustomButton = styled(Button)`
     }
 `;
 
+interface Book {
+    bookId: number;
+    cover: string;
+    title: string;
+    author?: string;
+    createdAt?: string;
+}
 const SelectBookPage = () => {
     const navigate = useNavigate();
-    const [bookList, setBookList] = useState([
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-    ]);
+    const bookService = BookService();
+    const getBookList = async () => {
+        const data = await bookService.book()
+            .then((res) => setBookList(res.result.books));
+        return data;
+    }
+
+    useEffect(() => {
+        getBookList();
+    }, []);
+    const [bookList, setBookList] = useState<Book[]>([]);
     return (
         <MainContainer>
             <InfoHeader type="나만의 동화 만들기" />
@@ -106,35 +119,52 @@ const TitleSubContainer = styled.div`
     width: 120%;
 `;
 
-interface BookListProps {
+interface Book {
+    bookId: number;
+    cover: string;
     title: string;
-    createdAt: string;
-    photo: string;
+    author?: string;
+    createdAt?: string;
+
 }
 
+interface newBook {
+    request: {
+        bookId: number | null;
+    }
+}
 const SelectBookList = ( {title, bookList}
     : {
         title: string,
         subTitle?: string,
-        bookList: BookListProps[]
+        bookList: Book[]
     }
 ) => {
+    const bookService = BookService();
     const navigate = useNavigate();
     const [search, setSearch] = useState("");
     const handleSearch = () => {
         if (search.trim()) navigate(PAGE_URL.Search, { state: { search } });
     };
 
-    const clickEvent = () => {
-        navigate(PAGE_URL.Topic);
+    const clickEvent = (bookId: number) => {
+        myBook({ request: { bookId: bookId } })
     };
+    const myBook = async (body: newBook) => {
+        const data = await bookService.newMakeBook(body)
+            .then((res) => navigate(PAGE_URL.BookPhoto, { state: { bookId: res.result.myBookId } }));
+        return data;
+    }
     return (
         <div>
             <TitleContainer>
                 <SubTitleContainer>
                     <TitleSubContainer>
                         <h1>{title}</h1>
-                        <NewButtonContainer onClick={() => navigate(PAGE_URL.BookPhoto)}>
+                        <NewButtonContainer onClick={() => {
+                            navigate(PAGE_URL.BookPhoto)
+                            myBook({ request: { bookId: null } });
+                            }}>
                             새로 만들기
                             <PlayButton />
                         </NewButtonContainer>
@@ -144,7 +174,9 @@ const SelectBookList = ( {title, bookList}
             </TitleContainer>
             <BookListContainer>
                 {bookList.map((book, index) => (
-                    <Book key={index} {...book} clickEvent={clickEvent} />
+                    index < 4 ? (
+                        <Book key={index} {...book} clickEvent={() => clickEvent(book.bookId)} />
+                    ) : null
                 ))}
             </BookListContainer>
         </div>

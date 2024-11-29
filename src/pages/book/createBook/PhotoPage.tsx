@@ -1,16 +1,25 @@
 import styled from "@emotion/styled";
 import { InfoHeader } from "@/widgets";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import { CiRedo } from "react-icons/ci";
 import { FaCaretRight } from "react-icons/fa";
 import { PAGE_URL } from "@/shared";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
+import { BookService } from "@/shared/hooks/services/BookService";
 
 const PhotoPage = () => {
   const navigate = useNavigate();
   const [images, setImages] = useState<string[]>([]);
   const bookStore = useBookStore();
+  const bookService = BookService();
+  const location = useLocation();
+  const [bookId, setBookId] = useState(location.state ? location.state.bookId : "");
+
+  useEffect(() => {
+    console.log(location.state.bookId);
+    console.log('bookId', bookId);
+  }, []);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const file = e.target.files?.[0];
@@ -33,7 +42,6 @@ const PhotoPage = () => {
 
   const handleMultiImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    
     files.forEach((file, index) => {
       const reader = new FileReader();
       reader.onload = () => {
@@ -50,18 +58,14 @@ const PhotoPage = () => {
   };
 
   const handleNextButton = () => {
-    // var isCancel = false
-    // images.forEach((image) => {
-    //   if (!image && !isCancel) {
-    //     alert("모든 사진을 업로드해주세요!");
-    //     isCancel = true;
-    //     return;
-    //   }
-    // });
-    // if (!isCancel) {
-    //   navigate(PAGE_URL.Hero);
-    // }
-    navigate(PAGE_URL.Hero);
+    bookService.bookImage({
+      myBookId: bookId,
+      body: {
+        images: images,
+      },
+    }).then(() => {
+      navigate(PAGE_URL.Hero);
+    });
   }
 
   return (

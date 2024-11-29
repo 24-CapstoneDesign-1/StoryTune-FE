@@ -1,5 +1,28 @@
 declare namespace Book {
     //dto
+
+    export interface NewMakeBookReq {
+        request: {
+            bookId: number | null;
+        }
+    };
+
+    export interface NewMakeBookRes {
+        result: {
+            myBookId: number;
+        }
+    };
+
+    export interface bookImageReq {
+        images: [string];
+    }
+
+    export interface bookImageRes {
+        result: {
+            myBookContentIds: number[];
+        }
+    };
+
     export interface BookRecordReq {
         file: FormData;
     }
@@ -15,10 +38,14 @@ declare namespace Book {
     }
     export interface BookListRes {
         result: {
-            bookId: number;
-            cover: string;
-            title: string;
-            author: string;
+            books: [
+                {
+                    bookId: number;
+                    cover: string;
+                    title: string;
+                    author: string;
+                }
+            ]
         }
     }
     export interface BookHelpReq {
@@ -38,6 +65,7 @@ declare namespace Book {
         books: { [id: number]: BasicBookInfo };
         heros: { [id: number]: string };
         index: number;
+        bookId: number;
         setImage: (id: number, image: string) => void;
         setName: (id: number, name: string) => void;
         setSubject: (subject: string) => void;

@@ -1,8 +1,42 @@
 import { AxiosResponse } from "axios";
-import { API } from "@/shared/configs/axios";
+import { API, getAccess } from "@/shared/configs/axios";
 import { useBookStore } from "../stores/useBookStore";
 
 export const BookService = () => {
+
+    const newMakeBook = async(body: Book.NewMakeBookReq) => {
+        const { data } = (await API.post(
+            "/api/mybook",
+            body,
+            {
+                headers: {
+                    "Authorization" : `Bearer ${getAccess()}`,
+                }
+            }
+        )) as AxiosResponse<Book.NewMakeBookRes>;
+        return data;
+    }
+
+    const bookImage = async ({
+        myBookId, body
+    } : {
+        myBookId: number;
+        body: {
+            images: string[];
+        }
+    }) => {
+        console.log(body);
+        const { data } = (await API.post(
+            `/api/mybook/${myBookId}/images`,
+            body,
+            {
+                headers: {
+                    "Authorization" : `Bearer ${getAccess()}`,
+                }
+            }
+        )) as AxiosResponse<Book.bookImageRes>;
+        return data;
+    }
 
     const record = async (body: Book.BookRecordReq) => {
         const { data } = (await API.post(
@@ -10,13 +44,6 @@ export const BookService = () => {
             body
         )) as AxiosResponse<User.SignUpResDto>;
         console.log('data: ', data);
-        return data;
-    };
-
-    const bookList = async () => {
-        const { data } = (await API.get(
-            "/api/book"
-        )) as AxiosResponse<Book.BookListRes>;
         return data;
     };
 
@@ -58,5 +85,27 @@ export const BookService = () => {
         return data;
     };
 
-    return { record, bookList, help };
+    const book = async () => {
+        const { data } = (await API.get(
+            "/api/book", {
+            headers: {
+                "Authorization" : `Bearer ${getAccess()}`,
+            }
+        })) as AxiosResponse<Book.BookListRes>;
+        return data;
+    };
+
+    const search = async (search: string) => {
+        const title = encodeURIComponent(search);
+        console.log(title);
+        const { data } = (await API.get(
+            `/api/book/?${title}`, {
+            headers: {
+                "Authorization" : `Bearer ${getAccess()}`,
+            },
+        })) as AxiosResponse<Book.BookListRes>;
+        return data;
+    }
+
+    return { newMakeBook, bookImage, record, help, book, search };
 };
