@@ -7,6 +7,7 @@ import { FaCaretRight } from "react-icons/fa";
 import { PAGE_URL } from "@/shared";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { BookService } from "@/shared/hooks/services/BookService";
+import { useForm } from "react-hook-form";
 
 const PhotoPage = () => {
   const navigate = useNavigate();
@@ -15,12 +16,13 @@ const PhotoPage = () => {
   const bookService = BookService();
   const location = useLocation();
   const [bookId, setBookId] = useState(location.state ? location.state.bookId : "");
+  const { register, handleSubmit, reset } = useForm();
 
   useEffect(() => {
-    console.log(location.state.bookId);
     console.log('bookId', bookId);
-  }, []);
+  }, [bookId]);
 
+  // 이미지 변경 시 호출되는 함수
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -28,18 +30,18 @@ const PhotoPage = () => {
       reader.onload = () => {
         setImages((prevImages) => {
           const updatedImages = [...prevImages];
-          // 인덱스까지 배열 확장
           while (updatedImages.length <= index) {
-            updatedImages.push("");
+            updatedImages.push(""); // 배열 길이 확장
           }
-          updatedImages[index] = URL.createObjectURL(file); // 이미지 URL 저장
+          updatedImages[index] = reader.result as string; // URL로 저장
           return updatedImages;
         });
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file); // 이미지 파일을 Data URL로 읽기
     }
   };
 
+  // 다중 이미지 업로드 처리
   const handleMultiImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     files.forEach((file, index) => {
@@ -47,80 +49,109 @@ const PhotoPage = () => {
       reader.onload = () => {
         setImages((prevImages) => {
           const newImages = [...prevImages];
-          if (index < newImages.length) {
-            newImages[index] = URL.createObjectURL(new Blob([reader.result as string], {type: file.type}));
-          }
+          newImages[index] = reader.result as string; // URL로 저장
           return newImages;
         });
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file); // 파일을 Data URL로 읽기
     });
   };
 
+  // 이미지 업로드 후 다음 단계로 넘어가는 함수
   const handleNextButton = () => {
+    const formData = new FormData();
+    
+    // base64 이미지를 Blob으로 변환
+    images.forEach((image) => {
+      const byteString = atob(image.split(',')[1]);  // base64 문자열에서 data:image/png;base64, 이후 부분을 디코딩
+      const arrayBuffer = new ArrayBuffer(byteString.length);
+      const uintArray = new Uint8Array(arrayBuffer);
+  
+      for (let i = 0; i < byteString.length; i++) {
+        uintArray[i] = byteString.charCodeAt(i);
+      }
+  
+      const blob = new Blob([uintArray], { type: 'image/png' });  // 적절한 MIME 타입을 설정
+      formData.append('images', blob, `image${Date.now()}.png`);  // 파일 이름을 임의로 설정
+    });
+  
+    console.log('bookId', bookId);
+    console.log('formData', formData);
+  
     bookService.bookImage({
       myBookId: bookId,
-      body: {
-        images: images,
-      },
+      body: formData,
     }).then(() => {
       navigate(PAGE_URL.Hero);
     });
-  }
+  };
+  
+
+  const onSubmit = async (data: any) => {
+    const formData = new FormData();
+    Array.from(data.image as FileList).forEach((file) => {
+      formData.append("images", file);
+    });
+    console.log(formData); // 디버깅용
+  };
 
   return (
     <MainContainer>
       <InfoHeader type="나만의 동화 만들기" />
-      <SubContainer>
-        <TitleContainer>OO이의 동화책에 들어갈 사진을 골라주세요!</TitleContainer>
-        <TitleSubContainer onClick={() => {
-          setImages(Array(10).fill(""));
-          document.getElementById("upload-multi")?.click();
-        }}>
-          <div>사진 업로드 하러 가기</div>
-        </TitleSubContainer>
-        <HiddenInput
-          type="file"
-          id="upload-multi"
-          accept="image/*"
-          multiple
-          onChange={handleMultiImageUpload}
-        />
-        <ImageContainer>
-        {Array.from({ length: Math.max(images.length, 10) }).map((_, index) => (
-            <AddImageBlock key={index} hasImage={!!images[index]} htmlFor={`block-${index}`}>
-              {images[index] ? <Image src={images[index]} alt={`Uploaded ${index}`} /> : "?"}
-              <HiddenInput
-                type="file"
-                id={`block-${index}`}
-                accept="image/*"
-                onChange={(e) => handleImageChange(e, index)}
-              />
-            </AddImageBlock>
-          ))}
-        </ImageContainer>
-        <ButtonContainer>
-          <RerollContainer onClick={() => setImages(Array(10).fill(""))}>
-            <RerollButton />
-            다시 고르고 싶어요
-          </RerollContainer>
-          <NextContainer onClick={() => {
-            images.map((image, index) => {
-              bookStore.setImage(index, image);
-            })
-            handleNextButton();
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <SubContainer>
+          <TitleContainer>OO이의 동화책에 들어갈 사진을 골라주세요!</TitleContainer>
+          <TitleSubContainer onClick={() => {
+            setImages(Array(10).fill(""));
+            document.getElementById("upload-multi")?.click();
           }}>
-            <NextButton />
-            다 골랐어요!
-          </NextContainer>
-        </ButtonContainer>
-      </SubContainer>
+            <div>사진 업로드 하러 가기</div>
+          </TitleSubContainer>
+          <HiddenInput
+            type="file"
+            id="upload-multi"
+            accept="image/*"
+            multiple
+            onChange={handleMultiImageUpload}
+          />
+          <ImageContainer>
+            {Array.from({ length: Math.max(images.length, 10) }).map((_, index) => (
+              <AddImageBlock key={index} hasImage={!!images[index]} htmlFor={`block-${index}`}>
+                {images[index] ? <Image src={images[index]} alt={`Uploaded ${index}`} /> : "?"}
+                <HiddenInput
+                  type="file"
+                  {...register(`image${index}`)}
+                  id={`block-${index}`}
+                  accept="image/*"
+                  onChange={(e) => handleImageChange(e, index)}
+                />
+              </AddImageBlock>
+            ))}
+          </ImageContainer>
+          <ButtonContainer>
+            <RerollContainer onClick={() => setImages(Array(10).fill(""))}>
+              <RerollButton />
+              다시 고르고 싶어요
+            </RerollContainer>
+            <NextContainer onClick={() => {
+              images.forEach((image, index) => {
+                bookStore.setImage(index, image); // 이미지를 상태에 저장
+              })
+              handleNextButton();
+            }}>
+              <NextButton />
+              다 골랐어요!
+            </NextContainer>
+          </ButtonContainer>
+        </SubContainer>
+      </form>
     </MainContainer>
   );
 };
 
 export default PhotoPage;
 
+// Styled Components
 const MainContainer = styled.div`
   background-color: #FFFCAD;
   display: flex;

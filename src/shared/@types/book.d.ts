@@ -14,7 +14,7 @@ declare namespace Book {
     };
 
     export interface bookImageReq {
-        images: [string];
+        images: FormData;
     }
 
     export interface bookImageRes {

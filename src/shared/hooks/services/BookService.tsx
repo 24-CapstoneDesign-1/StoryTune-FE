@@ -18,25 +18,25 @@ export const BookService = () => {
     }
 
     const bookImage = async ({
-        myBookId, body
-    } : {
-        myBookId: number;
-        body: {
-            images: string[];
-        }
+        myBookId, 
+        body
+    }: { 
+        myBookId: number; 
+        body: FormData; 
     }) => {
-        console.log(body);
         const { data } = (await API.post(
             `/api/mybook/${myBookId}/images`,
-            body,
+            body, // 기존의 FormData 객체를 그대로 전달
             {
                 headers: {
-                    "Authorization" : `Bearer ${getAccess()}`,
-                }
+                    "Authorization": `Bearer ${getAccess()}`,
+                    "Content-Type": "multipart/form-data",
+                },
             }
         )) as AxiosResponse<Book.bookImageRes>;
         return data;
-    }
+    };
+    
 
     const record = async (body: Book.BookRecordReq) => {
         const { data } = (await API.post(
