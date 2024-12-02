@@ -2,14 +2,15 @@ import { useRef, useState } from "react";
 import { RecordIcon, StopIcon } from "./Button"
 import { BookService } from "@/shared/hooks/services/BookService";
 import { ReactMediaRecorder } from "react-media-recorder";
+import { useNavigate } from "react-router-dom";
+import { PAGE_URL } from "@/shared";
 
-export const Record = () => {
+export const Record = (recordApi: any) => {
     const [recording, setRecording] = useState(false);
     const [text, setText] = useState('');
-    const record = BookService().record;
+    const bookService = BookService();
+    const navigate = useNavigate();
 
-
-    
     return (
         <>
             <ReactMediaRecorder
@@ -29,8 +30,9 @@ export const Record = () => {
                                     console.log(file);
                                     const formData = new FormData();
                                     formData.append('file', file);
-                                    record({ file: formData });
-                                });
+                                    bookService.recordTitle({ file: file });
+                                    console.log('file', file);
+                                }).then(() => navigate(PAGE_URL.Maked));
                             }}} /> : <RecordIcon onClick={() => {
                             setRecording(true);
                             startRecording();

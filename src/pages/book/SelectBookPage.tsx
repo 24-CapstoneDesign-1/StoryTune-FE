@@ -1,6 +1,7 @@
 import { Book, Button, MainContainer, Search } from "@/entities";
 import { PAGE_URL } from "@/shared";
 import { BookService } from "@/shared/hooks/services/BookService";
+import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { BookList, InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
@@ -11,11 +12,6 @@ const MainSubContainer = styled.div`
     width: 80%;
 `;
 
-const SearchButtonContainer = styled.div`
-    width: 80%;
-    display: flex;
-    margin: 20px 0 10px 0;
-`;
 const TitleContainer = styled.div`
     display: flex;
     justify-content: space-between;
@@ -27,28 +23,6 @@ const TitleContainer = styled.div`
     }
 `;
 
-const ButtonContainer = styled.div`
-    display: flex;
-    justify-content: space-evenly;
-    margin-top: 20px;
-    @media (max-width: 768px) {
-        flex-direction: column;
-        align-items: center;
-    }
-`;
-
-const CustomButton = styled(Button)`
-    color: black;
-    background-color: #FFFFFF;
-    font-weight: bold;
-    border-radius: 15px;
-    @media (max-width: 768px) {
-        font-size: 1rem;
-        width: 230px;
-        height: 50px;
-        margin: 10px;
-    }
-`;
 
 interface Book {
     bookId: number;
@@ -58,7 +32,6 @@ interface Book {
     createdAt?: string;
 }
 const SelectBookPage = () => {
-    const navigate = useNavigate();
     const bookService = BookService();
     const getBookList = async () => {
         const data = await bookService.book()
@@ -142,6 +115,7 @@ const SelectBookList = ( {title, bookList}
 ) => {
     const bookService = BookService();
     const navigate = useNavigate();
+    const bookStore = useBookStore();
     const [search, setSearch] = useState("");
     const handleSearch = () => {
         if (search.trim()) navigate(PAGE_URL.Search, { state: { search } });
@@ -149,10 +123,14 @@ const SelectBookList = ( {title, bookList}
 
     const clickEvent = (bookId: number) => {
         myBook({ request: { bookId: bookId } })
+        bookStore.setBookId(bookId);
     };
     const myBook = async (body: newBook) => {
         const data = await bookService.newMakeBook(body)
-            .then((res) => navigate(PAGE_URL.BookPhoto, { state: { bookId: res.result.myBookId } }));
+            .then((res) => {
+                bookStore.setBookId(res.result.myBookId);
+                navigate(PAGE_URL.BookPhoto, { state: { bookId: res.result.myBookId } });
+            });
         return data;
     }
     return (
@@ -162,9 +140,8 @@ const SelectBookList = ( {title, bookList}
                     <TitleSubContainer>
                         <h1>{title}</h1>
                         <NewButtonContainer onClick={() => {
-                            navigate(PAGE_URL.BookPhoto)
                             myBook({ request: { bookId: null } });
-                            }}>
+                        }}>
                             새로 만들기
                             <PlayButton />
                         </NewButtonContainer>

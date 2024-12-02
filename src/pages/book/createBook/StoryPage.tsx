@@ -46,7 +46,7 @@ const StoryPage = () => {
             <SubContainer>
                 <PhotoContainer>
                     <CustomTitle>이 사진을 보고 떠오르는 이야기를 들려주세요!</CustomTitle>
-                    <Photo src={bookStore.getImage(Math.floor(progress / 3))} />
+                    <Photo src={URL.createObjectURL(bookStore.getImage(Math.floor(progress / 3)))} />
                 </PhotoContainer>
                 {(progress % 3) === 0 ? (
                     <>

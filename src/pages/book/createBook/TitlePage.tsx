@@ -1,5 +1,6 @@
-import { Button, InputContainer, MainContainer, RecordIcon, SquareButton, Title } from "@/entities";
+import { Button, InputContainer, MainContainer, Record, RecordIcon, SquareButton, Title } from "@/entities";
 import { PAGE_URL } from "@/shared";
+import { BookService } from "@/shared/hooks/services/BookService";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
 import { useState } from "react";
@@ -95,6 +96,7 @@ const TitlePage = () => {
     const [typing, setTyping] = useState(false);
     const [finalName, setFinalName] = useState("");
     const [progress, setProgress] = useState(0);
+    const bookService = BookService();
     const navigate = useNavigate();
     return (
         <MainContainer>
@@ -110,7 +112,7 @@ const TitlePage = () => {
                         <InputContianer>
                             {!typing ? (
                                 <>
-                                    <RecordIcon />
+                                    <Record recordApi={bookService.recordTitle} />
                                     <CustomTitle>아이콘을 클릭해서 알려주세요!</CustomTitle>
                                     <CustomButton width="400px" height="50px" onClick={() => setTyping(!typing)}>직접 입력할래요!</CustomButton>
                                 </>

@@ -14,9 +14,7 @@ const PhotoPage = () => {
   const [images, setImages] = useState<string[]>([]);
   const bookStore = useBookStore();
   const bookService = BookService();
-  const location = useLocation();
-  const [bookId, setBookId] = useState(location.state ? location.state.bookId : "");
-  const { register, handleSubmit, reset } = useForm();
+  const [bookId, setBookId] = useState(bookStore.getBookId());
 
   useEffect(() => {
     console.log('bookId', bookId);
@@ -57,48 +55,51 @@ const PhotoPage = () => {
     });
   };
 
-  // 이미지 업로드 후 다음 단계로 넘어가는 함수
-  const handleNextButton = () => {
-    const formData = new FormData();
-    
-    // base64 이미지를 Blob으로 변환
-    images.forEach((image) => {
-      const byteString = atob(image.split(',')[1]);  // base64 문자열에서 data:image/png;base64, 이후 부분을 디코딩
-      const arrayBuffer = new ArrayBuffer(byteString.length);
-      const uintArray = new Uint8Array(arrayBuffer);
+  const base64ToBlob = (base64: string, mimeType: string = "image/png") => {
+    const byteString = atob(base64.split(",")[1]);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const uintArray = new Uint8Array(arrayBuffer);
   
-      for (let i = 0; i < byteString.length; i++) {
-        uintArray[i] = byteString.charCodeAt(i);
-      }
+    for (let i = 0; i < byteString.length; i++) {
+      uintArray[i] = byteString.charCodeAt(i);
+    }
   
-      const blob = new Blob([uintArray], { type: 'image/png' });  // 적절한 MIME 타입을 설정
-      formData.append('images', blob, `image${Date.now()}.png`);  // 파일 이름을 임의로 설정
-    });
-  
-    console.log('bookId', bookId);
-    console.log('formData', formData);
-  
-    bookService.bookImage({
-      myBookId: bookId,
-      body: formData,
-    }).then(() => {
-      navigate(PAGE_URL.Hero);
-    });
+    return new Blob([uintArray], { type: mimeType });
   };
   
-
-  const onSubmit = async (data: any) => {
+  // handleNextButton 수정
+  const handleNextButton = async () => {
     const formData = new FormData();
-    Array.from(data.image as FileList).forEach((file) => {
-      formData.append("images", file);
+  
+    images.forEach((image, index) => {
+      if (image) {
+        const blob = base64ToBlob(image, "image/png");
+        formData.append("images", blob, `image-${index}.png`); // 파일 이름 지정
+      }
     });
-    console.log(formData); // 디버깅용
+  
+    console.log("FormData content:", formData.getAll("images"));
+  
+    try {
+      const res = await bookService.bookImage({
+        myBookId: bookId,
+        body: formData,
+      });
+      res.result.myBookContentIds.forEach((id, index) => {
+        bookStore.setMyBookCharacterId(index, id);
+      });
+      // console.log(bookStore.getMyBookCharacterId(res.result.myBookContentIds[0]));
+      bookStore.setBookImage(formData);
+      navigate(PAGE_URL.Hero);
+    } catch (error) {
+      console.error("Image upload failed:", error);
+    }
   };
 
   return (
     <MainContainer>
       <InfoHeader type="나만의 동화 만들기" />
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form>
         <SubContainer>
           <TitleContainer>OO이의 동화책에 들어갈 사진을 골라주세요!</TitleContainer>
           <TitleSubContainer onClick={() => {
@@ -120,7 +121,6 @@ const PhotoPage = () => {
                 {images[index] ? <Image src={images[index]} alt={`Uploaded ${index}`} /> : "?"}
                 <HiddenInput
                   type="file"
-                  {...register(`image${index}`)}
                   id={`block-${index}`}
                   accept="image/*"
                   onChange={(e) => handleImageChange(e, index)}
@@ -134,9 +134,6 @@ const PhotoPage = () => {
               다시 고르고 싶어요
             </RerollContainer>
             <NextContainer onClick={() => {
-              images.forEach((image, index) => {
-                bookStore.setImage(index, image); // 이미지를 상태에 저장
-              })
               handleNextButton();
             }}>
               <NextButton />

@@ -1,5 +1,6 @@
 import { MainContainer, SquareButton } from "@/entities";
 import { PAGE_URL } from "@/shared";
+import { BookService } from "@/shared/hooks/services/BookService";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
@@ -22,6 +23,7 @@ const IndexPage = () => {
     ]);
     const [progress, setProgress] = useState<number>(0);
     const navigate = useNavigate();
+    const bookService = BookService();
 
     return (
         <MainContainer>
@@ -33,8 +35,9 @@ const IndexPage = () => {
                             {images.map((image, index) => (
                                 <ImageBlock key={index}>
                                     <Image src={image.image} onClick={() => {
-                                        setProgress(progress+1)
-                                        bookStore.setIndex(index)    
+                                        setProgress(progress+1);
+                                        bookStore.setIndex(index);
+                                        bookService.cover({myBookContentId: index});
                                     }}/>
                                 </ImageBlock>
                             ))}

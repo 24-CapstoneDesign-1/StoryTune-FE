@@ -1,8 +1,11 @@
 import { MainContainer } from "@/entities";
 import { PAGE_URL } from "@/shared";
+import { BookService } from "@/shared/hooks/services/BookService";
+import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { set } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 
@@ -77,20 +80,22 @@ interface HeroNameProps {
 }
 const HeroPage = () => {
     const navigate = useNavigate();
-    const [images, setImages] = useState<HeroNameProps[]>([
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-    ]);
+    const [images, setImages] = useState<Blob[]>([]);
+    const bookService = BookService();
+    const bookStore = useBookStore();
     
-
+    const getHero = async () => {
+        const res = await bookService.hero({
+            images: bookStore.getImages() // 'images' 속성으로 전달
+        });
+        console.log(res);
+        return res;
+    };
+    useEffect(() => {
+        getHero().then((res) => {
+            setImages(res.images);
+        });
+    }, []);
     return (
         <MainContainer>
             <InfoHeader type="나만의 동화 만들기" />
@@ -103,7 +108,7 @@ const HeroPage = () => {
                     {images.map((image, index) => (
                         <>
                         <ImageBlock key={index}>
-                            <Image src={image.image} />
+                            <Image src={URL.createObjectURL(image)} />
                         </ImageBlock>
                         </>
                     ))}
