@@ -54,22 +54,26 @@ const InfoContainer = styled.div`
     padding: 10px;
 `;
 export const Book = ({
+    bookId,
     title,
     createdAt,
-    photo,
+    author,
+    cover,
     clickEvent,
 }: {
+    bookId: number;
     title: string;
-    createdAt: string;
-    photo: string;
-    clickEvent: () => void;
+    createdAt?: string;
+    author?: string;
+    cover: string;
+    clickEvent?: () => void;
 }) => {
     return (
         <BookContainer onClick={clickEvent}>
-            <ImageContainer src={photo} />
+            <ImageContainer src={cover} />
             <InfoContainer>
                 <TitleContainer>{title}</TitleContainer>
-                <CreatedContainer>{createdAt}</CreatedContainer>
+                <CreatedContainer>{author ? author : createdAt}</CreatedContainer>
             </InfoContainer>
         </BookContainer>
     );

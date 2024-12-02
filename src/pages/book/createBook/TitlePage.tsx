@@ -1,5 +1,6 @@
-import { Button, InputContainer, MainContainer, RecordIcon, SquareButton, Title } from "@/entities";
+import { Button, InputContainer, MainContainer, Record, RecordIcon, SquareButton, Title } from "@/entities";
 import { PAGE_URL } from "@/shared";
+import { BookService } from "@/shared/hooks/services/BookService";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
 import { useState } from "react";
@@ -95,6 +96,7 @@ const TitlePage = () => {
     const [typing, setTyping] = useState(false);
     const [finalName, setFinalName] = useState("");
     const [progress, setProgress] = useState(0);
+    const bookService = BookService();
     const navigate = useNavigate();
     return (
         <MainContainer>
@@ -110,9 +112,8 @@ const TitlePage = () => {
                         <InputContianer>
                             {!typing ? (
                                 <>
-                                    <RecordIcon />
+                                    <Record recordApi={bookService.recordTitle} />
                                     <CustomTitle>아이콘을 클릭해서 알려주세요!</CustomTitle>
-                                    <CustomButton width="400px" height="50px" onClick={() => setTyping(!typing)}>직접 입력할래요!</CustomButton>
                                 </>
                             ): (
                                 <>
@@ -132,7 +133,9 @@ const TitlePage = () => {
                                 <ButtonContainer>
                                     <SquareButton width="160px" height="100px" onClick={() => setFinalName("")}>{`제목이 틀렸어요.
                                     다시 말하기`}</SquareButton>
-                                    <SquareButton width="160px" height="100px" onClick={() => setProgress(progress+1)}>{`맞아요!
+                                    <SquareButton width="160px" height="100px" onClick={() => {
+                                        setProgress(progress+1);
+                                    }}>{`맞아요!
                                     이어서 하기`}</SquareButton>
                                 </ButtonContainer>
                             </InputContianer>
@@ -143,7 +146,10 @@ const TitlePage = () => {
                         <RecordContainer>
                             <CustomTitle>이 동화의 제목은</CustomTitle>
                             <CustomTitle>{finalName} 이에요!</CustomTitle>
-                            <CustomButton width="400px" height="50px" onClick={() => navigate(PAGE_URL.Maked)}>{`다음으로 넘어가기`}</CustomButton>
+                            <CustomButton width="400px" height="50px" onClick={() => {
+                                bookService.bookCompleted()
+                                .then(() => navigate(PAGE_URL.Maked));
+                            }}>{`다음으로 넘어가기`}</CustomButton>
                         </RecordContainer>
                     </>
                 )}

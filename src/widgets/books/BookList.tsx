@@ -32,9 +32,11 @@ const SubTitleContainer = styled.div`
     width: 80%;
 `;
 interface BookListProps {
+    bookId: number;
     title: string;
-    createdAt: string;
-    photo: string;
+    createdAt?: string;
+    author?: string;
+    cover: string;
 }
 
 export const BookList = ( {title, subTitle, bookList}
@@ -55,7 +57,9 @@ export const BookList = ( {title, subTitle, bookList}
             </TitleContainer>
             <BookListContainer>
                 {bookList.map((book, index) => (
-                    <Book key={index} {...book} />
+                    index < 4 ? (
+                        <Book key={index} {...book} />
+                    ) : null
                 ))}
             </BookListContainer>
         </div>

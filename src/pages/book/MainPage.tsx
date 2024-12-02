@@ -1,9 +1,10 @@
 import { InfoHeader, BookList } from "@/widgets";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { Button, Search, MainContainer } from "@/entities";
 import { PAGE_URL } from "@/shared";
 import { useNavigate } from "react-router-dom";
+import { BookService } from "@/shared/hooks/services/BookService";
 
 const MainSubContainer = styled.div`
     width: 80%;
@@ -47,20 +48,32 @@ const CustomButton = styled(Button)`
     }
 `;
 
+interface Book {
+    bookId: number;
+    cover: string;
+    title: string;
+    author: string;
+}
 
 const MainPage = () => {
     const navigate = useNavigate();
     const [search, setSearch] = useState("");
-    const [bookList, setBookList] = useState([
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-    ]);
+    const bookService = BookService();
+    const [bookList, setBookList] = useState<Book[]>([]);
 
     const handleSearch = () => {
         if (search.trim()) navigate(PAGE_URL.Search, { state: { search } });
     };
+
+    const getBookList = async () => {
+        const data = await bookService.bookRecommend()
+            .then((res) => setBookList(res.result.books));
+        return data;
+    }
+
+    useEffect(() => {
+        getBookList();
+    }, []);
 
     return (
         <MainContainer>
@@ -69,7 +82,14 @@ const MainPage = () => {
                 <Search value={search} change={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)} onSearch={handleSearch}/>
             </SearchButtonContainer>
             <MainSubContainer>
-                <BookList title="다른 친구들은 어떤 책으로 만들었을까?" bookList={bookList} /> 
+                <BookList title="다른 친구들은 어떤 책으로 만들었을까?" bookList={
+                    bookList.map((book) => ({
+                        bookId: book.bookId,
+                        title: book.title,
+                        author: book.author,
+                        cover: book.cover
+                    }))
+                } /> 
             </MainSubContainer>
             <MainSubContainer>
             <TitleContainer>
