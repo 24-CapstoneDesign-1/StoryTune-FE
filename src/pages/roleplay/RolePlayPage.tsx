@@ -180,6 +180,7 @@ const RolePlayPage = () => {
     }
   };
 
+  //마이크가 열려있는지 확인할 수 있도록 음량 시각화
   const AudioVisualizer = ({ stream }: { stream: MediaStream | null }) => {
     const [levels, setLevels] = useState<number[]>(new Array(20).fill(0));
     const analyserRef = useRef<AnalyserNode | null>(null);
@@ -202,7 +203,7 @@ const RolePlayPage = () => {
         const updateLevels = () => {
           analyser.getByteFrequencyData(dataArray);
           const normalizedLevels = Array.from(dataArray)
-            .slice(0, 40) // 첫 20개 데이터만 시각화
+            .slice(0, 40) 
             .map((value) => (value / 255) * 100); 
   
           setLevels(normalizedLevels);
