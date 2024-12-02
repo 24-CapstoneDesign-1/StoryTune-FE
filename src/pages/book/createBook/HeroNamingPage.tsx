@@ -107,6 +107,7 @@ const HeroNamingPage = () => {
         });
         try{
             const res = await bookService.bookCharacter({ myBookId: bookStore.bookId, images: formData });
+            console.log("Image upload success:", res);
             return res;
         } catch (error) {
             console.error("Image upload failed:", error);

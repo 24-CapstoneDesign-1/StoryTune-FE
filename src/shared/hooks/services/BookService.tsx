@@ -221,7 +221,7 @@ export const BookService = () => {
     };
 
     const bookCharacter = async (body: Book.BookCharacterReq) => {
-        console.log(body);
+        console.log(body.images.getAll('images'));
         const { data } = (await FORMAPI.post(
             `/api/mybook/${body.myBookId}/character`,
             body.images,
