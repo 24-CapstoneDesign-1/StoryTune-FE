@@ -4,10 +4,55 @@ import styled from "@emotion/styled";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PAGE_URL } from "@/shared";
-import { on } from "events";
+import { useBookStore } from "@/shared/hooks/stores/useBookStore";
+
+const TopicPage = () => {
+    const navigate = useNavigate();
+    const [topic, setTopic] = useState<string[]>(["우정", "사랑", "용기", "배려", "협력", "가족", "꿈", "여행", "감사"]);
+    const [curTopic, setCurTopic] = useState<string>("");
+    
+    const onReroll = () => {
+        setCurTopic("");
+    };
+    
+    const onPlay = () => {
+        navigate(PAGE_URL.Story);
+    };
+    const bookStore = useBookStore();
+
+    return (
+        <MainContainer>
+            <InfoHeader type="나만의 동화 만들기" />
+            <SubContainer>
+                <TitleContainer>
+                    <div>
+                        <MainTitle>새로운 이야기가 떠올랐어요!</MainTitle>
+                        <SubTitle>새로운 이야기는 어떤 내용인가요?</SubTitle>
+                    </div>
+                </TitleContainer>
+                <InputContainer 
+                    placeholder="원하는 주제 입력하기"
+                    value={curTopic} 
+                    onChange={(e) => setCurTopic(e.target.value)}
+                />
+                <ButtonContainer>
+                    {topic.map((topic) => (
+                        <CustomButton key={topic} onClick={() => {
+                            setCurTopic(topic);
+                            bookStore.setSubject(topic);
+                        }}>{topic}</CustomButton>
+                    ))}
+                </ButtonContainer>
+                <Rerollplay onReroll={onReroll} onPlay={onPlay}/>
+            </SubContainer>
+        </MainContainer>
+    )
+}
+
+export default TopicPage;
 
 const SubContainer = styled.div`
-    height: 90vh;
+    height: 100vh;
     width: 50%;
     display: flex;
     flex-direction: column;
@@ -61,43 +106,3 @@ const ButtonContainer = styled.div`
         margin: 5px;
     }
 `;
-
-const TopicPage = () => {
-    const navigate = useNavigate();
-    const [topic, setTopic] = useState<string[]>(["우정", "사랑", "용기", "배려", "협력", "가족", "꿈", "여행", "감사"]);
-    const [curTopic, setCurTopic] = useState<string>("");
-    
-    const onReroll = () => {
-        setCurTopic("");
-    };
-    
-    const onPlay = () => {
-        navigate(PAGE_URL.BookPhoto);
-    };
-    return (
-        <MainContainer>
-            <InfoHeader type="나만의 동화 만들기" />
-            <SubContainer>
-                <TitleContainer>
-                    <div>
-                        <MainTitle>새로운 이야기가 떠올랐어요!</MainTitle>
-                        <SubTitle>새로운 이야기는 어떤 내용인가요?</SubTitle>
-                    </div>
-                </TitleContainer>
-                <InputContainer 
-                    placeholder="원하는 주제 입력하기"
-                    value={curTopic} 
-                    onChange={(e) => setCurTopic(e.target.value)}
-                />
-                <ButtonContainer>
-                    {topic.map((topic) => (
-                        <CustomButton key={topic} onClick={() => setCurTopic(topic)}>{topic}</CustomButton>
-                    ))}
-                </ButtonContainer>
-                <Rerollplay onReroll={onReroll} onPlay={onPlay}/>
-            </SubContainer>
-        </MainContainer>
-    )
-}
-
-export default TopicPage;

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useNavigate, } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form"
 import { FaEyeSlash, FaEye } from "react-icons/fa";
-import { PAGE_URL } from "@/shared";
+import { AuthService, PAGE_URL } from "@/shared";
 
 const SignUpContainer = styled.div`
     display: flex;
@@ -22,7 +22,6 @@ const SignUpForm = styled.form`
     background-color: white;
     border-radius: 20px;
     width: 350px;
-    height: 60vh;
     padding: 40px 70px;
     @media (max-width: 768px) {
         width: 220px;
@@ -123,17 +122,20 @@ const SignUpPage = () => {
     const [isPasswordVisible, setIsPasswordVisible] = useState(true);
     const [gender, setGender] = useState('');
     const navigate = useNavigate();
+    const { signup } = AuthService();
 
     const { register, handleSubmit, setError, setValue, formState: { errors }, } = useForm<SignUpFormInput>()
     const onSubmit: SubmitHandler<SignUpFormInput> = (data) => {
         try {
             if (onValid(data)){
-                navigate(PAGE_URL.SignIn);
+                signup({
+                    username: data.userId,
+                    password: data.password,
+                    name: data.name,
+                    age: data.age,
+                    gender: data.gender
+                }).then(() => navigate(PAGE_URL.SignIn));
             }
-            // signin({
-            //     userId: data.userId,
-            //     password: data.password,
-            // }).then(() => navigate("/home"));
         }
         catch (error) {
         console.error(error)
@@ -245,14 +247,14 @@ const SignUpPage = () => {
                         message: '성별을 입력해주세요.',
                       },})}
                     >
-                        <GenderButton gender={gender == '남' ? true : false} onClick={() => handleGenderSelection("남")}>남</GenderButton>
-                        <GenderButton gender={gender == '여' ? true : false} onClick={() => handleGenderSelection('여')}>여</GenderButton>
+                        <GenderButton gender={gender == 'BOY' ? true : false} onClick={() => handleGenderSelection("BOY")}>남</GenderButton>
+                        <GenderButton gender={gender == 'GIRL' ? true : false} onClick={() => handleGenderSelection('GIRL')}>여</GenderButton>
                     </GenderContainer>
                     <ValidInput>
                         {errors?.gender?.message ? errors?.gender?.message : '\u00A0'}
                     </ValidInput>
                     <NextConatiner>
-                        <Button width="400px" height="50px" onClick={handleSubmit(() => setProgress(progress + 1))}>계속하기</Button>
+                        <Button width="400px" height="50px" onClick={() => setProgress(progress + 1)}>계속하기</Button>
                     </NextConatiner>
                 </>
                 ) : (

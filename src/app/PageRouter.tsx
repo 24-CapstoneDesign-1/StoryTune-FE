@@ -26,6 +26,7 @@ const Title = lazy(() => import("@/pages/book/createBook/TitlePage"));
 const Maked = lazy(() => import ("@/pages/book/createBook/MakedPage"));
 const HeroNaming = lazy(() => import("@/pages/book/createBook/HeroNamingPage"));
 const Search = lazy(() => import("@/pages/search/SearchPage"));
+<<<<<<< HEAD
 const MyPage = lazy(() => import("@/pages/mypage/MyPage"));
 const MyInfo = lazy(() => import("@/pages/mypage/MyInfoPage"));
 const ChangeInfo = lazy(() => import("@/pages/mypage/ChangeInfoPage"));
@@ -36,6 +37,11 @@ const SelectRole = lazy(() => import("@/pages/roleplay/RoleSelectPage"));
 const RolePlay = lazy(() => import("@/pages/roleplay/RolePlayPage"));
 
 
+=======
+const Index = lazy(() => import("@/pages/book/createBook/IndexPage"));
+const SelectBook = lazy(() => import("@/pages/book/SelectBookPage"));
+const Book = lazy(() => import("@/pages/book/BookPage"));
+>>>>>>> origin/develop
 
 const PageRouter = () => {
     return (
@@ -47,6 +53,7 @@ const PageRouter = () => {
                         <Route path={PAGE_URL.Main} element={<Main />} />
                         <Route path={PAGE_URL.SignIn} element={<SignIn />} />
                         <Route path={PAGE_URL.SignUp} element={<SignUp />} />
+<<<<<<< HEAD
                         <Route path={PAGE_URL.Home} element={<Home />} />
                         
                         <Route path={PAGE_URL.BookMain} element={<BookMain />} />
@@ -73,6 +80,25 @@ const PageRouter = () => {
                             
                             
                         
+=======
+                        <Route>
+                            {/* <Route index element={<Navigate to={PAGE_URL.Home} replace />} /> */}
+                            <Route path={PAGE_URL.Home} element={<Home />} />
+                            <Route path={PAGE_URL.BookMain} element={<BookMain />} />
+                            <Route path={PAGE_URL.SelectBook} element={<SelectBook />} />
+                            <Route path={PAGE_URL.BookPhoto} element={<BooKPhoto />} />
+                            <Route path={PAGE_URL.Topic} element={<Topic />} />
+                            <Route path={PAGE_URL.Hero} element={<Hero />} />
+                            <Route path={PAGE_URL.Name} element={<Name />} />
+                            <Route path={PAGE_URL.Story} element={<Story />} />
+                            <Route path={PAGE_URL.Title} element={<Title />} />
+                            <Route path={PAGE_URL.Maked} element={<Maked />} />
+                            <Route path={PAGE_URL.HeroNaming} element={<HeroNaming />} />
+                            <Route path={PAGE_URL.Index} element={<Index />} />
+                            <Route path={PAGE_URL.Search} element={<Search />} />
+                            <Route path={PAGE_URL.Book} element={<Book />} />
+                        </Route>
+>>>>>>> origin/develop
                     </Routes>
                 </AuthRouter>
             </RootRouter>

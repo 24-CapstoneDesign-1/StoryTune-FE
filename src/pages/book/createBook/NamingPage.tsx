@@ -1,9 +1,10 @@
-import { Button, MainContainer, SquareButton, Title, RecordIcon, InputContainer } from "@/entities";
+import { Button, MainContainer, SquareButton, Title, InputContainer, Record } from "@/entities";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { PAGE_URL } from "@/shared";
+import { useHeroStore } from "@/shared/hooks/stores/useHeroStore";
 
 const SubContainer = styled.div`
     display: flex;
@@ -15,13 +16,13 @@ const SubContainer = styled.div`
 `;
 
 const CustomTitle = styled(Title)`
-    font-size: 1.8rem;
+    font-size: 1.4rem;
 `;
 const Photo = styled.img`
     width: 400px;
     height: 400px;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin-top: 5px;
+    margin-bottom: 50px;
 `;
 const PhotoContainer = styled.div`
     display: flex;
@@ -69,6 +70,8 @@ const NamingPage = () => {
     const [name, setName] = useState("");
     const [typing, setTyping] = useState(false);
     const [finalName, setFinalName] = useState("");
+    const heroStore = useHeroStore();
+
     return (
         <MainContainer>
             <InfoHeader type="나만의 동화 만들기" />
@@ -81,15 +84,15 @@ const NamingPage = () => {
                     <InputContianer>
                         {!typing ? (
                             <>
-                                <RecordIcon />
+                                <Record />
                                 <CustomTitle>아이콘을 클릭해서 알려주세요!</CustomTitle>
                                 <CustomButton width="400px" height="50px" onClick={() => setTyping(!typing)}>직접 입력할래요!</CustomButton>
                             </>
                         ): (
                             <>
                                 <InputContainer placeholder="이름을 입력해 주세요" value={name} onChange={(e) => setName(e.target.value)}></InputContainer>
-                                <div style={{height: "60px"}}></div>
-                                <SquareButton width="350px" onClick={() => {
+                                <div style={{height: "50px"}}></div>
+                                <SquareButton mobileWidth="230px" mobileHeight="60px" onClick={() => {
                                     setTyping(!typing)
                                     setFinalName(name)
                                 }}>이름을 입력했어요!</SquareButton>
@@ -101,9 +104,12 @@ const NamingPage = () => {
                     <InputContianer>
                         <CustomButton width="400px" height="50px">{name}</CustomButton>
                         <ButtonContainer>
-                            <SquareButton>{`이름이 틀렸어요.
+                            <SquareButton width="160px" height="100px" onClick={() => setFinalName("")}>{`이름이 틀렸어요.
                             다시 말하기`}</SquareButton>
-                            <SquareButton onClick={() => navigate(PAGE_URL.HeroNaming, {state: {index: curIndex, name: finalName}})}>{`맞아요!
+                            <SquareButton width="160px" height="100px" onClick={() => {
+                                heroStore.setName(curIndex, finalName);
+                                navigate(PAGE_URL.HeroNaming, {state: {index: curIndex, name: finalName}})
+                            }}>{`맞아요!
                             이어서 하기`}</SquareButton>
                         </ButtonContainer>
                     </InputContianer>

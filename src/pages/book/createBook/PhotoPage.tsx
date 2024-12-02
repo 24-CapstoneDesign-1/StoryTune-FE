@@ -1,10 +1,121 @@
 import styled from "@emotion/styled";
 import { InfoHeader } from "@/widgets";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { CiRedo } from "react-icons/ci";
 import { FaCaretRight } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 import { PAGE_URL } from "@/shared";
+import { useBookStore } from "@/shared/hooks/stores/useBookStore";
+
+const PhotoPage = () => {
+  const navigate = useNavigate();
+  const [images, setImages] = useState<string[]>([]);
+  const bookStore = useBookStore();
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImages((prevImages) => {
+          const updatedImages = [...prevImages];
+          // 인덱스까지 배열 확장
+          while (updatedImages.length <= index) {
+            updatedImages.push("");
+          }
+          updatedImages[index] = URL.createObjectURL(file); // 이미지 URL 저장
+          return updatedImages;
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleMultiImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    
+    files.forEach((file, index) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImages((prevImages) => {
+          const newImages = [...prevImages];
+          if (index < newImages.length) {
+            newImages[index] = URL.createObjectURL(new Blob([reader.result as string], {type: file.type}));
+          }
+          return newImages;
+        });
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleNextButton = () => {
+    // var isCancel = false
+    // images.forEach((image) => {
+    //   if (!image && !isCancel) {
+    //     alert("모든 사진을 업로드해주세요!");
+    //     isCancel = true;
+    //     return;
+    //   }
+    // });
+    // if (!isCancel) {
+    //   navigate(PAGE_URL.Hero);
+    // }
+    navigate(PAGE_URL.Hero);
+  }
+
+  return (
+    <MainContainer>
+      <InfoHeader type="나만의 동화 만들기" />
+      <SubContainer>
+        <TitleContainer>OO이의 동화책에 들어갈 사진을 골라주세요!</TitleContainer>
+        <TitleSubContainer onClick={() => {
+          setImages(Array(10).fill(""));
+          document.getElementById("upload-multi")?.click();
+        }}>
+          <div>사진 업로드 하러 가기</div>
+        </TitleSubContainer>
+        <HiddenInput
+          type="file"
+          id="upload-multi"
+          accept="image/*"
+          multiple
+          onChange={handleMultiImageUpload}
+        />
+        <ImageContainer>
+        {Array.from({ length: Math.max(images.length, 10) }).map((_, index) => (
+            <AddImageBlock key={index} hasImage={!!images[index]} htmlFor={`block-${index}`}>
+              {images[index] ? <Image src={images[index]} alt={`Uploaded ${index}`} /> : "?"}
+              <HiddenInput
+                type="file"
+                id={`block-${index}`}
+                accept="image/*"
+                onChange={(e) => handleImageChange(e, index)}
+              />
+            </AddImageBlock>
+          ))}
+        </ImageContainer>
+        <ButtonContainer>
+          <RerollContainer onClick={() => setImages(Array(10).fill(""))}>
+            <RerollButton />
+            다시 고르고 싶어요
+          </RerollContainer>
+          <NextContainer onClick={() => {
+            images.map((image, index) => {
+              bookStore.setImage(index, image);
+            })
+            handleNextButton();
+          }}>
+            <NextButton />
+            다 골랐어요!
+          </NextContainer>
+        </ButtonContainer>
+      </SubContainer>
+    </MainContainer>
+  );
+};
+
+export default PhotoPage;
 
 const MainContainer = styled.div`
   background-color: #FFFCAD;
@@ -62,6 +173,7 @@ const AddImageBlock = styled.label<{ hasImage: boolean }>`
   position: relative;
   border: 1px solid #000000;
   box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
   @media (max-width: 768px) {
     width: 150px;
     height: 150px;
@@ -75,6 +187,7 @@ const HiddenInput = styled.input`
 const RerollButton = styled(CiRedo)`
   font-size: 2rem;
 `;
+
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
@@ -86,9 +199,11 @@ const ButtonContainer = styled.div`
     margin-top: 20px;
   }
 `;
+
 const NextButton = styled(FaCaretRight)`
   font-size: 2rem;
 `;
+
 const RerollContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -98,6 +213,7 @@ const RerollContainer = styled.div`
   font-size: 1.2rem;
   font-weight: bold;
 `;
+
 const NextContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -106,64 +222,12 @@ const NextContainer = styled.div`
   font-size: 1.2rem;
   font-weight: bold;
 `;
+
 const SubContainer = styled.div`
   display: flex;
   width: 80%;
+  height: 1000px;
   flex-direction: column;
   align-items: center;
   margin-top: 20px;
 `;
-const PhotoPage = () => {
-  const navigate = useNavigate();
-  const [images, setImages] = useState<string[]>(Array(10).fill("")); // 10개의 빈 이미지 슬롯을 준비
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const newImages = [...images];
-        newImages[index] = reader.result as string;
-        setImages(newImages);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  return (
-    <MainContainer>
-      <InfoHeader type="나만의 동화 만들기" />
-      <SubContainer>
-        <TitleContainer>OO이의 동화책에 들어갈 사진을 골라주세요!</TitleContainer>
-        {/* <TitleSubContainer>사진 업로드 하러 가기</TitleSubContainer> */}
-        <ImageContainer>
-          {images.map((image, index) => (
-            <AddImageBlock key={index} htmlFor={`upload-${index}`} hasImage={!!image}>
-              {image ? <Image src={image} alt={`Uploaded ${index}`} /> : "?"}
-              <HiddenInput
-                type="file"
-                id={`upload-${index}`}
-                accept="image/*"
-                capture="environment"
-                onChange={(e) => handleImageChange(e, index)}
-              />
-            </AddImageBlock>
-          ))}
-        </ImageContainer>
-        <ButtonContainer>
-          <RerollContainer onClick={() => setImages(Array(10).fill(""))}>
-            <RerollButton />
-            다시 고르고 싶어요
-          </RerollContainer>
-          <NextContainer onClick={() => navigate(PAGE_URL.Hero)}>
-            <NextButton />
-            다 골랐어요!
-          </NextContainer>
-        </ButtonContainer>
-      </SubContainer>
-      <div style={{height: "100px"}}></div>
-    </MainContainer>
-  );
-};
-
-export default PhotoPage;

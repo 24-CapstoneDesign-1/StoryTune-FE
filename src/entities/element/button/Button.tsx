@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { IoMenu, IoSearchSharp } from "react-icons/io5";
-import { PiRecordFill } from "react-icons/pi";
+import { PiRecordFill, PiStopCircleFill } from "react-icons/pi";
 import { FaCaretLeft, FaCaretRight } from "react-icons/fa6";
 
 export const Button = styled.button<{
@@ -44,6 +44,8 @@ export const SearchButton = styled(IoSearchSharp)`
 export const SquareButton = styled.button<{
     width?: string;
     height?: string;
+    mobileWidth?: string;
+    mobileHeight?: string;
 }>`
     display: flex;
     justify-content: center;
@@ -59,9 +61,9 @@ export const SquareButton = styled.button<{
     border: 0.3px solid #000000;
     white-space: pre-line;
     @media (max-width: 768px) {
-        width: 230px;
-        height: 75px;
-        font-size: 1.2rem;
+        width: ${(props) => props.mobileWidth || "120px"};
+        height: ${(props) => props.mobileHeight || "75px"};
+        font-size: 1rem;
     }
 `;
 
@@ -69,6 +71,18 @@ export const RecordIcon = styled(PiRecordFill)`
     font-size: 60px;
     margin-top: 20px;
     margin-bottom: 20px;
+    @media (max-width: 768px) {
+        margin-top: 0px;
+    }
+`;
+
+export const StopIcon = styled(PiStopCircleFill)`
+    font-size: 60px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    @media (max-width: 768px) {
+        margin-top: 0px;
+    }
 `;
 
 export const CircleButton = styled.button`

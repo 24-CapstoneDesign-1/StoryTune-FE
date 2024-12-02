@@ -26,7 +26,7 @@ const BookContainer = styled.div`
     box-shadow: 5px 5px 5px gray;
     margin: 10px;
     @media (max-width: 768px) {
-        width: 123px;
+        width: 120px;
         height: 245px;
     }
 `;
@@ -57,13 +57,15 @@ export const Book = ({
     title,
     createdAt,
     photo,
+    clickEvent,
 }: {
     title: string;
     createdAt: string;
     photo: string;
+    clickEvent: () => void;
 }) => {
     return (
-        <BookContainer>
+        <BookContainer onClick={clickEvent}>
             <ImageContainer src={photo} />
             <InfoContainer>
                 <TitleContainer>{title}</TitleContainer>

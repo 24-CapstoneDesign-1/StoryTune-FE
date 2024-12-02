@@ -121,16 +121,15 @@ const FriendListPage = () => {
 
   useEffect(() => {
     const fetchFriendsData = async () => {
-      try {
-        const friendsData = await friendService.fetchFriendList();
-        setFriends(friendsData);
-
-        const requestsData = await friendService.fetchFriendRequests();
-        setReceivedRequests(requestsData);
-      } catch (error) {
-        console.error("친구 목록 불러오기 실패", error);
-      }
-    };
+        try {
+          const { friends, requests } = await friendService.fetchFriendList();  // Assuming the API returns this format
+          setFriends(friends);
+          setReceivedRequests(requests);
+        } catch (error) {
+          console.error("친구 목록 불러오기 실패", error);
+        }
+      };
+      
 
     fetchFriendsData();
   }, [friendService]);
@@ -154,7 +153,7 @@ const FriendListPage = () => {
     }
   };
 
-  const handleSendRequest = async (user) => {
+  const handleSendRequest = async (user: { id: string; name: string }) => {
     try {
       await friendService.addFriend(user.id); 
       alert(`"${user.name}"님에게 친구 요청을 보냈습니다.`);

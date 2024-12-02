@@ -1,6 +1,8 @@
 import { MainContainer, SquareButton, Title } from "@/entities";
+import { PAGE_URL } from "@/shared";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
+import { useNavigate } from "react-router-dom";
 
 
 const SubContainer = styled.div`
@@ -19,6 +21,10 @@ const CustomTitle = styled(Title)`
     font-size: 1.8rem;
     margin-top: 20px;
     padding: 0px 20px 0px 20px;
+    @media (max-width: 768px) {
+        font-size: 1.4rem;
+        margin-top: 0px;
+    }
 `;
 
 const PhotoContainer = styled.div`
@@ -29,7 +35,7 @@ const PhotoContainer = styled.div`
     align-items: center;
     @media (max-width: 768px) {
         height: 100%;
-        margin-top: 30px;
+        margin-top: 20px;
     }
 `;
 
@@ -38,6 +44,9 @@ const Photo = styled.img`
     height: 400px;
     margin-top: 20px;
     margin-bottom: 20px;
+    @media (max-width: 768px) {
+        margin-top: 0px;
+    }
 `;
 const ButtonContainer = styled.div`
     display: flex;
@@ -50,13 +59,14 @@ const ButtonSubContainer = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 40%;
+    height: 250px;
     @media (max-width: 768px) {
-        height: 200px;
+        height: 180px;
     }
 `;
 
 const MakedPage = () => {
+    const navigate = useNavigate();
     return (
         <MainContainer>
             <InfoHeader type="나만의 동화 만들기" />
@@ -67,8 +77,8 @@ const MakedPage = () => {
                 </PhotoContainer>
                 <ButtonContainer>
                     <ButtonSubContainer>
-                        <SquareButton width="400px">내가 만든 동화 보러 가기</SquareButton>
-                        <SquareButton width="400px">영어 동화로 바꾸고 싶어요!</SquareButton>
+                        <SquareButton width="300px" mobileWidth="300px" onClick={() => navigate(PAGE_URL.Book)}>내가 만든 동화 보러 가기</SquareButton>
+                        <SquareButton width="300px" mobileWidth="300px">영어 동화로 바꾸고 싶어요!</SquareButton>
                     </ButtonSubContainer>
                 </ButtonContainer>
             </SubContainer>

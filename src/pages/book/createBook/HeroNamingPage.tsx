@@ -1,5 +1,6 @@
 import { MainContainer } from "@/entities";
 import { PAGE_URL } from "@/shared";
+import { useHeroStore } from "@/shared/hooks/stores/useHeroStore";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
@@ -106,6 +107,7 @@ const HeroNamingPage = () => {
         {image: "../images/temp.svg", name: ""},
         {image: "../images/temp.svg", name: ""},
     ]);
+    const heroStore = useHeroStore();
 
     useEffect(() => {
         if (location.state) {
@@ -115,7 +117,6 @@ const HeroNamingPage = () => {
                     i === index ? { ...img, name } : img
                 )
             );
-            // navigate(".", { replace: true });
         }
     }, [location.state]);
 
@@ -134,12 +135,12 @@ const HeroNamingPage = () => {
                             navigate(PAGE_URL.Name, {state: {image: image.image, index: index}});
                         }}>
                             <Image src={image.image} />
-                            {image.name.length === 0 ? (
+                            {heroStore.getName(index)?.length === undefined ? (
                                 <>
                                 </>
                             ) : (
                                 <NameContainer>
-                                    {image.name}
+                                    {heroStore.getName(index)}
                                 </NameContainer>
                             )}
                         </ImageBlock>
@@ -152,12 +153,13 @@ const HeroNamingPage = () => {
                             {`마음에 들지 않아요.
                             다시 이름을 알려줄게요!`}
                         </ButtonSubContainer>
-                        <ButtonSubContainer onClick={() => navigate(PAGE_URL.Story)}>
+                        <ButtonSubContainer onClick={() => navigate(PAGE_URL.Topic)}>
                             {`마음에 들어요!
                             이어서 하기`}
                         </ButtonSubContainer>
                     </ButtonContainer>
             </SubContainer>
+            <div style={{height: "300px"}}></div>
         </MainContainer>
     )
 };

@@ -3,7 +3,7 @@ import { Button, Title, ValidInput } from "@/entities";
 import { useNavigate } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FaEyeSlash, FaEye } from "react-icons/fa";
-import { PAGE_URL } from "@/shared";
+import { AuthService, PAGE_URL } from "@/shared";
 import { useState } from "react";
 
 const SignInContainer = styled.div`
@@ -85,14 +85,13 @@ const SignInPage = () => {
     const navigate = useNavigate();
     const [isPasswordVisible, setIsPasswordVisible] = useState(true);
     const { register, handleSubmit, setError, formState: { errors }, } = useForm<SignInFormInput>()
+    const signin = AuthService().signin;
 
     const onSubmit: SubmitHandler<SignInFormInput> = (data) => {
-        // signin({
-        //     userId: data.userId,
-        //   password: data.password,
-        // }).then(() => navigate("/home"));
-        console.log(data);
-        navigate(PAGE_URL.Home);
+        signin({
+            username: data.userId,
+            password: data.password,
+        }).then(() => navigate(PAGE_URL.Home));
     }
 
     return (
