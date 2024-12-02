@@ -12,7 +12,7 @@ declare namespace User {
     export interface FriendStore {
         friends: Friend[];
         addFriend: (friend: Friend) => void;
-        updateFriendStatus: (id: string, status: string) => void;
+        updateFriendStatus: (id: string, status: "친구" | "친구의 수락을 기다리고 있어요" | "거절됨") => void;
         setFriends: (friends: Friend[]) => void;
         removeFriend: (id: string) => void;
     }
@@ -53,7 +53,7 @@ export const useFriendStore = create<User.FriendStore>()(
             const newFriend = {
                 id: user.username, 
                 name: user.name, 
-                status: "친구" 
+                status: "친구" as "친구" | "친구의 수락을 기다리고 있어요" | "거절됨",
             };
             set((state) => {
                 state.friends.push(newFriend);
