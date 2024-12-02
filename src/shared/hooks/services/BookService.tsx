@@ -220,11 +220,14 @@ export const BookService = () => {
         return data;
     };
 
-    const bookCharacter = async (body: Book.BookCharacterReq) => {
-        console.log(body.images.getAll('images'));
+    const bookCharacter = async (
+        myBookId: number,
+        images: FormData,
+    ) => {
+        console.log(images.getAll('images'));
         const { data } = (await FORMAPI.post(
-            `/api/mybook/${body.myBookId}/character`,
-            body.images,
+            `/api/mybook/${myBookId}/character`,
+            images,
         )) as AxiosResponse<Book.BookCharacterRes>;
         console.log('data', data);
         return data;

@@ -107,6 +107,20 @@ const HeroPage = () => {
     const bookStore = useBookStore();
     const heroStore = useHeroStore();
     
+    const character = async () => {
+        const formData = new FormData();
+        heroStore.getImages().forEach((image, index) => {
+            formData.append("images", image, `hero${index}`);
+        });
+        try{
+            const res = await bookService.bookCharacter(bookStore.bookId, formData);
+            console.log("Image upload success:", res);
+            return res;
+        } catch (error) {
+            console.error("Image upload failed:", error);
+          }
+    }
+    
     const getHero = async () => {
         const resList: any[] = [];
 
@@ -189,7 +203,10 @@ const HeroPage = () => {
                             {`마음에 들지 않아요.
                             다시 분석하기`}
                         </ButtonSubContainer>
-                        <ButtonSubContainer onClick={() => navigate(PAGE_URL.HeroNaming)}>
+                        <ButtonSubContainer onClick={() => {
+                            navigate(PAGE_URL.HeroNaming);
+                            character();
+                        }}>
                             {`마음에 들어요! 
                             이어서 하기`}
                         </ButtonSubContainer>

@@ -100,27 +100,30 @@ const HeroNamingPage = () => {
     const bookService = BookService();
     const bookStore = useBookStore();
 
-    const character = async () => {
-        const formData = new FormData();
-        heroStore.getImages().forEach((image, index) => {
-            formData.append("images", image, `hero${index}`);
-        });
-        try{
-            const res = await bookService.bookCharacter({ myBookId: bookStore.bookId, images: formData });
-            console.log("Image upload success:", res);
-            return res;
-        } catch (error) {
-            console.error("Image upload failed:", error);
-          }
-    }
+    // const character = async () => {
+    //     const formData = new FormData();
+    //     heroStore.getImages().forEach((image, index) => {
+    //         formData.append("images", image, `hero${index}`);
+    //     });
+    //     try{
+    //         const res = await bookService.bookCharacter(bookStore.bookId, formData);
+    //         console.log("Image upload success:", res);
+    //         return res;
+    //     } catch (error) {
+    //         console.error("Image upload failed:", error);
+    //       }
+    // }
     useEffect(() => {
-        if (!heroStore.getImages().length) {
-            navigate(PAGE_URL.Hero);
-        }
-        
-        const res = character();
-        // heroStore.setHero(res);
-    }, []);
+        const fetchCharacter = async () => {
+            if (!heroStore.getImages().length) {
+                navigate(PAGE_URL.Hero);
+                return;
+            }
+        };
+    
+        fetchCharacter();
+    }, [heroStore, navigate]);
+    
 
     useEffect(() => {
         // heroStore.getImages()가 이미지를 반환한다고 가정하고, 이미지를 업데이트

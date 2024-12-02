@@ -7,6 +7,7 @@ import { FaCaretRight } from "react-icons/fa";
 import { PAGE_URL } from "@/shared";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { BookService } from "@/shared/hooks/services/BookService";
+import imageCompression from "browser-image-compression";
 
 const PhotoPage = () => {
   const navigate = useNavigate();
@@ -16,10 +17,19 @@ const PhotoPage = () => {
   const [bookId, setBookId] = useState(bookStore.getBookId());
   const [file, setFile] = useState<File[] | null>(null);
 
-  useEffect(() => {
-    console.log('bookId', bookId);
-  }, [bookId]);
-
+  const imageCompress = () => {
+    const options = {
+      maxSizeMB: 0.08,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+    };
+    if (file) {
+      const compressedImages: Promise<File>[] = file.map((file) => {
+        return imageCompression(file, options);
+      });
+      return Promise.all(compressedImages);
+    }
+  }
   // 이미지 변경 시 호출되는 함수
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const file = e.target.files?.[0];
@@ -65,14 +75,20 @@ const PhotoPage = () => {
     });
   };
   
-  // handleNextButton 수정
   const handleNextButton = async () => {
     const formData = new FormData();
     console.log(file);
     if (!file) return;
-    file.forEach((f, index) => {
+  
+    // 비동기적으로 이미지 압축
+    const compressedFiles = await imageCompress();
+    if (!compressedFiles) return;
+    setFile(compressedFiles);
+  
+    compressedFiles.forEach((f, index) => {
       formData.append("images", f, `image-${index}.png`);
     });
+  
     try {
       const res = await bookService.bookImage({
         myBookId: bookId,
