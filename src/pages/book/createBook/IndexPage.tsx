@@ -1,5 +1,6 @@
 import { MainContainer, SquareButton } from "@/entities";
 import { PAGE_URL } from "@/shared";
+import { BookService } from "@/shared/hooks/services/BookService";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
@@ -22,6 +23,7 @@ const IndexPage = () => {
     ]);
     const [progress, setProgress] = useState<number>(0);
     const navigate = useNavigate();
+    const bookService = BookService();
 
     return (
         <MainContainer>
@@ -33,8 +35,8 @@ const IndexPage = () => {
                             {images.map((image, index) => (
                                 <ImageBlock key={index}>
                                     <Image src={image.image} onClick={() => {
-                                        setProgress(progress+1)
-                                        bookStore.setIndex(index)    
+                                        setProgress(progress+1);
+                                        bookStore.setIndex(index);
                                     }}/>
                                 </ImageBlock>
                             ))}
@@ -51,7 +53,10 @@ const IndexPage = () => {
                                 <ButtonContainer>
                                     <SquareButton width="180px" height="100px" onClick={() => setProgress(progress-1)}>{`표지가 틀렸어요.
                                     다시 말하기`}</SquareButton>
-                                    <SquareButton width="180px" height="100px" onClick={() => navigate(PAGE_URL.Title)}>{`맞아요!
+                                    <SquareButton width="180px" height="100px" onClick={() => {
+                                        navigate(PAGE_URL.Title);
+                                        bookService.cover({myBookContentId: bookStore.getMyBookCharacterId(bookStore.getIndex())});
+                                    }}>{`맞아요!
                                     이어서 하기`}</SquareButton>
                                 </ButtonContainer>
                             </InputContianer>

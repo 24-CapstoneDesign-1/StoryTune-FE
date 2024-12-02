@@ -1,8 +1,9 @@
 import { MainContainer, Title } from "@/entities";
+import { BookService } from "@/shared/hooks/services/BookService";
 import { InfoHeader, LeftRight } from "@/widgets";
 import { PageOffset } from "@/widgets/button/LeftRight";
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const SubContainer = styled.div`
     display: flex;
@@ -70,31 +71,30 @@ const DescriptionContainer = styled.div`
 `;
 
 
-const BookPage = () => {
+const BookPage = (myBookId: number) => {
     const [book, setBook] = useState({
-        title: "동화 제목",
-        description: "동화 내용",
-        createdAt: "2021-09-01",
-        images: [
-            "../images/temp.svg",
-            "../images/temp.svg",
-            "../images/temp.svg",
-            "../images/temp.svg",
-            "../images/temp.svg",
-            "../images/temp.svg",
-            "../images/temp.svg",
-            "../images/temp.svg",
-            "../images/temp.svg",
-            "../images/temp.svg",
-        ],
+        myBookContentId: 0,
+        image: "",
+        previousContent: "",
     });
     const [page, setPage] = useState<number>(1);
+    const bookService = BookService();
+
+    useEffect(() => {
+        getDetail();
+    }, [page]);
+
+    const getDetail = async () => {
+        const data = await bookService.myMakedBook(myBookId, page);
+        setBook(data.result);
+        return data;
+    }
     return (
         <MainContainer>
-            <InfoHeader type="내가 만든 동화" />
+            {/* <InfoHeader type="내가 만든 동화" />
             <SubContainer>
                 <PhotoContainer>
-                    <CustomTitle>{book.title}</CustomTitle>
+                    <CustomTitle>{book.}</CustomTitle>
                     <CustomSubTitle>{book.createdAt}</CustomSubTitle>
                     <Photo src={book.images[page]} />
                     <PageOffset page={page} setPage={setPage}/>
@@ -103,7 +103,7 @@ const BookPage = () => {
                     {book.description}
                 </DescriptionContainer>
             </SubContainer>
-            <div style={{height: "100px"}}></div>
+            <div style={{height: "100px"}}></div> */}
         </MainContainer>
     )
 }

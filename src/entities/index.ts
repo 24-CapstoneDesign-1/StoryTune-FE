@@ -13,6 +13,7 @@ export {
  } from "./element/button/Button";
  export {
     Record,
+    RecordContent,
  } from "./element/button/Record";
 export {
     Title,
