@@ -66,7 +66,7 @@ const MainPage = () => {
     };
 
     const getBookList = async () => {
-        const data = await bookService.bookRecommend()
+        const data = await bookService.book()
             .then((res) => setBookList(res.result.books));
         return data;
     }
