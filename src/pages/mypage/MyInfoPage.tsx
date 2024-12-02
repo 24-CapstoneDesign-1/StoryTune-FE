@@ -1,6 +1,6 @@
 import { InfoHeader } from "@/widgets";
 import { useNavigate } from "react-router-dom";
-import { PAGE_URL } from "@/shared";
+import { PAGE_URL, useUserStore } from "@/shared";
 import { useLocation } from 'react-router-dom';
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
@@ -39,30 +39,18 @@ const InfoItem = styled.div`
   }
 `;
 
-const dummyData = {
-  name: "김철수",
-  userId: "kim123",
-  age: 7,
-  gender: "남",
-};
-
 const MyInfo = () => {
-  const [userInfo, setUserInfo] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  
+  const { getUserAllInfo } = useUserStore();
+  const userInfo = getUserAllInfo(); 
 
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        setUserInfo(dummyData);
-      } catch (err) {
-        console.error(err);
-        setError("사용자 정보를 불러오는 데 실패했습니다.");
-      }
-    };
-
-    fetchUserInfo();
-  }, [navigate]);
+    if (!userInfo) {
+      setError("사용자 정보를 불러오는 데 실패했습니다.");
+    }
+  }, [userInfo]);
 
   if (error) {
     return <div>{error}</div>;
@@ -72,25 +60,25 @@ const MyInfo = () => {
     <MainContainer>
       <InfoHeader type="내 정보" />
       <PageContainer>
-      <InfoCard>
-        <InfoItem>
-          <span>이름</span>
-          <span>{userInfo?.name}</span>
-        </InfoItem>
-        <InfoItem>
-          <span>아이디</span>
-          <span>{userInfo?.userId}</span>
-        </InfoItem>
-        <InfoItem>
-          <span>나이</span>
-          <span>{userInfo?.age}</span>
-        </InfoItem>
-        <InfoItem>
-          <span>성별</span>
-          <span>{userInfo?.gender}</span>
-        </InfoItem>
-      </InfoCard>
-    </PageContainer>
+        <InfoCard>
+          <InfoItem>
+            <span>이름</span>
+            <span>{userInfo?.name}</span>
+          </InfoItem>
+          <InfoItem>
+            <span>아이디</span>
+            <span>{userInfo?.username}</span>
+          </InfoItem>
+          <InfoItem>
+            <span>나이</span>
+            <span>{userInfo?.age}</span>
+          </InfoItem>
+          <InfoItem>
+            <span>성별</span>
+            <span>{userInfo?.gender}</span>
+          </InfoItem>
+        </InfoCard>
+      </PageContainer>
     </MainContainer>
   );
 };

@@ -6,7 +6,7 @@ export const useWebRTC = (localStream: MediaStream, friends: { id: string; name:
   const [remoteStreams, setRemoteStreams] = useState<MediaStream[]>([]);
 
   useEffect(() => {
-    socketRef.current = new WebSocket("ws://localhost:3000");
+    socketRef.current = new WebSocket("wss://localhost:443");
 
     socketRef.current.onopen = () => {
       console.log("시그널링 서버에 연결되었습니다.");

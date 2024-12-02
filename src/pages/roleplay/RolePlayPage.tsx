@@ -75,7 +75,7 @@ const RolePlayPage = () => {
 
   useEffect(() => {
 
-    socketRef.current = io('http://localhost:5000'); // 시그널링 서버 URL
+    socketRef.current = io('http://localhost:5173'); // 시그널링 서버 URL
 
    
     navigator.mediaDevices.getUserMedia({ video: true, audio: true })

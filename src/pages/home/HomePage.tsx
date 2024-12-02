@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PAGE_URL } from "@/shared";
@@ -185,18 +184,6 @@ const HomePage = () => {
       </Section>
     </PageContainer>
   );
-=======
-import { useUserStore } from "@/shared/hooks/stores/useUserStore";
-import { Header } from "@/widgets"
-const HomePage = () => {
-    const userStore = useUserStore();
-
-    return (
-        <>
-            <Header />
-        </>
-    );
->>>>>>> origin/develop
 };
 
 export default HomePage;

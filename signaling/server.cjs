@@ -8,7 +8,7 @@ const credentials = { key: privateKey, cert: certificate };
 
 const httpsServer = https.createServer(credentials);
 
-const wss = new WebSocket.Server({ server: httpsServer });
+const wss = new WebSocket.Server({ port: 3000 });
 
 const PORT = 443; 
 let clients = {};
@@ -51,5 +51,5 @@ wss.on('connection', (socket) => {
 
 
 httpsServer.listen(PORT, () => {
-  console.log(`HTTPS 서버가 https://localhost:${PORT} 에서 실행 중입니다.`);
+  console.log(`HTTP 서버가 https://localhost:${PORT} 에서 실행 중입니다.`);
 });
