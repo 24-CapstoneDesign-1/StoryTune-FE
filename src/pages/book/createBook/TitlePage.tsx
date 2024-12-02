@@ -134,7 +134,9 @@ const TitlePage = () => {
                                 <ButtonContainer>
                                     <SquareButton width="160px" height="100px" onClick={() => setFinalName("")}>{`제목이 틀렸어요.
                                     다시 말하기`}</SquareButton>
-                                    <SquareButton width="160px" height="100px" onClick={() => setProgress(progress+1)}>{`맞아요!
+                                    <SquareButton width="160px" height="100px" onClick={() => {
+                                        setProgress(progress+1);
+                                    }}>{`맞아요!
                                     이어서 하기`}</SquareButton>
                                 </ButtonContainer>
                             </InputContianer>
@@ -145,7 +147,10 @@ const TitlePage = () => {
                         <RecordContainer>
                             <CustomTitle>이 동화의 제목은</CustomTitle>
                             <CustomTitle>{finalName} 이에요!</CustomTitle>
-                            <CustomButton width="400px" height="50px" onClick={() => navigate(PAGE_URL.Maked)}>{`다음으로 넘어가기`}</CustomButton>
+                            <CustomButton width="400px" height="50px" onClick={() => {
+                                bookService.bookCompleted()
+                                .then(() => navigate(PAGE_URL.Maked));
+                            }}>{`다음으로 넘어가기`}</CustomButton>
                         </RecordContainer>
                     </>
                 )}

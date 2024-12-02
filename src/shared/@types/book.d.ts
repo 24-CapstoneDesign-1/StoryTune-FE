@@ -1,6 +1,25 @@
 declare namespace Book {
     //dto
 
+    export interface MyBookRes {
+        result: {
+            myBookId: number;
+            cover: string;
+            title: string;
+            updatedAt: string;
+        }
+    }
+
+    export interface BookCharacterReq {
+        myBookId: number;
+        images: FormData;
+    }
+    export interface BookCharacterRes {
+        result: {
+            myBookCharacterIds: number[];
+        }
+    }
+
     export interface CoverReq {
         myBookContentId: number;
     }

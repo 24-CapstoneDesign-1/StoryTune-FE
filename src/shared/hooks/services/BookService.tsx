@@ -1,10 +1,20 @@
 import { AxiosResponse } from "axios";
-import { API, getAccess } from "@/shared/configs/axios";
+import { API, FORMAPI, getAccess } from "@/shared/configs/axios";
 import { useBookStore } from "../stores/useBookStore";
 
 export const BookService = () => {
     const bookStore = useBookStore();
-
+    const myBook = async () => {
+        const { data } = (await API.get(
+            "/api/mybook",
+            {
+                headers: {
+                    "Authorization" : `Bearer ${getAccess()}`,
+                }
+            }
+        )) as AxiosResponse<Book.MyBookRes>;
+        return data;
+    }
     const newMakeBook = async(body: Book.NewMakeBookReq) => {
         const { data } = (await API.post(
             "/api/mybook",
@@ -23,17 +33,11 @@ export const BookService = () => {
         body
     }: { 
         myBookId: number; 
-        body: FormData; 
+        body: any; 
     }) => {
-        const { data } = (await API.post(
+        const { data } = (await FORMAPI.post(
             `/api/mybook/${myBookId}/images`,
-            body, // 기존의 FormData 객체를 그대로 전달
-            {
-                headers: {
-                    // "Authorization": `Bearer ${getAccess()}`,
-                    "Content-Type": "multipart/form-data",
-                },
-            }
+            body,
         )) as AxiosResponse<Book.bookImageRes>;
         console.log('data', data);
         return data;
@@ -111,17 +115,17 @@ export const BookService = () => {
         return data;
     };
 
-    const search = async (search: string) => {
-        const title = encodeURIComponent(search);
+    const search = async (title: string) => {
         console.log(title);
-        const { data } = (await API.get(
-            `/api/book/?${title}`, {
+        const { data } = (await API.get(`/api/book/search`, {
+            params: { title },
             headers: {
-                "Authorization" : `Bearer ${getAccess()}`,
+                "Authorization": `Bearer ${getAccess()}`,
             },
         })) as AxiosResponse<Book.BookListRes>;
         return data;
-    }
+    };
+    
 
     const hero = async (body: Book.HeroReq) => {
         // Blob을 Base64로 변환하는 함수
@@ -203,8 +207,9 @@ export const BookService = () => {
     };
 
     const cover = async (body: Book.CoverReq) => {
+        console.log('body', body);
         const { data } = (await API.patch(
-            `/api/mybook/41/cover`,
+            `/api/mybook/${bookStore.bookId}/cover`,
             body,
             {
                 headers: {
@@ -213,6 +218,23 @@ export const BookService = () => {
             }
         ));
         console.log(data);
+        return data;
+    };
+
+    const bookCharacter = async (body: Book.BookCharacterReq) => {
+        const { data } = (await FORMAPI.post(
+            `/api/mybook/${body.myBookId}/character`,
+            body.images,
+        )) as AxiosResponse<Book.BookCharacterRes>;
+        console.log('data', data);
+        return data;
+    };
+
+    const bookCompleted = async () => {
+        const { data } = (await API.patch(
+            `/api/mybook/${bookStore.bookId}/completed`,
+        ));
+        console.log('data', data);
         return data;
     };
     
@@ -226,5 +248,9 @@ export const BookService = () => {
         search, 
         hero, 
         topic, 
-        cover };
+        cover,
+        bookCharacter,
+        bookCompleted,
+        myBook,
+    };
 };

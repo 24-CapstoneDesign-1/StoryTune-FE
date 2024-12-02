@@ -31,6 +31,7 @@ export const Record = (recordApi: any) => {
                                     const formData = new FormData();
                                     formData.append('file', file);
                                     bookService.recordTitle({ file: file });
+                                    bookService.bookCompleted();
                                     console.log('file', file);
                                 }).then(() => navigate(PAGE_URL.Maked));
                             }}} /> : <RecordIcon onClick={() => {

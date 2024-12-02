@@ -7,7 +7,6 @@ import { FaCaretRight } from "react-icons/fa";
 import { PAGE_URL } from "@/shared";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { BookService } from "@/shared/hooks/services/BookService";
-import { useForm } from "react-hook-form";
 
 const PhotoPage = () => {
   const navigate = useNavigate();
@@ -15,6 +14,7 @@ const PhotoPage = () => {
   const bookStore = useBookStore();
   const bookService = BookService();
   const [bookId, setBookId] = useState(bookStore.getBookId());
+  const [file, setFile] = useState<File[] | null>(null);
 
   useEffect(() => {
     console.log('bookId', bookId);
@@ -24,6 +24,11 @@ const PhotoPage = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const file = e.target.files?.[0];
     if (file) {
+      setFile((prevFile) => {
+        const newFiles = prevFile ? [...prevFile] : [];
+        newFiles[index] = file;
+        return newFiles;
+      });
       const reader = new FileReader();
       reader.onload = () => {
         setImages((prevImages) => {
@@ -43,6 +48,11 @@ const PhotoPage = () => {
   const handleMultiImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     files.forEach((file, index) => {
+      setFile((prevFiles) => {
+        const newFiles = prevFiles ? [...prevFiles] : [];
+        newFiles[index] = file;
+        return newFiles;
+      });
       const reader = new FileReader();
       reader.onload = () => {
         setImages((prevImages) => {
@@ -54,32 +64,15 @@ const PhotoPage = () => {
       reader.readAsDataURL(file); // 파일을 Data URL로 읽기
     });
   };
-
-  const base64ToBlob = (base64: string, mimeType: string = "image/png") => {
-    const byteString = atob(base64.split(",")[1]);
-    const arrayBuffer = new ArrayBuffer(byteString.length);
-    const uintArray = new Uint8Array(arrayBuffer);
-  
-    for (let i = 0; i < byteString.length; i++) {
-      uintArray[i] = byteString.charCodeAt(i);
-    }
-  
-    return new Blob([uintArray], { type: mimeType });
-  };
   
   // handleNextButton 수정
   const handleNextButton = async () => {
     const formData = new FormData();
-  
-    images.forEach((image, index) => {
-      if (image) {
-        const blob = base64ToBlob(image, "image/png");
-        formData.append("images", blob, `image-${index}.png`); // 파일 이름 지정
-      }
+    console.log(file);
+    if (!file) return;
+    file.forEach((f, index) => {
+      formData.append("images", f, `image-${index}.png`);
     });
-  
-    console.log("FormData content:", formData.getAll("images"));
-  
     try {
       const res = await bookService.bookImage({
         myBookId: bookId,
@@ -88,7 +81,8 @@ const PhotoPage = () => {
       res.result.myBookContentIds.forEach((id, index) => {
         bookStore.setMyBookCharacterId(index, id);
       });
-      // console.log(bookStore.getMyBookCharacterId(res.result.myBookContentIds[0]));
+      console.log('res', res);
+      console.log(bookStore.getMyBookCharacterId(0));
       bookStore.setBookImage(formData);
       navigate(PAGE_URL.Hero);
     } catch (error) {

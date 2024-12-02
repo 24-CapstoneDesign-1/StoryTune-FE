@@ -37,7 +37,6 @@ const IndexPage = () => {
                                     <Image src={image.image} onClick={() => {
                                         setProgress(progress+1);
                                         bookStore.setIndex(index);
-                                        bookService.cover({myBookContentId: index});
                                     }}/>
                                 </ImageBlock>
                             ))}
@@ -54,7 +53,10 @@ const IndexPage = () => {
                                 <ButtonContainer>
                                     <SquareButton width="180px" height="100px" onClick={() => setProgress(progress-1)}>{`표지가 틀렸어요.
                                     다시 말하기`}</SquareButton>
-                                    <SquareButton width="180px" height="100px" onClick={() => navigate(PAGE_URL.Title)}>{`맞아요!
+                                    <SquareButton width="180px" height="100px" onClick={() => {
+                                        navigate(PAGE_URL.Title);
+                                        bookService.cover({myBookContentId: bookStore.getMyBookCharacterId(bookStore.getIndex())});
+                                    }}>{`맞아요!
                                     이어서 하기`}</SquareButton>
                                 </ButtonContainer>
                             </InputContianer>
