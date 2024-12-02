@@ -5,21 +5,56 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PAGE_URL } from "@/shared";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
+import { BookService } from "@/shared/hooks/services/BookService";
 
 const TopicPage = () => {
     const navigate = useNavigate();
     const [topic, setTopic] = useState<string[]>(["우정", "사랑", "용기", "배려", "협력", "가족", "꿈", "여행", "감사"]);
     const [curTopic, setCurTopic] = useState<string>("");
+    const bookService = BookService();
     
     const onReroll = () => {
         setCurTopic("");
     };
     
     const onPlay = () => {
-        navigate(PAGE_URL.Story);
+        bookService.topic({ topic: curTopic })
+        .then((res) => {
+            console.log(res);
+            bookStore.setSubject(curTopic)
+            navigate(PAGE_URL.Story);
+            });
     };
     const bookStore = useBookStore();
-
+    const setTopicTrans = (topic: string) => {
+        if (topic == "우정") {
+            return "FRIENDSHIP";
+        }
+        else if (topic == "사랑") {
+            return "LOVE";
+        }
+        else if (topic == "용기") {
+            return "COURAGE";
+        }
+        else if (topic == "배려") {
+            return "COMPASSION";
+        }
+        else if (topic == "협력") {
+            return "COOPERATION";
+        }
+        else if (topic == "가족") {
+            return "FAMILY";
+        }
+        else if (topic == "꿈") {
+            return "DREAM";
+        }
+        else if (topic == "여행") {
+            return "ADVENTURE";
+        }
+        else  {
+            return "GRATITUDE";
+        }
+    }
     return (
         <MainContainer>
             <InfoHeader type="나만의 동화 만들기" />
@@ -38,7 +73,7 @@ const TopicPage = () => {
                 <ButtonContainer>
                     {topic.map((topic) => (
                         <CustomButton key={topic} onClick={() => {
-                            setCurTopic(topic);
+                            setCurTopic(() => setTopicTrans(topic));
                             bookStore.setSubject(topic);
                         }}>{topic}</CustomButton>
                     ))}
