@@ -2,6 +2,7 @@ import { MainContainer } from "@/entities";
 import { PAGE_URL } from "@/shared";
 import { BookService } from "@/shared/hooks/services/BookService";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
+import { useHeroStore } from "@/shared/hooks/stores/useHeroStore";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
@@ -73,6 +74,26 @@ const SubContainer = styled.div`
     flex-direction: column;
     align-items: center;
 `;
+const SubLoadingContainer = styled.div`
+    width: 100%;
+    height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    font-weight: bold;
+    margin-top: 20px;
+`;
+const NonContainer = styled.div`
+    width: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.9rem;
+    font-weight: bold;
+    margin-top: 100px;
+    margin-bottom: 200px;
+`;
 
 interface HeroNameProps {
     image: string;
@@ -82,20 +103,52 @@ const HeroPage = () => {
     const navigate = useNavigate();
     const [images, setImages] = useState<Blob[]>([]);
     const bookService = BookService();
+    const [loading, setLoading] = useState<boolean>(true);
     const bookStore = useBookStore();
+    const heroStore = useHeroStore();
     
     const getHero = async () => {
-        const res = await bookService.hero({
-            images: bookStore.getImages() // 'images' 속성으로 전달
-        });
-        console.log(res);
-        return res;
+        const resList: any[] = [];
+
+        // 이미지 목록을 비동기적으로 처리하고, 결과를 resList에 담기
+        await Promise.all(
+            bookStore.getImages().map(async (image, index) => {
+                const res = await bookService.hero({
+                    images: image // 'images' 속성으로 전달
+                });
+                console.log('res', res.data.choices[0].message.content);
+                if (res.data.choices[0].message.content === "hero") {
+                    resList.push(index);
+                    heroStore.setImage(index, image);
+                }
+            })
+        );
+
+        return resList; // 비동기 결과를 반환
     };
+
     useEffect(() => {
         getHero().then((res) => {
-            setImages(res.images);
+            // API 응답을 처리하고 이미지 상태를 업데이트
+            const heroImages = res.map((index) => bookStore.getImage(index));
+            setImages(heroImages); // images 상태 업데이트
+            
+            setLoading(false); // 로딩이 완료되었음을 표시
         });
     }, []);
+
+    if (loading) {
+        return (
+            <MainContainer>
+            <InfoHeader type="나만의 동화 만들기" />
+            <SubLoadingContainer>
+                Loading ...
+            </SubLoadingContainer>
+            <div style={{height: "300px"}}></div>
+        </MainContainer>
+        );
+    }
+
     return (
         <MainContainer>
             <InfoHeader type="나만의 동화 만들기" />
@@ -105,16 +158,33 @@ const HeroPage = () => {
                     <Title>이야기 주인공이에요!</Title>
                 </TitleContainer>
                 <ImageContainer>
-                    {images.map((image, index) => (
+                    {images.length === 0 ? (
                         <>
-                        <ImageBlock key={index}>
-                            <Image src={URL.createObjectURL(image)} />
-                        </ImageBlock>
+                            <NonContainer>
+                                주인공이 없습니다.
+                            </NonContainer>
                         </>
-                    ))}
+                    ): (
+                        <>
+                            {images.map((image, index) => (
+                                <>
+                                    <ImageBlock key={index}>
+                                        <Image src={URL.createObjectURL(image)} />
+                                    </ImageBlock>
+                                </>
+                            ))}
+                        </>
+                    )}
 
                 </ImageContainer>
-                <ButtonContainer>
+                {images.length === 0 ? (
+                    <>
+                        <ButtonSubContainer onClick={() => navigate(PAGE_URL.Topic)}>
+                            {`다음으로 넘어가기`}
+                        </ButtonSubContainer>
+                    </>
+                ) : (
+                    <ButtonContainer>
                         <ButtonSubContainer>
                             {`마음에 들지 않아요.
                             다시 분석하기`}
@@ -124,6 +194,7 @@ const HeroPage = () => {
                             이어서 하기`}
                         </ButtonSubContainer>
                     </ButtonContainer>
+                )}
             </SubContainer>
             <div style={{height: "300px"}}></div>
         </MainContainer>

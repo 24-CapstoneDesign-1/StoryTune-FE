@@ -114,7 +114,6 @@ const TitlePage = () => {
                                 <>
                                     <Record recordApi={bookService.recordTitle} />
                                     <CustomTitle>아이콘을 클릭해서 알려주세요!</CustomTitle>
-                                    <CustomButton width="400px" height="50px" onClick={() => setTyping(!typing)}>직접 입력할래요!</CustomButton>
                                 </>
                             ): (
                                 <>

@@ -1,13 +1,14 @@
-import { CircleButton, MainContainer, RecordIcon, SquareButton, Title } from "@/entities";
+import { CircleButton, MainContainer, RecordContent, RecordIcon, SquareButton, StopIcon, Title } from "@/entities";
 import { PAGE_URL } from "@/shared";
 import { BookService } from "@/shared/hooks/services/BookService";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { useHeroStore } from "@/shared/hooks/stores/useHeroStore";
 import { InfoHeader, LeftRight } from "@/widgets";
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import { ReactMediaRecorder } from "react-media-recorder";
 
 const StoryPage = () => {
     const navigate = useNavigate();
@@ -21,7 +22,7 @@ const StoryPage = () => {
     const [isHelp, setIsHelp] = useState<boolean>(false);
     const [help, setHelp] = useState<string>("");
     const pageNum = bookStore.getAllBook().length;
-    const bookService = BookService().help;
+    const bookService = BookService();
 
     const handleGPTApi = async () => {
         // console.log('bookStore.getAllBook(): ', bookStore.getAllBook()[0].name);
@@ -29,7 +30,7 @@ const StoryPage = () => {
         bookStore.getAllBook().forEach((book) => {
             book.name !== undefined ? content += `${book.name} : ${book.story}\n` : '';
         });
-        const res = await bookService({ message: content.trim() });
+        const res = await bookService.help({ message: content.trim() });
         console.log('res: ', res);
         setHelp(res.choices[0].message.content);
         return res;
@@ -70,7 +71,17 @@ const StoryPage = () => {
                                             </MessageContainer>
                                         </BalloonContainer>
                                     </ImageContainer>
-                                    <RecordIcon onClick={() => setIsRecord(true)}/>
+
+                                    <RecordContent
+                                        myBookContentId={bookStore.getMyBookCharacterId(Math.floor(progress / 3))}
+                                        setIsRecord={setIsRecord}
+                                        setRecordProgress={setRecordProgress}
+                                        progress={progress}
+                                        setProgress={setProgress}
+                                    />
+                                    {/* <RecordIcon onClick={
+                                        () => setIsRecord(true)
+                                        }/> */}
                                     <CustomTitle>아이콘을 클릭해서 알려주세요!</CustomTitle>
                                 </RecordContainer>
                             </>
@@ -79,7 +90,7 @@ const StoryPage = () => {
                                 {(!recordProgress) ? (
                                     <RecordContainer>
                                         <CustomTitle>이야기를 만들어 주세요</CustomTitle>
-                                        <textarea onChange={(e) => setRecord(e.target.value)} value={record} style={{width: "80%", height: "60%"}}/>
+                                        {/* <textarea onChange={(e) => setRecord(e.target.value)} value={record} style={{width: "80%", height: "60%"}}/> */}
                                         <SquareButton onClick={() => {
                                             setRecordProgress(true);
                                         }}>완료</SquareButton>
@@ -105,7 +116,15 @@ const StoryPage = () => {
                         <CustomTitle>등장인물의 대사인가요?</CustomTitle>
                         <ButtonContainer>
                             <CircleButton onClick={() => setProgress(progress+1)}>네</CircleButton>
-                            <CircleButton onClick={() => setProgress(progress + 2)}>아니요</CircleButton>
+                            <CircleButton onClick={() => {
+                                if (progress + 2 == pageNum * 3) {
+                                    bookStore.setStory(Math.floor(progress / 3), record);
+                                    navigate(PAGE_URL.Index)
+                                }
+                                else {
+                                    setProgress(progress + 2);
+                                }
+                                }}>아니요</CircleButton>
                         </ButtonContainer>
                     </HeroContainer>
                 ) : (
@@ -373,3 +392,4 @@ const HeroListContainer = styled.div`
 
 
 export default StoryPage;
+

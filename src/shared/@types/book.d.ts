@@ -1,6 +1,19 @@
 declare namespace Book {
     //dto
 
+    export interface MyMakedRes {
+        result: {
+            myBookContentId: number;
+            image: string;
+            previousContent: string;
+        }
+    }
+    export interface MyBookContentReq {
+        audio: File;
+        isLine: boolean;
+        myBookCharacterId: number | null;
+    }
+
     export interface MyBookRes {
         result: {
             myBookId: number;
@@ -28,7 +41,7 @@ declare namespace Book {
     }
     
     export interface HeroReq {
-        images: Blob[];
+        images: Blob;
     }
 
     export interface HeroRes {

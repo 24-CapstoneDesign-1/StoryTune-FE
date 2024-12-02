@@ -139,10 +139,10 @@ export const BookService = () => {
         };
     
         // 모든 Blob 파일을 Base64로 변환
-        const base64Images = await Promise.all(
-            body.images.map((image) => convertToBase64(image))
-        );
-        console.log(base64Images);
+        const base64Image = await convertToBase64(body.images);
+        // const base64Images = await Promise.all(
+        //     body.images.map((image) => convertToBase64(image))
+        // );
         // OpenAI API 호출
         const { data } = (await API.post(
             "https://api.openai.com/v1/chat/completions",
@@ -158,12 +158,12 @@ export const BookService = () => {
                         "content": [
                         {
                             "type": "text",
-                            "text": "Please distinguish the main character from the image."
+                            "text": "Please distinguish between main characters and non-main characters. If you are the main character, you only need to print out 'hero' and if you are not the main character, you can print out 'nonhero'. You should not print anything other than 'hero' and 'nonhero'."
                         },
                         {
                             "type": "image_url",
                             "image_url": {
-                            "url": base64Images
+                            "url": base64Image
                             }
                         }
                         ]
@@ -177,18 +177,17 @@ export const BookService = () => {
                     Authorization: `Bearer ${import.meta.env.VITE_OPENAI_SECRET_KEY}`,
                 },
             }
-        )) as AxiosResponse<{ message: string; images: string[] }>; // 응답 데이터의 예상 타입
-    
+        ))
         // OpenAI 응답 데이터를 Blob으로 변환
-        const images = await Promise.all(
-            data.images.map(async (base64) => {
-                const res = await fetch(base64); // Base64를 URL처럼 사용
-                const blob = await res.blob(); // Blob으로 변환
-                return blob;
-            })
-        );
+        // const images = await Promise.all(
+        //     data.images.map(async (base64) => {
+        //         const res = await fetch(base64); // Base64를 URL처럼 사용
+        //         const blob = await res.blob(); // Blob으로 변환
+        //         return blob;
+        //     })
+        // );
     
-        return { images }; // Book.HeroRes 타입 반환
+        return { data }; // Book.HeroRes 타입 반환
     };
 
     const topic = async (body: Book.TopicReq) => {
@@ -222,6 +221,7 @@ export const BookService = () => {
     };
 
     const bookCharacter = async (body: Book.BookCharacterReq) => {
+        console.log(body);
         const { data } = (await FORMAPI.post(
             `/api/mybook/${body.myBookId}/character`,
             body.images,
@@ -238,7 +238,51 @@ export const BookService = () => {
         return data;
     };
     
+    const myBookContent = async (myBookContentId: number, body: Book.MyBookContentReq) => {
+        const { data } = (await API.patch(
+            `/api/mybook/${myBookContentId}`,
+            body,{
+                headers: {
+                    "Authorization": `Bearer ${getAccess()}`,
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        ));
+        console.log('data', data);
+        return data;
+    };
 
+    const myMakedBook = async (myBookId: number, pageNum: number) => {
+        const { data } = (await API.get(
+            `/api/mybook/${myBookId}/${pageNum}`,
+            {
+                headers: {
+                    "Authorization" : `Bearer ${getAccess()}`,
+                }
+            }
+        )) as AxiosResponse<Book.MyMakedRes>;
+        return data;
+    }
+
+    const bookRecommend = async () => {
+        const { data } = (await API.get(
+            "/api/book/recommendations",
+            {
+                headers: {
+                    "Authorization" : `Bearer ${getAccess()}`,
+                }
+            }
+        )) as AxiosResponse<Book.BookListRes>;
+        return data;
+    }
+    const recordCharacter = async (body: Book.BookRecordReq) => {
+        const { data } = (await FORMAPI.post(
+            `/api/mybook/${bookStore.bookId}/character`,
+            body,
+        )) as AxiosResponse<Book.BookCharacterRes>;
+        console.log('data', data);
+        return data;
+    }
     return { newMakeBook, 
         bookImage, 
         record, 
@@ -252,5 +296,8 @@ export const BookService = () => {
         bookCharacter,
         bookCompleted,
         myBook,
+        myBookContent,
+        myMakedBook,
+        bookRecommend,
     };
 };
