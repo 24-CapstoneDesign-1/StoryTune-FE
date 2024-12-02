@@ -12,5 +12,5 @@ export {
 
 
 export { AuthService } from "./hooks/services/AuthService";
-
 export { useWebRTC } from "./hooks/useWebRTC";
+export { useUserStore } from "./hooks/stores/useUserStore";
