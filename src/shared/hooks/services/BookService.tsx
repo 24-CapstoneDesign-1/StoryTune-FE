@@ -1,9 +1,11 @@
 import { AxiosResponse } from "axios";
 import { API, FORMAPI, getAccess } from "@/shared/configs/axios";
 import { useBookStore } from "../stores/useBookStore";
+import { useHeroStore } from "../stores/useHeroStore";
 
 export const BookService = () => {
     const bookStore = useBookStore();
+    const heroStore = useHeroStore();
     const myBook = async () => {
         const { data } = (await API.get(
             "/api/mybook",
@@ -220,11 +222,18 @@ export const BookService = () => {
         return data;
     };
 
-    const bookCharacter = async (body: Book.BookCharacterReq) => {
-        console.log(body);
+    const bookCharacter = async (
+        myBookCharacterId: number,
+        file: FormData,
+    ) => {
+        console.log(file.getAll('images'));
         const { data } = (await FORMAPI.post(
-            `/api/mybook/${body.myBookId}/character`,
-            body.images,
+            `/api/mybook/${myBookCharacterId}/character`,
+            file, {
+                headers: {
+                    "Authorization": `Bearer ${getAccess()}`,
+                },
+            }
         )) as AxiosResponse<Book.BookCharacterRes>;
         console.log('data', data);
         return data;
@@ -275,15 +284,35 @@ export const BookService = () => {
         )) as AxiosResponse<Book.BookListRes>;
         return data;
     }
-    const recordCharacter = async (body: Book.BookRecordReq) => {
-        const { data } = (await FORMAPI.post(
-            `/api/mybook/${bookStore.bookId}/character`,
-            body,
-        )) as AxiosResponse<Book.BookCharacterRes>;
+    const recordCharacter = async (index: number, file: FormData) => {
+        console.log('aa', index);
+        const { data } = (await FORMAPI.patch(
+            `/api/mybook/character/${index}`,
+            file, {
+                headers: {
+                    "Authorization": `Bearer ${getAccess()}`,
+                },
+            }
+        ));
         console.log('data', data);
+        return data.result.name;
+    }
+
+    const myBookDetail = async (myBookId: number) => {
+        const { data } = (await API.get(
+            `/api/mybook/${myBookId}`,
+            {
+                headers: {
+                    "Authorization" : `Bearer ${getAccess()}`,
+                }
+            }
+        ));
         return data;
     }
-    return { newMakeBook, 
+
+    return { 
+        myBookDetail,
+        newMakeBook, 
         bookImage, 
         record, 
         recordTitle, 
@@ -299,5 +328,6 @@ export const BookService = () => {
         myBookContent,
         myMakedBook,
         bookRecommend,
+        recordCharacter,
     };
 };

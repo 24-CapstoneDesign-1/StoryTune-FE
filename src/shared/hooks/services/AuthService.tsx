@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { API, setAccess, storeAccess } from "@/shared";
+import { API, getAccess, setAccess, storeAccess } from "@/shared";
 import { useUserStore } from "../stores/useUserStore";
 
 export const AuthService = () => {
@@ -23,5 +23,17 @@ export const AuthService = () => {
         return data;
       };
 
-    return { signup, signin };
+    const userInfo = async () => {
+      const { data } = (await API.get(
+        "/api/user",
+        {
+          headers: {
+              "Authorization" : `Bearer ${getAccess()}`,
+          }
+      }
+      )) as AxiosResponse<User.UserInfoRes>;
+      return data;
+    }
+
+    return { signup, signin, userInfo };
 };

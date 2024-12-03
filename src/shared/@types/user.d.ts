@@ -1,5 +1,13 @@
 declare namespace User {
     //dto
+
+    export interface UserInfoRes {
+        result: {
+            userId: string;
+            name: string;
+        }
+    }
+    
     export interface SignInReqDto {
         username: string;
         password: string;

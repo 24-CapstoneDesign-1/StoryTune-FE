@@ -27,6 +27,7 @@ declare namespace Book {
         myBookId: number;
         images: FormData;
     }
+    
     export interface BookCharacterRes {
         result: {
             myBookCharacterIds: number[];
