@@ -22,7 +22,7 @@ const StoryPage = () => {
     const [help, setHelp] = useState<string>("");
     const pageNum = bookStore.getAllBook().length;
     const bookService = BookService();
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const handleGPTApi = async () => {
         // console.log('bookStore.getAllBook(): ', bookStore.getAllBook()[0].name);
@@ -43,7 +43,7 @@ const StoryPage = () => {
                     {help}
                 </HelpSubContainer>
             </HelpContainer>
-            <LoadingContainer isLoading={isLoading} onClick={() => setIsLoading(false)}>
+            <LoadingContainer isLoading={isLoading}>
                 <LoadingSubContainer>
                     Loading ...
                 </LoadingSubContainer>

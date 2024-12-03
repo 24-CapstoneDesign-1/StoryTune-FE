@@ -57,6 +57,8 @@ const Photo = styled.img`
     border-radius: 20px;
     @media (max-width: 768px) {
         margin-top: 0px;
+        width: 300px;
+        height: 300px;
     }
 `;
 const DescriptionContainer = styled.div`
@@ -72,6 +74,11 @@ const DescriptionContainer = styled.div`
     box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.3);
     white-space: pre-wrap;
     overflow-y: auto;
+    @media (max-width: 768px) {
+        width: 80%;
+        height: 300px;
+        margin: 20px 20px 0px 20px;
+    }
 `;
 
 const DescriptionLargeContainer = styled.div`
@@ -80,13 +87,24 @@ const DescriptionLargeContainer = styled.div`
 
 const ButtonContainer = styled.div`
     display: flex;
-    justify-content: space-between;
-    width: 500px;
+    justify-content: space-evenly;
+    width: 100%;
     margin-top: 30px;
+
+`;
+
+const ButtonSubContainer = styled.div`
+    display: flex;
+    justify-content: space-between;
+
 `;
 
 const ButtonCustom = styled(SquareButton)`
     height: 60px;
+    margin: 0px 10px 0px 10px;
+    @media (max-width: 768px) {
+        height: 40px;
+    }
 `;
 
 const BookPage = () => {
@@ -110,6 +128,7 @@ const BookPage = () => {
     const getDetail = async () => {
         const id = Number(params.id);
         const data = await bookService.myBookDetail(id);
+        console.log(data);
         setBook(data.result.details);
         setTitle(data.result.title);
         setCreatedAt(data.result.createdAt);
@@ -127,8 +146,10 @@ const BookPage = () => {
                 </PhotoContainer>
                 <DescriptionLargeContainer>
                     <ButtonContainer>
-                        <ButtonCustom onClick={() => setIsContent(true)}>Content</ButtonCustom>
-                        <ButtonCustom onClick={() => setIsContent(false)}>Senario</ButtonCustom>
+                        <ButtonSubContainer>
+                            <ButtonCustom onClick={() => setIsContent(true)}>Content</ButtonCustom>
+                            <ButtonCustom onClick={() => setIsContent(false)}>Senario</ButtonCustom>
+                        </ButtonSubContainer>
                     </ButtonContainer>
                     <DescriptionContainer>
                         {isContent ? book[page].content_story : book[page].content_scenario}

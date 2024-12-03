@@ -10,6 +10,9 @@ const ButtonContainer = styled.div`
     width: 30%;
     font-size: 2rem;
     margin-top: 40px;
+    @media (max-width: 768px) {
+        margin-top: 0px;
+    }
 `;
 
 const PageContainer = styled.div`
