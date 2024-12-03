@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { PAGE_URL } from "@/shared";
+import { AuthService, PAGE_URL, useUserStore } from "@/shared";
 import { FaSearch, FaBookOpen, FaPlus, FaMask, FaPencilAlt } from "react-icons/fa";
 import styled from "@emotion/styled";
 
@@ -127,7 +127,21 @@ const HomePage = () => {
     { title: "피노키오", createdAt: "2024.01.02", photo: "pinocchio-cover.jpg" },
     { title: "피노키오", createdAt: "2024.01.02", photo: "pinocchio-cover.jpg" },
   ]);
+  const authService = AuthService();
+  const userStore = useUserStore();
 
+  const user = async () => {
+    await authService.userInfo()
+    .then((res) => {
+        userStore.setUsername(res.result.userId);
+        userStore.setName(res.result.name);
+        console.log(userStore.getUserAllInfo());
+    })
+  }
+
+  useEffect(() => {
+    user();
+  }, []);
   const handleSearch = () => {
     if (search.trim()) navigate(PAGE_URL.Search, { state: { search } });
   };

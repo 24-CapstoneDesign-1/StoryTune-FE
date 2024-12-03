@@ -286,7 +286,22 @@ export const BookService = () => {
         console.log('data', data);
         return data;
     }
-    return { newMakeBook, 
+
+    const myBookDetail = async (myBookId: number) => {
+        const { data } = (await API.get(
+            `/api/mybook/${myBookId}`,
+            {
+                headers: {
+                    "Authorization" : `Bearer ${getAccess()}`,
+                }
+            }
+        ));
+        return data;
+    }
+
+    return { 
+        myBookDetail,
+        newMakeBook, 
         bookImage, 
         record, 
         recordTitle, 
@@ -302,5 +317,6 @@ export const BookService = () => {
         myBookContent,
         myMakedBook,
         bookRecommend,
+        recordCharacter,
     };
 };

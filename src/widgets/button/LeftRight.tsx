@@ -67,7 +67,7 @@ export const PageOffset = ({page, setPage}: {page : number; setPage :  Dispatch<
                     <PageContainer>
                         {page}
                     </PageContainer>
-                    <RightButton onClick={() => setPage(page+1)}/>
+                    <RightButton onClick={() => setPage(page)}/>
                 </>
             ) : (page === 10 ? (
                 <>
@@ -79,11 +79,11 @@ export const PageOffset = ({page, setPage}: {page : number; setPage :  Dispatch<
                 </>
             ) : (
                 <>
-                    <LeftButton onClick={() => setPage(page-1)}/>
+                    <LeftButton onClick={() => setPage(page-2)}/>
                     <PageContainer>
                         {page}
                     </PageContainer>
-                    <RightButton onClick={() => setPage(page+1)}/>
+                    <RightButton onClick={() => setPage(page)}/>
                 </>
             ))}
         </ButtonContainer>
