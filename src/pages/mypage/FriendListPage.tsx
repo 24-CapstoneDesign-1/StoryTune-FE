@@ -241,7 +241,7 @@ const FriendListPage = () => {
       <Section>
         <h2>친구 목록</h2>
         <div>
-          {friends.map((friend) => (
+          {(friends).length !== 0 ? (friends.map((friend) => (
             <FriendCard key={friend.id}>
               <FaUserCheck size={32} color="#FF8A65" />
               <FriendName>{friend.name}</FriendName>
@@ -250,7 +250,10 @@ const FriendListPage = () => {
             </small>
 
             </FriendCard>
-          ))}
+          ))) : (
+            <>
+            </>
+          )}
         </div>
       </Section>
 

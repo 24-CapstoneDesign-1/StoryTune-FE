@@ -100,7 +100,9 @@ const BookPage = () => {
     const bookService = BookService();
     const params = useParams();
     const [isContent, setIsContent] = useState(true);
-
+    const [title, setTitle] = useState("");
+    const [createdAt, setCreatedAt] = useState("");
+    const pageNum = book.length;
     useEffect(() => {
         getDetail();
     }, [page]);
@@ -109,6 +111,8 @@ const BookPage = () => {
         const id = Number(params.id);
         const data = await bookService.myBookDetail(id);
         setBook(data.result.details);
+        setTitle(data.result.title);
+        setCreatedAt(data.result.createdAt);
         return data;
     }
     return (
@@ -116,10 +120,10 @@ const BookPage = () => {
             <InfoHeader type="내가 만든 동화" />
             <SubContainer>
                 <PhotoContainer>
-                    <CustomTitle>ㅁㅁ</CustomTitle>
-                    {/* <CustomSubTitle>aa</CustomSubTitle> */}
+                    <CustomTitle>{title}</CustomTitle>
+                    <CustomSubTitle>{createdAt}</CustomSubTitle>
                     <Photo src={book[page].image} />
-                    <PageOffset page={page+1} setPage={setPage}/>
+                    <PageOffset pageNum={pageNum} page={page+1} setPage={setPage}/>
                 </PhotoContainer>
                 <DescriptionLargeContainer>
                     <ButtonContainer>

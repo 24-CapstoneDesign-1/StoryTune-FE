@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { PAGE_URL } from "@/shared";
 import { useHeroStore } from "@/shared/hooks/stores/useHeroStore";
+import { CharacterRecord } from "@/entities/element/button/Record";
 
 const SubContainer = styled.div`
     display: flex;
@@ -84,7 +85,7 @@ const NamingPage = () => {
                     <InputContianer>
                         {!typing ? (
                             <>
-                                <Record />
+                                <CharacterRecord index={curIndex}/>
                                 <CustomTitle>아이콘을 클릭해서 알려주세요!</CustomTitle>
                                 <CustomButton width="400px" height="50px" onClick={() => setTyping(!typing)}>직접 입력할래요!</CustomButton>
                             </>

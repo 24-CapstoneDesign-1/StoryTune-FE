@@ -97,8 +97,6 @@ const HeroNamingPage = () => {
     const location = useLocation();
     const [images, setImages] = useState<HeroNameProps[]>([]);
     const heroStore = useHeroStore();
-    const bookService = BookService();
-    const bookStore = useBookStore();
 
     // const character = async () => {
     //     const formData = new FormData();

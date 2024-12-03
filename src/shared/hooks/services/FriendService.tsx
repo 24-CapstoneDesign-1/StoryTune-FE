@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { API } from "@/shared";
+import { API, getAccess } from "@/shared";
 import { useFriendStore } from "../stores/useFriendStore";
 
 export const FriendService = () => {
@@ -41,7 +41,13 @@ export const FriendService = () => {
 
   const fetchFriendList = async () => {
     try {
-      const { data } = await API.get("/api/friend");
+      const { data } = await API.get(
+        "/api/friend", {
+          headers: {
+            "Authorization": `Bearer ${getAccess()}`,
+          },
+        }
+      );
       friendStore.setFriends(data); 
       return data;
     } catch (error) {
@@ -51,7 +57,13 @@ export const FriendService = () => {
 
   const searchFriend = async (searchTerm: string) => {
     try {
-      const { data } = await API.get(`/api/friend/search?query=${searchTerm}`);
+      const { data } = await API.get(
+        `/api/friend/search?username=${searchTerm}`, {
+          headers: {
+            "Authorization": `Bearer ${getAccess()}`,
+          },
+        }
+      );
       return data;
     } catch (error) {
       throw new Error("친구 검색에 실패했습니다.");
