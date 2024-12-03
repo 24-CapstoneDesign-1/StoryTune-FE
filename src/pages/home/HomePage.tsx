@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PAGE_URL } from "@/shared";
 import { FaSearch, FaBookOpen, FaPlus, FaMask, FaPencilAlt } from "react-icons/fa";
-import styled from "styled-components";
+import styled from "@emotion/styled";
 
 const PageContainer = styled.div`
   background-color: #fff9c4;

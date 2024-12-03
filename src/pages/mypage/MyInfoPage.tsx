@@ -63,7 +63,11 @@ const MyInfo = () => {
         <InfoCard>
           <InfoItem>
             <span>이름</span>
+<<<<<<< HEAD
             <span>{userInfo?.name}</span>
+=======
+            <span>{userInfo.name}</span>
+>>>>>>> 1d95887285087aa54898541a05b615860d78fb5b
           </InfoItem>
           <InfoItem>
             <span>아이디</span>
