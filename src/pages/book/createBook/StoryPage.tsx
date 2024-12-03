@@ -23,6 +23,7 @@ const StoryPage = () => {
     const [help, setHelp] = useState<string>("");
     const pageNum = bookStore.getAllBook().length;
     const bookService = BookService();
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const handleGPTApi = async () => {
         // console.log('bookStore.getAllBook(): ', bookStore.getAllBook()[0].name);
@@ -43,6 +44,11 @@ const StoryPage = () => {
                     {help}
                 </HelpSubContainer>
             </HelpContainer>
+            <LoadingContainer isLoading={isLoading} onClick={() => setIsLoading(false)}>
+                <LoadingSubContainer>
+                    Loading ...
+                </LoadingSubContainer>
+            </LoadingContainer>
             <InfoHeader type="나만의 동화 만들기" />
             <SubContainer>
                 <PhotoContainer>
@@ -78,6 +84,8 @@ const StoryPage = () => {
                                         setRecordProgress={setRecordProgress}
                                         progress={progress}
                                         setProgress={setProgress}
+                                        isLoading={isLoading}
+                                        setIsLoading={setIsLoading}
                                     />
                                     {/* <RecordIcon onClick={
                                         () => setIsRecord(true)
@@ -192,6 +200,36 @@ const HelpContainer = styled.div<{ isHelp: boolean }>`
     align-items: center;
     background-color: rgba(0, 0, 0, 0.8);
     z-index: 9999;
+`;
+const LoadingContainer = styled.div<{ isLoading: boolean }>`
+    display: ${({ isLoading }) => (isLoading ? "flex" : "none")};
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+`
+
+const LoadingSubContainer = styled.div`
+    width: 400px;
+    height: 400px;
+    position: absolute;
+    top: 300px;
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+    z-index: 100;
+    border-radius: 20px;
+    padding: 20px;
+    padding-top: 50px;
+    @media (max-width: 768px) {
+        width: 250px;
+        height: 300px;
+        top: 200px;
+        left: 50px;
+    }
 `;
 const HelpImg = styled.img`
     position: absolute;
