@@ -1,13 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled'; 
 import { MainContainer } from "@/entities";
 import { InfoHeader } from "@/widgets";
 import { io } from 'socket.io-client';
-import { FaCamera } from "react-icons/fa";
 import { BiSolidCameraOff, BiSolidCamera } from 'react-icons/bi'; 
 import { PiSpeakerSimpleSlashDuotone, PiSpeakerSimpleHighDuotone } from "react-icons/pi";
-import { useWebRTC } from '@/shared';
 
 const SubContainer = styled.div`
     height: 20vh;
@@ -59,7 +56,6 @@ const VisualizerBar = styled.div<{ height: number }>`
 `;
 
 const RolePlayPage = () => {
-  const location = useLocation();
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remoteStreams, setRemoteStreams] = useState<MediaStream[]>([]);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true); 

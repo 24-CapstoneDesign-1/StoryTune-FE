@@ -1,7 +1,5 @@
 import { MainContainer } from "@/entities";
 import { PAGE_URL } from "@/shared";
-import { BookService } from "@/shared/hooks/services/BookService";
-import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { useHeroStore } from "@/shared/hooks/stores/useHeroStore";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";

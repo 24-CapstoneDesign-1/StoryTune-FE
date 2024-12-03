@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { RecordIcon, StopIcon } from "./Button"
 import { BookService } from "@/shared/hooks/services/BookService";
 import { ReactMediaRecorder } from "react-media-recorder";
@@ -6,9 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { PAGE_URL } from "@/shared";
 import { useHeroStore } from "@/shared/hooks/stores/useHeroStore";
 
-export const Record = (recordApi: any) => {
+export const Record = () => {
     const [recording, setRecording] = useState(false);
-    const [text, setText] = useState('');
     const bookService = BookService();
     const navigate = useNavigate();
 
@@ -16,7 +15,7 @@ export const Record = (recordApi: any) => {
         <>
             <ReactMediaRecorder
                 audio
-                render={({ status, startRecording, stopRecording, mediaBlobUrl }) => (
+                render={({ startRecording, stopRecording, mediaBlobUrl }) => (
                     <div>
                         {recording ? <StopIcon onClick={() => {
                             setRecording(false);
@@ -61,18 +60,17 @@ interface RecordContentProps {
     setIsLoading: Dispatch<SetStateAction<boolean>>;
 }
 export const RecordContent = ({
-    myBookContentId, setIsRecord, setRecordProgress, progress, setProgress, isLoading, setIsLoading
+    myBookContentId, setIsRecord, setRecordProgress, progress, setProgress, setIsLoading
 } : RecordContentProps
 ) => {
     const [recording, setRecording] = useState(false);
-    const [text, setText] = useState('');
     const bookService = BookService();
 
     return (
         <>
             <ReactMediaRecorder
                 audio
-                render={({ status, startRecording, stopRecording, mediaBlobUrl }) => (
+                render={({ startRecording, stopRecording, mediaBlobUrl }) => (
                     <div>
                         {recording ? <StopIcon
                                 onClick={async () => {
@@ -120,7 +118,6 @@ export const RecordContent = ({
 // export const CharacterRecord = ({index, typing, setTyping} : {index: number, typing: any, setTyping: any}) => {
 export const CharacterRecord = ({index} : {index: number}) => {
     const [recording, setRecording] = useState(false);
-    const [text, setText] = useState('');
     const bookService = BookService();
     const navigate = useNavigate();
     const heroStore = useHeroStore();
@@ -131,7 +128,7 @@ export const CharacterRecord = ({index} : {index: number}) => {
         <>
             <ReactMediaRecorder
                 audio
-                render={({ status, startRecording, stopRecording, mediaBlobUrl }) => (
+                render={({ startRecording, stopRecording, mediaBlobUrl }) => (
                     <div>
                         {recording ? <StopIcon onClick={() => {
                             setRecording(false);

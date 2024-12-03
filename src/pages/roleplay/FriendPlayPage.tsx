@@ -1,12 +1,8 @@
-import { LeftRight, InfoHeader } from "@/widgets";
+import { InfoHeader } from "@/widgets";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { PAGE_URL } from "@/shared";
-import { Button, SquareButton, CircleButton, MainContainer} from "@/entities";
-import { LeftButton, RightButton } from "@/entities";
+import { MainContainer} from "@/entities";
 
 const FriendPlayPage = () => {
-    const navigate = useNavigate();
     const [bookList] = useState([
         { title: "피노키오", createdAt: "2024.01.02", photo: "pinocchio-cover.jpg" },
         { title: "피노키오", createdAt: "2024.01.02", photo: "pinocchio-cover.jpg" },

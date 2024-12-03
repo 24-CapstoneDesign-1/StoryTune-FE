@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import styled from '@emotion/styled';
-import { MainContainer, SquareButton, Title } from "@/entities";
+import { MainContainer, SquareButton } from "@/entities";
 import { useNavigate } from 'react-router-dom';
 import { PAGE_URL } from '@/shared';
 //Modal.tsx에서 가져오니까 오류생겨서 일단 여기에 함 

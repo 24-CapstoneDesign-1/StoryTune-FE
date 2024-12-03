@@ -1,4 +1,4 @@
-import { Button, MainContainer, SquareButton, Title, InputContainer, Record } from "@/entities";
+import { Button, MainContainer, SquareButton, Title, InputContainer } from "@/entities";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
 import { useState } from "react";
@@ -66,8 +66,8 @@ const ButtonContainer = styled.div`
 const NamingPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [image, setImage] = useState(location.state.image);
-    const [curIndex, setCurIndex] = useState(location.state.index);
+    const [image] = useState(location.state.image);
+    const [curIndex] = useState(location.state.index);
     const [name, setName] = useState("");
     const [typing, setTyping] = useState(false);
     const [finalName, setFinalName] = useState("");

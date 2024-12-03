@@ -1,11 +1,9 @@
 import { AxiosResponse } from "axios";
 import { API, FORMAPI, getAccess } from "@/shared/configs/axios";
 import { useBookStore } from "../stores/useBookStore";
-import { useHeroStore } from "../stores/useHeroStore";
 
 export const BookService = () => {
     const bookStore = useBookStore();
-    const heroStore = useHeroStore();
     const myBook = async () => {
         const { data } = (await API.get(
             "/api/mybook",

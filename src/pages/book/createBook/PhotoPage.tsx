@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { InfoHeader } from "@/widgets";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { CiRedo } from "react-icons/ci";
 import { FaCaretRight } from "react-icons/fa";
 import { PAGE_URL } from "@/shared";
@@ -14,7 +14,7 @@ const PhotoPage = () => {
   const [images, setImages] = useState<string[]>([]);
   const bookStore = useBookStore();
   const bookService = BookService();
-  const [bookId, setBookId] = useState(bookStore.getBookId());
+  const [bookId] = useState(bookStore.getBookId());
   const [file, setFile] = useState<File[] | null>(null);
 
   const imageCompress = () => {

@@ -1,4 +1,3 @@
-import { AxiosResponse } from "axios";
 import { API, getAccess } from "@/shared";
 import { useFriendStore } from "../stores/useFriendStore";
 

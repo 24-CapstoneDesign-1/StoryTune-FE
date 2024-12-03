@@ -1,7 +1,5 @@
 import { InfoHeader } from "@/widgets";
-import { useNavigate } from "react-router-dom";
-import { PAGE_URL, useUserStore } from "@/shared";
-import { useLocation } from 'react-router-dom';
+import { useUserStore } from "@/shared";
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { MainContainer } from "@/entities";
@@ -41,7 +39,6 @@ const InfoItem = styled.div`
 
 const MyInfo = () => {
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
   
   const { getUserAllInfo } = useUserStore();
   const userInfo = getUserAllInfo(); 

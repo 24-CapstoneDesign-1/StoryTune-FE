@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthService, PAGE_URL, useUserStore } from "@/shared";
-import { FaSearch, FaBookOpen, FaPlus, FaMask, FaPencilAlt } from "react-icons/fa";
+import { PAGE_URL } from "@/shared";
+import { FaSearch, FaBookOpen, FaMask, FaPencilAlt } from "react-icons/fa";
 import styled from "@emotion/styled";
 
 const PageContainer = styled.div`
@@ -121,27 +121,25 @@ const BookCard = styled.div`
 const HomePage = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const [bookList, setBookList] = useState([
+  const [bookList] = useState([
     { title: "피노키오", createdAt: "2024.01.02", photo: "pinocchio-cover.jpg" },
     { title: "피노키오", createdAt: "2024.01.02", photo: "pinocchio-cover.jpg" },
     { title: "피노키오", createdAt: "2024.01.02", photo: "pinocchio-cover.jpg" },
     { title: "피노키오", createdAt: "2024.01.02", photo: "pinocchio-cover.jpg" },
   ]);
-  const authService = AuthService();
-  const userStore = useUserStore();
 
-  const user = async () => {
-    await authService.userInfo()
-    .then((res) => {
-        userStore.setUsername(res.result.userId);
-        userStore.setName(res.result.name);
-        console.log(userStore.getUserAllInfo());
-    })
-  }
+  // const user = async () => {
+  //   await authService.userInfo()
+  //   .then((res) => {
+  //       userStore.setUsername(res.result.userId);
+  //       userStore.setName(res.result.name);
+  //       console.log(userStore.getUserAllInfo());
+  //   })
+  // }
 
-  useEffect(() => {
-    user();
-  }, []);
+  // useEffect(() => {
+  //   user();
+  // }, []);
   const handleSearch = () => {
     if (search.trim()) navigate(PAGE_URL.Search, { state: { search } });
   };

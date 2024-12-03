@@ -1,4 +1,4 @@
-import { Button, InputContainer, MainContainer, Record, RecordIcon, SquareButton, Title } from "@/entities";
+import { Button, InputContainer, MainContainer, Record, SquareButton, Title } from "@/entities";
 import { PAGE_URL } from "@/shared";
 import { BookService } from "@/shared/hooks/services/BookService";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
@@ -93,7 +93,6 @@ const ButtonContainer = styled.div`
 `;
 
 const TitlePage = () => {
-    const [image, setImage] = useState("../public/images/temp.svg");
     const [name, setName] = useState("");
     const [typing, setTyping] = useState(false);
     const [finalName, setFinalName] = useState("");
@@ -143,7 +142,7 @@ const TitlePage = () => {
                         <InputContianer>
                             {!typing ? (
                                 <>
-                                    <Record recordApi={bookService.recordTitle} />
+                                    <Record/>
                                     <CustomTitle>아이콘을 클릭해서 알려주세요!</CustomTitle>
                                 </>
                             ): (

@@ -2,10 +2,7 @@ import styled from "@emotion/styled";
 import { Button, Title, ValidInput } from "@/entities";
 import { useNavigate } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { API } from "@/shared"; 
-import { FaEyeSlash, FaEye } from "react-icons/fa";
 import { useState } from "react";
-import { PAGE_URL } from "@/shared";
 
 const ChangeInfoContainer = styled.div`
     display: flex;
@@ -53,11 +50,11 @@ const PasswordContainer = styled.div`
 
 const ChangeInfoPage = () => {
     const navigate = useNavigate();
-    const [isPasswordVisible, setIsPasswordVisible] = useState(true);
-    const [isNewPasswordVisible, setIsNewPasswordVisible] = useState(true);
+    const [isPasswordVisible] = useState(true);
+    const [isNewPasswordVisible] = useState(true);
     const { register, handleSubmit, setError, formState: { errors }, } = useForm();
 
-    const onSubmit: SubmitHandler<any> = async (data) => {
+    const onSubmit: SubmitHandler<any> = async () => {
         try {
             //await API.put('/change-password', { 
             //    currentPassword: data.currentPassword,

@@ -19,7 +19,7 @@ declare namespace User {
 }
 
 export const useFriendStore = create<User.FriendStore>()(
-    immer((set, get) => ({
+    immer((set) => ({
         friends: [],
 
         addFriend: (friend) => {

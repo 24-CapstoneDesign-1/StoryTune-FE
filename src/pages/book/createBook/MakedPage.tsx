@@ -1,5 +1,4 @@
 import { MainContainer, SquareButton, Title } from "@/entities";
-import { PAGE_URL } from "@/shared";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";

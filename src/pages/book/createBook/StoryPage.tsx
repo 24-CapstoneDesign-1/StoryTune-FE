@@ -1,22 +1,21 @@
-import { CircleButton, MainContainer, RecordContent, RecordIcon, SquareButton, StopIcon, Title } from "@/entities";
+import { CircleButton, MainContainer, RecordContent, SquareButton, Title } from "@/entities";
 import { PAGE_URL } from "@/shared";
 import { BookService } from "@/shared/hooks/services/BookService";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { useHeroStore } from "@/shared/hooks/stores/useHeroStore";
 import { InfoHeader, LeftRight } from "@/widgets";
 import styled from "@emotion/styled";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
-import { ReactMediaRecorder } from "react-media-recorder";
 
 const StoryPage = () => {
     const navigate = useNavigate();
-    const [record, setRecord] = useState<string>("");
+    const [record] = useState<string>("");
     const [progress, setProgress] = useState<number>(0);
     const heroStore = useHeroStore();
     const bookStore = useBookStore();
-    const [hero, setHero] = useState<string[]>(heroStore.getAllName());
+    const [hero] = useState<string[]>(heroStore.getAllName());
     const [isRecord, setIsRecord] = useState<boolean>(false);
     const [recordProgress, setRecordProgress] = useState<boolean>(false);
     const [isHelp, setIsHelp] = useState<boolean>(false);
@@ -62,7 +61,7 @@ const StoryPage = () => {
                                 <RecordContainer>
                                     <ImageContainer>
                                         <HelpImg src="../public/images/help.svg" onClick={() => {
-                                            handleGPTApi().then((res) => {
+                                            handleGPTApi().then(() => {
                                                 // setHelp(res.data.choices[0].message.content);
                                             }).then(() => {
                                                 setIsHelp(true);

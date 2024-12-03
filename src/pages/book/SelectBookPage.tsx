@@ -1,8 +1,8 @@
-import { Book, Button, MainContainer, Search } from "@/entities";
+import { Book, MainContainer, Search } from "@/entities";
 import { PAGE_URL } from "@/shared";
 import { BookService } from "@/shared/hooks/services/BookService";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
-import { BookList, InfoHeader } from "@/widgets";
+import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { FaPlay } from "react-icons/fa6";

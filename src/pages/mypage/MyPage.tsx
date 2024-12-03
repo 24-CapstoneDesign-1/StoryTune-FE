@@ -1,10 +1,9 @@
 import { InfoHeader } from "@/widgets";
 import { useNavigate } from "react-router-dom";
 import { PAGE_URL } from "@/shared";
-import { useLocation } from "react-router-dom";
+// import { useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
 import { MainContainer } from "@/entities";
-import { Title } from "@/entities";
 import { API } from "@/shared";
 import { useEffect, useState } from "react";
 
@@ -65,14 +64,15 @@ const LogoutButton = styled.button`
 
 const MyPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const name = params.get("name");
+  // const location = useLocation();
+  // const params = new URLSearchParams(location.search);
+  // const name = params.get("name");
   const [userInfo, setUserInfo] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
 
   const fetchUserInfo = async () => {
     try {
+      console.log(error)
       const response = await API.get("/myinfo");
       setUserInfo(response.data);
     } catch (err) {

@@ -1,6 +1,5 @@
 import { lazy, Suspense } from "react";
 import {
-    Navigate,
     BrowserRouter as RootRouter,
     Route,
     Routes,

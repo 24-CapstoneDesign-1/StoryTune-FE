@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { MainContainer, SquareButton } from "@/entities";
 import { InfoHeader } from "@/widgets";
@@ -68,7 +67,6 @@ const roles = ['여주', '남주', '조연1', '조연2', '행인1', '행인2'];
 
 const SelectRolePage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   // const friends: Friend[] = location.state?.friends || [];
   const friends: Friend[] = [
     { id: 'user1', name: '김민수' },

@@ -54,7 +54,6 @@ const InfoContainer = styled.div`
     padding: 10px;
 `;
 export const Book = ({
-    bookId,
     title,
     createdAt,
     author,

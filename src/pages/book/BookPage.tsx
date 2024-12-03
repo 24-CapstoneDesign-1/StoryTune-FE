@@ -1,6 +1,6 @@
 import { MainContainer, SquareButton, Title } from "@/entities";
 import { BookService } from "@/shared/hooks/services/BookService";
-import { InfoHeader, LeftRight } from "@/widgets";
+import { InfoHeader } from "@/widgets";
 import { PageOffset } from "@/widgets/button/LeftRight";
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { FaUserCheck, FaUserPlus } from "react-icons/fa";
-import { API, FriendService } from "@/shared";
+import { FriendService } from "@/shared";
 
 const PageContainer = styled.div`
   background-color: #fff9c4;
@@ -133,10 +133,6 @@ const FriendListPage = () => {
 
     fetchFriendsData();
   }, [friendService]);
-
-  const isFriend = (userId: string) => friends.some((friend) => friend.id === userId);
-
-  const hasSentRequest = (userId: string) => receivedRequests.some((request) => request.id === userId);
 
   const handleSearch = async () => {
     try {
