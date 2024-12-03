@@ -2,14 +2,17 @@ import axios from "axios";
 import { PAGE_URL } from "./path";
 
 export const API = axios.create({
-  baseURL: import.meta.env.VITE_SERVER_URL,
+  baseURL: '/api',
   headers: {
     "Content-Type": "application/json",
   },
 });
 
 export const FORMAPI = axios.create({
-  baseURL: import.meta.env.VITE_SERVER_URL,
+  baseURL: '/api',
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 const storageAccessKey = "JWT_ACCESS_TOKEN";
@@ -56,3 +59,35 @@ export const getAccess = (): string | null => {
 //   }
 // );
 
+API.interceptors.request.use(
+  (config) => {
+    const token = getAccess();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    console.log('Request Config:', {
+      url: config.url,
+      headers: config.headers,
+      method: config.method
+    });
+    return config;
+  },
+  (error) => {
+    console.error('Request Error:', error);
+    return Promise.reject(error);
+  }
+);
+
+
+
+// FORMAPI도 동일하게 적용
+FORMAPI.interceptors.request.use(
+  (config) => {
+    const token = getAccess();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);

@@ -122,51 +122,68 @@ const FriendListPage = () => {
   useEffect(() => {
     const fetchFriendsData = async () => {
         try {
-          const { friends, requests } = await friendService.fetchFriendList();  // Assuming the API returns this format
-          setFriends(friends);
-          setReceivedRequests(requests);
+          const response = await friendService.fetchFriendList();
+          if (response && typeof response === 'object') {
+            setFriends(Array.isArray(response.friends) ? response.friends : []);
+            setReceivedRequests(Array.isArray(response.requests) ? response.requests : []);
+          } else {
+            console.error("Invalid response format:", response);
+            setError("데이터를 불러오는데 실패했습니다.");
+          }
         } catch (error) {
           console.error("친구 목록 불러오기 실패", error);
-        }
+          setError("친구 목록을 불러오는데 실패했습니다.");
+        } 
       };
-      
-
-    fetchFriendsData();
-  }, [friendService]);
-
-  const isFriend = (userId: string) => friends.some((friend) => friend.id === userId);
-
-  const hasSentRequest = (userId: string) => receivedRequests.some((request) => request.id === userId);
+  
+      fetchFriendsData();
+    }, []);
 
   const handleSearch = async () => {
+    if (!searchId.trim()) {
+      setError("찾을 친구를 입력해주세요.");
+      return;
+    }
+
     try {
-      const searchResults = await friendService.searchFriend(searchId);
-      if (searchResults.length > 0) {
-        setSearchResults(searchResults);
+      const results = await friendService.searchFriend(searchId);
+      console.log("API Response:", results);
+      if (Array.isArray(results) && results.length > 0) {
+        const filteredResults = results.filter(
+          user => !friends.some(friend => friend.id === user.id)
+        );
+        setSearchResults(filteredResults);
         setError("");
       } else {
         setSearchResults([]);
-        setError("존재하지 않는 사용자이거나 이미 친구입니다.");
+        setError("검색 결과가 없습니다.");
       }
     } catch (error) {
       console.error("검색 실패", error);
+      setError("검색 중 오류가 발생했습니다.");
     }
   };
 
   const handleSendRequest = async (user: { id: string; name: string }) => {
     try {
-      await friendService.addFriend(user.id); 
-      alert(`"${user.name}"님에게 친구 요청을 보냈습니다.`);
+      await friendService.addFriend(user.id);
+      setSearchResults(prev => prev.filter(result => result.id !== user.id));
+      alert(`${user.name}님에게 친구 요청을 보냈습니다.`);
     } catch (error) {
       console.error("친구 요청 실패:", error);
-      alert("친구 요청에 실패했습니다.");
+      alert("친구 요청을 보내는데 실패했습니다.");
     }
   };
 
   const handleAcceptRequest = async (id: string) => {
     try {
-      await friendService.acceptRequest(id); 
-      alert(`"${id}"님의 요청을 수락했습니다.`);
+      await friendService.acceptRequest(id);
+      const acceptedRequest = receivedRequests.find(request => request.id === id);
+      if (acceptedRequest) {
+        setFriends(prev => [...prev, acceptedRequest]);
+        setReceivedRequests(prev => prev.filter(request => request.id !== id));
+      }
+      alert("친구 요청을 수락했습니다.");
     } catch (error) {
       console.error("요청 수락 실패:", error);
       alert("요청 수락에 실패했습니다.");
@@ -176,7 +193,8 @@ const FriendListPage = () => {
   const handleRejectRequest = async (id: string) => {
     try {
       await friendService.rejectRequest(id);
-      alert(`"${id}"님의 요청을 거절했습니다.`);
+      setReceivedRequests(prev => prev.filter(request => request.id !== id));
+      alert("친구 요청을 거절했습니다.");
     } catch (error) {
       console.error("요청 거절 실패:", error);
       alert("요청 거절에 실패했습니다.");
@@ -206,12 +224,14 @@ const FriendListPage = () => {
 //     }
 //   };
 
-  return (
+return (
     <PageContainer>
       <header style={{ textAlign: "center", marginBottom: "2rem" }}>
-                <h1 style={{ fontSize: "2rem", color: "#5D4037", marginBottom: "0.5rem" }}>친구 검색</h1>
-                <p style={{ fontSize: "1rem", color: "#5D4037" }}>친구 목록을 확인하세요!</p>
-      </header> 
+        <h1 style={{ fontSize: "2rem", color: "#5D4037", marginBottom: "0.5rem" }}>
+          친구 검색
+        </h1>
+        <p style={{ fontSize: "1rem", color: "#5D4037" }}>친구 목록을 확인하세요!</p>
+      </header>
 
       <SearchContainer>
         <SearchInput
@@ -219,24 +239,31 @@ const FriendListPage = () => {
           value={searchId}
           onChange={(e) => setSearchId(e.target.value)}
           placeholder="아이디나 이름으로 검색하세요."
+          onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
         />
         <SearchButton onClick={handleSearch}>검색</SearchButton>
-        {error && <p style={{color : "red"}}>{error}</p>}
-        <Section>
-        <div>
-        {searchResults.map((result) => (
-            <FriendCard key={result.id} onClick={() => handleSendRequest(result)}>
-              <FaUserPlus size={32} color="#FF8A65" />
-              <FriendName>{result.name}</FriendName>
-              <small style={{ backgroundColor: "#E6E6E6" }}>
-                {result.id}
-               </small>
-            </FriendCard>
-          ))}
-        </div>
-        </Section>
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {searchResults.length > 0 && (
+          <Section>
+            <div>
+              {searchResults.map((result) => (
+                <FriendCard key={result.id}>
+                  <FaUserPlus size={32} color="#FF8A65" />
+                  <FriendName>{result.name}</FriendName>
+                  <small style={{ backgroundColor: "#E6E6E6", padding: "2px 4px", borderRadius: "4px" }}>
+                    {result.id}
+                  </small>
+                  <RequestActions>
+                    <ActionButton onClick={() => handleSendRequest(result)}>
+                      친구 요청
+                    </ActionButton>
+                  </RequestActions>
+                </FriendCard>
+              ))}
+            </div>
+          </Section>
+        )}
       </SearchContainer>
-
 
       <Section>
         <h2>친구 목록</h2>
