@@ -56,27 +56,30 @@ const InfoContainer = styled.div`
 export const Book = ({
     title,
     createdAt,
-    photo,
+    author,
+    cover,
     clickEvent,
 }: {
+    bookId: number;
     title: string;
-    createdAt: string;
-    photo: string;
-    clickEvent: () => void;
+    createdAt?: string;
+    author?: string;
+    cover: string;
+    clickEvent?: () => void;
 }) => {
     return (
         <BookContainer onClick={clickEvent}>
-            <ImageContainer src={photo} />
+            <ImageContainer src={cover} />
             <InfoContainer>
                 <TitleContainer>{title}</TitleContainer>
-                <CreatedContainer>{createdAt}</CreatedContainer>
+                <CreatedContainer>{author ? author : createdAt}</CreatedContainer>
             </InfoContainer>
         </BookContainer>
     );
 };
 
 export const MainContainer = styled.div`
-    background-color: #FFFCAD;
+    background-color: #fff9c4;
     display: flex;
     flex-direction: column;
     align-items: center;

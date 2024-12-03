@@ -25,7 +25,6 @@ const ImageBlock = styled.label`
     background-color: transparent;
     border-radius: 10px;
     color: black;
-    // overflow: hidden;
     position: relative;
     border: 1px solid #000000;
     box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.5);
@@ -53,7 +52,7 @@ const ImageContainer = styled.div`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 40%;
+  width: 50%;
   margin-top: 20px;
   @media (max-width: 768px) {
     width: 100%;
@@ -74,7 +73,6 @@ const NameContainer = styled.div`
     width: 165px;
     height: 20px;
     border-radius: 0px 0px 9px 9px;
-    // box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.5);
     border-top: 1px solid #000000;
     padding: 10px 0px 10px 5px;
     font-size: 1.2rem;
@@ -95,19 +93,42 @@ interface HeroNameProps {
 const HeroNamingPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [images, setImages] = useState<HeroNameProps[]>([
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-    ]);
+    const [images, setImages] = useState<HeroNameProps[]>([]);
     const heroStore = useHeroStore();
+
+    // const character = async () => {
+    //     const formData = new FormData();
+    //     heroStore.getImages().forEach((image, index) => {
+    //         formData.append("images", image, `hero${index}`);
+    //     });
+    //     try{
+    //         const res = await bookService.bookCharacter(bookStore.bookId, formData);
+    //         console.log("Image upload success:", res);
+    //         return res;
+    //     } catch (error) {
+    //         console.error("Image upload failed:", error);
+    //       }
+    // }
+    useEffect(() => {
+        const fetchCharacter = async () => {
+            if (!heroStore.getImages().length) {
+                navigate(PAGE_URL.Hero);
+                return;
+            }
+        };
+    
+        fetchCharacter();
+    }, [heroStore, navigate]);
+    
+
+    useEffect(() => {
+        // heroStore.getImages()가 이미지를 반환한다고 가정하고, 이미지를 업데이트
+        const newImages = heroStore.getImages().map((image, index) => ({
+            image: URL.createObjectURL(image),
+            name: heroStore.getName(index) || ""
+        }));
+        setImages(newImages); // 새로운 이미지 배열로 상태 업데이트
+    }, [heroStore]); // heroStore의 상태가 바뀔 때마다 실행
 
     useEffect(() => {
         if (location.state) {
@@ -130,37 +151,32 @@ const HeroNamingPage = () => {
                 </TitleContainer>
                 <ImageContainer>
                     {images.map((image, index) => (
-                        <>
                         <ImageBlock key={index} onClick={() => {
-                            navigate(PAGE_URL.Name, {state: {image: image.image, index: index}});
+                            navigate(PAGE_URL.Name, { state: { image: image.image, index: index } });
                         }}>
                             <Image src={image.image} />
-                            {heroStore.getName(index)?.length === undefined ? (
-                                <>
-                                </>
-                            ) : (
+                            {image.name ? (
                                 <NameContainer>
-                                    {heroStore.getName(index)}
+                                    {image.name}
                                 </NameContainer>
-                            )}
+                            ) : null}
                         </ImageBlock>
-                        </>
                     ))}
-
                 </ImageContainer>
                 <ButtonContainer>
-                        <ButtonSubContainer>
-                            {`마음에 들지 않아요.
-                            다시 이름을 알려줄게요!`}
-                        </ButtonSubContainer>
-                        <ButtonSubContainer onClick={() => navigate(PAGE_URL.Topic)}>
-                            {`마음에 들어요!
-                            이어서 하기`}
-                        </ButtonSubContainer>
-                    </ButtonContainer>
+                    <ButtonSubContainer>
+                        {`마음에 들지 않아요.
+                        다시 이름을 알려줄게요!`}
+                    </ButtonSubContainer>
+                    <ButtonSubContainer onClick={() => navigate(PAGE_URL.Topic)}>
+                        {`마음에 들어요!
+                        이어서 하기`}
+                    </ButtonSubContainer>
+                </ButtonContainer>
             </SubContainer>
-            <div style={{height: "300px"}}></div>
+            <div style={{ height: "300px" }}></div>
         </MainContainer>
-    )
+    );
 };
+
 export default HeroNamingPage;

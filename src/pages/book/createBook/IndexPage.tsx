@@ -1,27 +1,39 @@
 import { MainContainer, SquareButton } from "@/entities";
 import { PAGE_URL } from "@/shared";
+import { BookService } from "@/shared/hooks/services/BookService";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const IndexPage = () => {
     const bookStore = useBookStore();
-    const [images, setImages] = useState([
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-        {image: "../images/temp.svg", name: ""},
-    ]);
+    const [images, setImages] = useState<
+    { image: string; myBookCharacterId: number; name: string; story: string }[]
+>([]);
+
     const [progress, setProgress] = useState<number>(0);
     const navigate = useNavigate();
+    const bookService = BookService();
+
+    useEffect(() => {
+        const fetchCharacter = async () => {
+            const res = await bookStore.getAllBook(); // 데이터를 가져옵니다.
+            console.log(res);
+            // Blob을 문자열로 변환
+            const formattedImages = res.map((book: any) => ({
+                image: URL.createObjectURL(book.image), // Blob → string 변환
+                myBookCharacterId: book.myBookCharacterId,
+                name: book.name,
+                story: book.story,
+            }));
+    
+            setImages(formattedImages); // 상태 업데이트
+        };
+    
+        fetchCharacter();
+    }, []);
 
     return (
         <MainContainer>
@@ -33,8 +45,8 @@ const IndexPage = () => {
                             {images.map((image, index) => (
                                 <ImageBlock key={index}>
                                     <Image src={image.image} onClick={() => {
-                                        setProgress(progress+1)
-                                        bookStore.setIndex(index)    
+                                        setProgress(progress+1);
+                                        bookStore.setIndex(index);
                                     }}/>
                                 </ImageBlock>
                             ))}
@@ -45,13 +57,16 @@ const IndexPage = () => {
                         <ValidContainer>
                             <PhotoContainer>
                                 <TitleContainer>동화책의 표지가 맞나요?</TitleContainer>
-                                <Photo src="../public/images/temp.svg" />
+                                <Photo src={images[bookStore.getIndex()].image} />
                             </PhotoContainer>
                             <InputContianer>
                                 <ButtonContainer>
                                     <SquareButton width="180px" height="100px" onClick={() => setProgress(progress-1)}>{`표지가 틀렸어요.
                                     다시 말하기`}</SquareButton>
-                                    <SquareButton width="180px" height="100px" onClick={() => navigate(PAGE_URL.Title)}>{`맞아요!
+                                    <SquareButton width="180px" height="100px" onClick={() => {
+                                        navigate(PAGE_URL.Title);
+                                        bookService.cover({myBookContentId: bookStore.getMyBookCharacterId(bookStore.getIndex())});
+                                    }}>{`맞아요!
                                     이어서 하기`}</SquareButton>
                                 </ButtonContainer>
                             </InputContianer>
@@ -103,6 +118,7 @@ const Photo = styled.img`
     height: 400px;
     margin-top: 20px;
     margin-bottom: 20px;
+    border-radius: 20px;
 `;
 const ImageBlock = styled.label`
     width: 170px;

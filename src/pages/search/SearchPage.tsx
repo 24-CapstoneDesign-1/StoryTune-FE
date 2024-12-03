@@ -1,8 +1,9 @@
 import { MainContainer, Search } from "@/entities";
-import { BookList, InfoHeader, SearchBookList } from "@/widgets";
+import { InfoHeader, SearchBookList } from "@/widgets";
 import { useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { BookService } from "@/shared/hooks/services/BookService";
 
 const SearchContainer = styled.div`
     width: 100%;
@@ -42,36 +43,40 @@ const SearchInputContainer = styled.div`
     justify-content: center;
     width: 100%;
 `;
+interface Book {
+    bookId: number;
+    cover: string;
+    title: string;
+    author?: string;
+    createdAt?: string;
+}
 const SearchPage = () => {
-    const navigate = useNavigate();
     const location = useLocation();
     const searchInputRef = useRef<HTMLInputElement>(null);
     const [search, setSearch] = useState(location.state ? location.state.search : "");
-    const [searchList, setSearchList] = useState([
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-        {"title": "피노키오", "createdAt": "2021-10-01", "photo": "../public/images/temp.svg"},
-    ]);
+    const [searchList, setSearchList] = useState<Book[]>([]);
+    const bookService = BookService();
 
     useEffect(() => {
         searchInputRef.current?.focus();
+        if (search) {
+            bookService.search(search).then((res) => {
+                setSearchList(res.result.books);
+            });
+        }
     }, []);
     return (
         <MainContainer>
             <InfoHeader type="검색하기" />
             <SearchMainContainer>
                 <SearchInputContainer>
-                    <Search value={search} ref={searchInputRef} change={(e) => setSearch(e.target.value)} onSearch={() => {}} />
+                    <Search value={search} ref={searchInputRef} change={(e) => setSearch(e.target.value)} onSearch={() => {
+                        if (search) {
+                            bookService.search(search).then((res) => {
+                                setSearchList(res.result.books);
+                            });
+                        }
+                    }} />
                 </SearchInputContainer>
                 {search ? (
                     <SearchContainer>

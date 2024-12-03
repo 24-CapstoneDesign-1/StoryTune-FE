@@ -1,5 +1,4 @@
 import axios from "axios";
-import { PAGE_URL } from "./path";
 
 export const API = axios.create({
   baseURL: import.meta.env.VITE_SERVER_URL,

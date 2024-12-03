@@ -1,4 +1,4 @@
-import { CircleButton, MainContainer, RecordIcon, SquareButton, Title } from "@/entities";
+import { CircleButton, MainContainer, RecordContent, SquareButton, Title } from "@/entities";
 import { PAGE_URL } from "@/shared";
 import { BookService } from "@/shared/hooks/services/BookService";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
@@ -11,17 +11,18 @@ import { useNavigate } from "react-router-dom";
 
 const StoryPage = () => {
     const navigate = useNavigate();
-    const [record, setRecord] = useState<string>("");
+    const [record] = useState<string>("");
     const [progress, setProgress] = useState<number>(0);
     const heroStore = useHeroStore();
     const bookStore = useBookStore();
-    const [hero, setHero] = useState<string[]>(heroStore.getAllName());
+    const [hero] = useState<string[]>(heroStore.getAllName());
     const [isRecord, setIsRecord] = useState<boolean>(false);
     const [recordProgress, setRecordProgress] = useState<boolean>(false);
     const [isHelp, setIsHelp] = useState<boolean>(false);
     const [help, setHelp] = useState<string>("");
     const pageNum = bookStore.getAllBook().length;
-    const bookService = BookService().help;
+    const bookService = BookService();
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const handleGPTApi = async () => {
         // console.log('bookStore.getAllBook(): ', bookStore.getAllBook()[0].name);
@@ -29,7 +30,7 @@ const StoryPage = () => {
         bookStore.getAllBook().forEach((book) => {
             book.name !== undefined ? content += `${book.name} : ${book.story}\n` : '';
         });
-        const res = await bookService({ message: content.trim() });
+        const res = await bookService.help({ message: content.trim() });
         console.log('res: ', res);
         setHelp(res.choices[0].message.content);
         return res;
@@ -42,11 +43,16 @@ const StoryPage = () => {
                     {help}
                 </HelpSubContainer>
             </HelpContainer>
+            <LoadingContainer isLoading={isLoading} onClick={() => setIsLoading(false)}>
+                <LoadingSubContainer>
+                    Loading ...
+                </LoadingSubContainer>
+            </LoadingContainer>
             <InfoHeader type="나만의 동화 만들기" />
             <SubContainer>
                 <PhotoContainer>
                     <CustomTitle>이 사진을 보고 떠오르는 이야기를 들려주세요!</CustomTitle>
-                    <Photo src={bookStore.getImage(Math.floor(progress / 3))} />
+                    <Photo src={URL.createObjectURL(bookStore.getImage(Math.floor(progress / 3)))} />
                 </PhotoContainer>
                 {(progress % 3) === 0 ? (
                     <>
@@ -55,7 +61,7 @@ const StoryPage = () => {
                                 <RecordContainer>
                                     <ImageContainer>
                                         <HelpImg src="../public/images/help.svg" onClick={() => {
-                                            handleGPTApi().then((res) => {
+                                            handleGPTApi().then(() => {
                                                 // setHelp(res.data.choices[0].message.content);
                                             }).then(() => {
                                                 setIsHelp(true);
@@ -70,7 +76,19 @@ const StoryPage = () => {
                                             </MessageContainer>
                                         </BalloonContainer>
                                     </ImageContainer>
-                                    <RecordIcon onClick={() => setIsRecord(true)}/>
+
+                                    <RecordContent
+                                        myBookContentId={bookStore.getMyBookCharacterId(Math.floor(progress / 3))}
+                                        setIsRecord={setIsRecord}
+                                        setRecordProgress={setRecordProgress}
+                                        progress={progress}
+                                        setProgress={setProgress}
+                                        isLoading={isLoading}
+                                        setIsLoading={setIsLoading}
+                                    />
+                                    {/* <RecordIcon onClick={
+                                        () => setIsRecord(true)
+                                        }/> */}
                                     <CustomTitle>아이콘을 클릭해서 알려주세요!</CustomTitle>
                                 </RecordContainer>
                             </>
@@ -79,7 +97,7 @@ const StoryPage = () => {
                                 {(!recordProgress) ? (
                                     <RecordContainer>
                                         <CustomTitle>이야기를 만들어 주세요</CustomTitle>
-                                        <textarea onChange={(e) => setRecord(e.target.value)} value={record} style={{width: "80%", height: "60%"}}/>
+                                        {/* <textarea onChange={(e) => setRecord(e.target.value)} value={record} style={{width: "80%", height: "60%"}}/> */}
                                         <SquareButton onClick={() => {
                                             setRecordProgress(true);
                                         }}>완료</SquareButton>
@@ -105,7 +123,15 @@ const StoryPage = () => {
                         <CustomTitle>등장인물의 대사인가요?</CustomTitle>
                         <ButtonContainer>
                             <CircleButton onClick={() => setProgress(progress+1)}>네</CircleButton>
-                            <CircleButton onClick={() => setProgress(progress + 2)}>아니요</CircleButton>
+                            <CircleButton onClick={() => {
+                                if (progress + 2 == pageNum * 3) {
+                                    bookStore.setStory(Math.floor(progress / 3), record);
+                                    navigate(PAGE_URL.Index)
+                                }
+                                else {
+                                    setProgress(progress + 2);
+                                }
+                                }}>아니요</CircleButton>
                         </ButtonContainer>
                     </HeroContainer>
                 ) : (
@@ -173,6 +199,36 @@ const HelpContainer = styled.div<{ isHelp: boolean }>`
     align-items: center;
     background-color: rgba(0, 0, 0, 0.8);
     z-index: 9999;
+`;
+const LoadingContainer = styled.div<{ isLoading: boolean }>`
+    display: ${({ isLoading }) => (isLoading ? "flex" : "none")};
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+`
+
+const LoadingSubContainer = styled.div`
+    width: 400px;
+    height: 400px;
+    position: absolute;
+    top: 300px;
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+    z-index: 100;
+    border-radius: 20px;
+    padding: 20px;
+    padding-top: 50px;
+    @media (max-width: 768px) {
+        width: 250px;
+        height: 300px;
+        top: 200px;
+        left: 50px;
+    }
 `;
 const HelpImg = styled.img`
     position: absolute;
@@ -373,3 +429,4 @@ const HeroListContainer = styled.div`
 
 
 export default StoryPage;
+

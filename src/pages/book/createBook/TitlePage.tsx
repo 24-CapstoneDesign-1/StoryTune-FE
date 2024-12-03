@@ -1,8 +1,10 @@
-import { Button, InputContainer, MainContainer, RecordIcon, SquareButton, Title } from "@/entities";
+import { Button, InputContainer, MainContainer, Record, SquareButton, Title } from "@/entities";
 import { PAGE_URL } from "@/shared";
+import { BookService } from "@/shared/hooks/services/BookService";
+import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const SubContainer = styled.div`
@@ -44,6 +46,7 @@ const Photo = styled.img`
     height: 400px;
     margin-top: 20px;
     margin-bottom: 20px;
+    border-radius: 20px;
     @media (max-width: 768px) {
         margin-top: 0px;
     }
@@ -90,19 +93,48 @@ const ButtonContainer = styled.div`
 `;
 
 const TitlePage = () => {
-    const [image, setImage] = useState("../public/images/temp.svg");
     const [name, setName] = useState("");
     const [typing, setTyping] = useState(false);
     const [finalName, setFinalName] = useState("");
     const [progress, setProgress] = useState(0);
+    const bookService = BookService();
     const navigate = useNavigate();
+    const bookStore = useBookStore();
+    const [images, setImages] = useState<
+    { image: string; myBookCharacterId: number; name: string; story: string }[]
+>([]);
+    
+    useEffect(() => {
+        const fetchCharacter = async () => {
+            const res = await bookStore.getAllBook(); // 데이터를 가져옵니다.
+            // Blob을 문자열로 변환
+            const formattedImages = res.map((book: any) => ({
+                image: URL.createObjectURL(book.image), // Blob → string 변환
+                myBookCharacterId: book.myBookCharacterId,
+                name: book.name,
+                story: book.story,
+            }));
+            console.log(formattedImages);
+    
+            setImages(formattedImages); // 상태 업데이트
+        };
+    
+        fetchCharacter();
+    }, []);
+
     return (
         <MainContainer>
             <InfoHeader type="나만의 동화 만들기" />
             <SubContainer>
                 <PhotoContainer>
                     <CustomTitle>이 동화의 제목은 무엇인가요?</CustomTitle>
-                    <Photo src={image} />
+                    <Photo
+                        src={
+                            images.length > 0 && bookStore.getIndex() < images.length
+                                ? images[bookStore.getIndex()].image
+                                : "../public/images/temp.svg"
+                        }
+                    />
                 </PhotoContainer>
                 {progress === 0 ? (
                     <>
@@ -110,9 +142,8 @@ const TitlePage = () => {
                         <InputContianer>
                             {!typing ? (
                                 <>
-                                    <RecordIcon />
+                                    <Record/>
                                     <CustomTitle>아이콘을 클릭해서 알려주세요!</CustomTitle>
-                                    <CustomButton width="400px" height="50px" onClick={() => setTyping(!typing)}>직접 입력할래요!</CustomButton>
                                 </>
                             ): (
                                 <>
@@ -132,7 +163,9 @@ const TitlePage = () => {
                                 <ButtonContainer>
                                     <SquareButton width="160px" height="100px" onClick={() => setFinalName("")}>{`제목이 틀렸어요.
                                     다시 말하기`}</SquareButton>
-                                    <SquareButton width="160px" height="100px" onClick={() => setProgress(progress+1)}>{`맞아요!
+                                    <SquareButton width="160px" height="100px" onClick={() => {
+                                        setProgress(progress+1);
+                                    }}>{`맞아요!
                                     이어서 하기`}</SquareButton>
                                 </ButtonContainer>
                             </InputContianer>
@@ -143,7 +176,10 @@ const TitlePage = () => {
                         <RecordContainer>
                             <CustomTitle>이 동화의 제목은</CustomTitle>
                             <CustomTitle>{finalName} 이에요!</CustomTitle>
-                            <CustomButton width="400px" height="50px" onClick={() => navigate(PAGE_URL.Maked)}>{`다음으로 넘어가기`}</CustomButton>
+                            <CustomButton width="400px" height="50px" onClick={() => {
+                                bookService.bookCompleted()
+                                .then(() => navigate(PAGE_URL.Maked));
+                            }}>{`다음으로 넘어가기`}</CustomButton>
                         </RecordContainer>
                     </>
                 )}
