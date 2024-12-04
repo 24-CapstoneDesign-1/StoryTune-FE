@@ -1,11 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PAGE_URL } from "@/shared";
-<<<<<<< HEAD
 import { FaSearch, FaBookOpen, FaPlus, FaMask, FaPencilAlt, FaUser } from "react-icons/fa";
-=======
-import { FaSearch, FaBookOpen, FaMask, FaPencilAlt } from "react-icons/fa";
->>>>>>> 274ea052c2563dd2ba9841b0af0c5b3d2b9c1ca7
 import styled from "@emotion/styled";
 
 const UserContainer = styled.div`

@@ -3,8 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { PAGE_URL } from "@/shared";
 import styled from "@emotion/styled";
 import { MainContainer } from "@/entities";
-import { API, getAccess} from "@/shared";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FaUser, FaEdit, FaBook, FaUserFriends, FaSignOutAlt } from "react-icons/fa";
 
 const SubContainer = styled.div`

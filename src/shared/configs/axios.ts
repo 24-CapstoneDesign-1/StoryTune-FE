@@ -2,7 +2,7 @@ import axios from "axios";
 import { PAGE_URL } from "./path";
 
 export const API = axios.create({
-  baseURL: 'https://storytune.shop/api',
+  baseURL: 'https://storytune.shop',
   headers: {
     "Content-Type": "application/json",
   },
