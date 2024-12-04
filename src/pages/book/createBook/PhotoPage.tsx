@@ -268,17 +268,6 @@ const RerollContainer = styled.div`
   font-weight: bold;
 `;
 
-const SubLoadingContainer = styled.div`
-    width: 100%;
-    height: 80vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 3rem;
-    font-weight: bold;
-    margin-top: 20px;
-`
-
 const NextContainer = styled.div`
   display: flex;
   flex-direction: column;
