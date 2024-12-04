@@ -129,7 +129,7 @@ const SelectBookList = ( {title, bookList}
         const data = await bookService.newMakeBook(body)
             .then((res) => {
                 bookStore.setBookId(res.result.myBookId);
-                navigate(PAGE_URL.BookPhoto, { state: { bookId: res.result.myBookId } });
+                navigate(PAGE_URL.Topic, { state: { bookId: res.result.myBookId } });
             });
         return data;
     }
