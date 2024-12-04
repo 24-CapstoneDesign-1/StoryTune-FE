@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PAGE_URL } from "@/shared";
-import { FaSearch, FaBookOpen, FaPlus, FaMask, FaPencilAlt, FaUser } from "react-icons/fa";
+import { FaSearch, FaBookOpen, FaMask, FaPencilAlt, FaUser } from "react-icons/fa";
 import styled from "@emotion/styled";
 import { BookService } from "@/shared/hooks/services/BookService";
 
