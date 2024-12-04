@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { FaUserCheck, FaUserPlus } from "react-icons/fa";
-import { API, FriendService } from "@/shared";
+import {  FriendService } from "@/shared";
 import { Loading } from "@/entities";
 
 const PageContainer = styled.div`
@@ -126,7 +126,7 @@ const FriendListPage = () => {
   useEffect(() => {
     const fetchFriendsData = async () => {
       try {
-        setIsLoading(true);
+        
         const friendsResponse = await friendService.fetchFriendList();
         const requestsResponse = await friendService.fetchFriendRequests();
     

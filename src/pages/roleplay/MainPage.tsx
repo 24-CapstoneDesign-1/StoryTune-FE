@@ -123,7 +123,6 @@ const MainPage = () => {
 
   // 방 생성하고 모달 열기
   const handleCreateRoom = async () => {
-    setIsLoading(true);
     try {
       const room = await rolePlayService.createRoom({
         name: "새로운 역할놀이방",
@@ -136,25 +135,35 @@ const MainPage = () => {
       setModalOpen(true);
     } catch (error) {
       console.error('Failed to create room:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    } 
   };
 
   // 친구 초대하기
   const handleInvite = async (friendId: string) => {
     if (!currentRoomId) return;
-
+  
     try {
+      // 초대 API 호출
       await rolePlayService.inviteUser(currentRoomId, Number(friendId));
+      
+      // 친구 찾기
       const invitedFriend = friends.find(friend => friend.id === friendId);
+  
       if (invitedFriend) {
-        setInvitedFriends(prev => [...prev, invitedFriend]);
+        // 중복 추가 방지 및 상태 업데이트
+        setInvitedFriends(prev => 
+          prev.some(friend => friend.id === invitedFriend.id) 
+            ? prev 
+            : [...prev, invitedFriend]
+        );
       }
     } catch (error) {
       console.error('Failed to invite friend:', error);
     }
   };
+  
+  
+
 
   // 다음 페이지로 이동
   const handleNext = () => {
@@ -169,6 +178,8 @@ const MainPage = () => {
   if (isLoading) {
     return <Loading />;
   }
+
+  
 
   return (
     <MainContainer>
