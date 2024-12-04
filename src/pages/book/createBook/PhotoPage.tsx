@@ -8,6 +8,7 @@ import { PAGE_URL } from "@/shared";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { BookService } from "@/shared/hooks/services/BookService";
 import imageCompression from "browser-image-compression";
+import { Loading } from "@/entities";
 
 const PhotoPage = () => {
   const navigate = useNavigate();
@@ -158,10 +159,8 @@ const PhotoPage = () => {
       </form>
       ): (
         <>
-          <SubLoadingContainer>
-              Loading ...
-          </SubLoadingContainer>
-          <div style={{height: "300px"}}></div>
+          <Loading />
+          <div style={{height: "1000px"}}></div>
         </>
       )}
       

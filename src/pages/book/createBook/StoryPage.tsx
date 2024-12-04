@@ -15,7 +15,7 @@ const StoryPage = () => {
     const [progress, setProgress] = useState<number>(0);
     const heroStore = useHeroStore();
     const bookStore = useBookStore();
-    const [hero] = useState<string[]>(heroStore.getAllName());
+    const [hero, setHero] = useState<string[]>(heroStore.getAllName());
     const [isRecord, setIsRecord] = useState<boolean>(false);
     const [recordProgress, setRecordProgress] = useState<boolean>(false);
     const [isHelp, setIsHelp] = useState<boolean>(false);
@@ -35,6 +35,11 @@ const StoryPage = () => {
         setHelp(res.choices[0].message.content);
         return res;
     }
+
+    const getCharacter = async () => {
+        const res = await bookService.getCharacterName(bookStore.getBookId());
+        return res;
+    };
     return (
         <MainContainer>
             <HelpContainer isHelp={isHelp} onClick={() => setIsHelp(false)}>
@@ -122,7 +127,14 @@ const StoryPage = () => {
                     <HeroContainer>
                         <CustomTitle>등장인물의 대사인가요?</CustomTitle>
                         <ButtonContainer>
-                            <CircleButton onClick={() => setProgress(progress+1)}>네</CircleButton>
+                            <CircleButton onClick={() => {
+                                getCharacter().then((res) => {
+                                    console.log('res', res);
+                                    setHero(res.result.map((name: any) => name.name));
+                                    console.log('hero', hero);
+                                    setProgress(progress+1)
+                                });
+                            }}>네</CircleButton>
                             <CircleButton onClick={() => {
                                 if (progress + 2 == pageNum * 3) {
                                     bookStore.setStory(Math.floor(progress / 3), record);
@@ -130,6 +142,7 @@ const StoryPage = () => {
                                 }
                                 else {
                                     setProgress(progress + 2);
+                                    console.log('get character', getCharacter());
                                 }
                                 }}>아니요</CircleButton>
                         </ButtonContainer>
@@ -140,7 +153,7 @@ const StoryPage = () => {
                         <HeroListContainer>
                             <>
                             {console.log((progress + 1) / 3)}
-                            {console.log(bookStore.getAllBook())}
+                            {console.log(hero)}
                             </>
                             {hero.map((name, index) => (
                                 <SquareButton width="50px" height="50px" key={index} onClick={() => {
