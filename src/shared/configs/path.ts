@@ -23,5 +23,5 @@ export enum PAGE_URL {
     FriendPlay = "/roleplay/friendplay",
     RolePlay = "/roleplay/roleplay",
     Index = "/book/index",
-    Book = "/book"
+    Book = "/book/:id",
 }

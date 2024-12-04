@@ -1,9 +1,10 @@
-import { Button, InputContainer, MainContainer, Record, RecordIcon, SquareButton, Title } from "@/entities";
+import { Button, InputContainer, MainContainer, Record, SquareButton, Title } from "@/entities";
 import { PAGE_URL } from "@/shared";
 import { BookService } from "@/shared/hooks/services/BookService";
+import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const SubContainer = styled.div`
@@ -45,6 +46,7 @@ const Photo = styled.img`
     height: 400px;
     margin-top: 20px;
     margin-bottom: 20px;
+    border-radius: 20px;
     @media (max-width: 768px) {
         margin-top: 0px;
     }
@@ -91,20 +93,48 @@ const ButtonContainer = styled.div`
 `;
 
 const TitlePage = () => {
-    const [image, setImage] = useState("../public/images/temp.svg");
     const [name, setName] = useState("");
     const [typing, setTyping] = useState(false);
     const [finalName, setFinalName] = useState("");
     const [progress, setProgress] = useState(0);
     const bookService = BookService();
     const navigate = useNavigate();
+    const bookStore = useBookStore();
+    const [images, setImages] = useState<
+    { image: string; myBookCharacterId: number; name: string; story: string }[]
+>([]);
+    
+    useEffect(() => {
+        const fetchCharacter = async () => {
+            const res = await bookStore.getAllBook(); // 데이터를 가져옵니다.
+            // Blob을 문자열로 변환
+            const formattedImages = res.map((book: any) => ({
+                image: URL.createObjectURL(book.image), // Blob → string 변환
+                myBookCharacterId: book.myBookCharacterId,
+                name: book.name,
+                story: book.story,
+            }));
+            console.log(formattedImages);
+    
+            setImages(formattedImages); // 상태 업데이트
+        };
+    
+        fetchCharacter();
+    }, []);
+
     return (
         <MainContainer>
             <InfoHeader type="나만의 동화 만들기" />
             <SubContainer>
                 <PhotoContainer>
                     <CustomTitle>이 동화의 제목은 무엇인가요?</CustomTitle>
-                    <Photo src={image} />
+                    <Photo
+                        src={
+                            images.length > 0 && bookStore.getIndex() < images.length
+                                ? images[bookStore.getIndex()].image
+                                : "../public/images/temp.svg"
+                        }
+                    />
                 </PhotoContainer>
                 {progress === 0 ? (
                     <>
@@ -112,7 +142,7 @@ const TitlePage = () => {
                         <InputContianer>
                             {!typing ? (
                                 <>
-                                    <Record recordApi={bookService.recordTitle} />
+                                    <Record/>
                                     <CustomTitle>아이콘을 클릭해서 알려주세요!</CustomTitle>
                                 </>
                             ): (

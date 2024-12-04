@@ -1,8 +1,8 @@
 import { MainContainer, Search } from "@/entities";
-import { BookList, InfoHeader, SearchBookList } from "@/widgets";
+import { InfoHeader, SearchBookList } from "@/widgets";
 import { useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { BookService } from "@/shared/hooks/services/BookService";
 
 const SearchContainer = styled.div`
@@ -51,7 +51,6 @@ interface Book {
     createdAt?: string;
 }
 const SearchPage = () => {
-    const navigate = useNavigate();
     const location = useLocation();
     const searchInputRef = useRef<HTMLInputElement>(null);
     const [search, setSearch] = useState(location.state ? location.state.search : "");

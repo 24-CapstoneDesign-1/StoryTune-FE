@@ -10,6 +10,9 @@ const ButtonContainer = styled.div`
     width: 30%;
     font-size: 2rem;
     margin-top: 40px;
+    @media (max-width: 768px) {
+        margin-top: 0px;
+    }
 `;
 
 const PageContainer = styled.div`
@@ -58,33 +61,43 @@ export const LeftRight = ({progress, setProgress, pageNum}: LeftRightProps) => {
     )
 };
 
-export const PageOffset = ({page, setPage}: {page : number; setPage :  Dispatch<SetStateAction<number>>}) => {
+export const PageOffset = ({pageNum, page, setPage}: {pageNum: number, page : number; setPage :  Dispatch<SetStateAction<number>>}) => {
     return (
         <ButtonContainer>
-            {page === 1 ? (
+            {(page === 1) && (1 !== pageNum) ? (
                 <>
                     <LeftButton visibility={"hidden"}/>
                     <PageContainer>
                         {page}
                     </PageContainer>
-                    <RightButton onClick={() => setPage(page+1)}/>
+                    <RightButton onClick={() => setPage(page)}/>
                 </>
-            ) : (page === 10 ? (
+            ) : ((page === pageNum) && (1 !== pageNum) ? (
                 <>
-                    <LeftButton onClick={() => setPage(page-1)}/>
+                    <LeftButton onClick={() => setPage(page-2)}/>
                     <PageContainer>
                         {page}
                     </PageContainer>
                     <RightButton visibility={"hidden"}/>
                 </>
             ) : (
-                <>
-                    <LeftButton onClick={() => setPage(page-1)}/>
-                    <PageContainer>
-                        {page}
-                    </PageContainer>
-                    <RightButton onClick={() => setPage(page+1)}/>
-                </>
+                pageNum === 1 ? (
+                    <>
+                        <LeftButton visibility={"hidden"}/>
+                            <PageContainer>
+                                {page}
+                            </PageContainer>
+                        <RightButton visibility={"hidden"}/>
+                    </>
+                ):(
+                    <>
+                        <LeftButton onClick={() => setPage(page-2)}/>
+                        <PageContainer>
+                            {page}
+                        </PageContainer>
+                        <RightButton onClick={() => setPage(page)}/>
+                    </>
+                )
             ))}
         </ButtonContainer>
     )

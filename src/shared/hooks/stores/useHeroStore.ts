@@ -16,14 +16,15 @@ export const useHeroStore = create<Hero.HeroStore>() (
                 state.images[idx] = images;
             });
         },
-        setIds(ids) {
+        setIds(idx, ids) {
             set((state) => {
-                state.id = [ids];
+                state.id[idx] = ids;
             });
         },
         getName: (idx : number) => get().name[idx],
         getAllName: () => Object.values(get().name),
         getImage: (idx : number) => get().images[idx],
+        getCharacterId: (idx : number) => get().id[idx],
         getImages: () => Object.values(get().images),
         getIds: () => get().id,
     }))

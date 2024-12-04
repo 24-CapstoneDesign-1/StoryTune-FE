@@ -115,24 +115,7 @@ const MyPage = () => {
   const [userInfo, setUserInfo] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const response = await API.get("/api/username", {
-            headers: {
-                "Authorization": `Bearer ${getAccess()}`,
-              },
-        });
-        setUserInfo(response.data);
-      } catch (err) {
-        console.error(err);
-        setError("사용자 정보를 불러오는 데 실패했습니다.");
-      }
-    };
-    fetchUserInfo();
-  }, []);
 
- 
   return (
     <MainContainer>
       <InfoHeader type="마이페이지" />
@@ -141,7 +124,7 @@ const MyPage = () => {
           <User>
             <FaUser />
           </User>
-          <UserName>{userInfo.name || "사용자"}</UserName>
+          <UserName>{userInfo?.name || "사용자"}</UserName>
         </ProfileSection>
 
         <MenuContainer>

@@ -12,9 +12,10 @@ declare namespace Hero {
         setImage: (idx: number, image: Blob) => void;
         setName: (idx: number, name: string) => void;
         getName: (idx: number) => string;
-        setIds: (ids: number) => void;
+        setIds: (idx: number, ids: number) => void;
         getAllName: () => string[];
         getImage: (idx: number) => Blob;
+        getCharacterId: (idx: number) => number;
         getImages: () => Blob[];
         getIds: () => number[];
     }

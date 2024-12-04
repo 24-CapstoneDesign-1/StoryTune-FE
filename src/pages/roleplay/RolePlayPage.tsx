@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled'; 
 import { MainContainer } from "@/entities";
 import { InfoHeader } from "@/widgets";
@@ -8,6 +7,7 @@ import { FaCamera } from "react-icons/fa";
 import { BiSolidCameraOff, BiSolidCamera } from 'react-icons/bi'; 
 import { PiSpeakerSimpleSlashDuotone, PiSpeakerSimpleHighDuotone } from "react-icons/pi";
 import { useWebRTC, RolePlayService } from '@/shared';
+import { useLocation } from 'react-router-dom';
 
 const SubContainer = styled.div`
     height: 20vh;
@@ -69,6 +69,44 @@ const RolePlayPage = () => {
   const [myBookId] = useState(location.state?.myBookId || '');
   const [pageNum, setPageNum] = useState(1);
   
+  const [roomData, setRoomData] = useState<RolePlay.RolePlayRoom | null>(null);
+  const [pageData, setPageData] = useState<RolePlay.RolePlayPageResDto | null>(null);
+  const [currentRole, setCurrentRole] = useState<RolePlay.RolePlayRoleResDto | null>(null);
+  const [participants, setParticipants] = useState<RolePlay.RolePlayParticipant[]>([]);
+
+  useEffect(() => {
+    const fetchRoomData = async () => {
+      if (!roomId) return;
+
+      try {
+        // 방 정보 조회
+        const roomResponse = await rolePlayService.getRoomById(Number(roomId));
+        setRoomData(roomResponse.data);
+
+        // 페이지 정보 조회
+        const pageResponse = await rolePlayService.getRolePlayPage({
+          rolePlayingRoomId: Number(roomId),
+          myBookId: Number(myBookId),
+          pageNum
+        });
+        setPageData(pageResponse.data);
+
+        // 역할 정보 조회
+        const roleResponse = await rolePlayService.getRolePlayRole(Number(roomId), Number(myBookId));
+        setCurrentRole(roleResponse.data);
+
+        // 참가자 정보 조회
+        const participantsResponse = await rolePlayService.getParticipants(Number(roomId));
+        setParticipants(participantsResponse.data.result);
+
+      } catch (error) {
+        console.error('실패:', error);
+      }
+    };
+
+    fetchRoomData();
+  }, [roomId, myBookId]);
+
   const peerConnections = useRef<Map<string, RTCPeerConnection>>(new Map());
   const socketRef = useRef<Socket | null>(null);
 
@@ -78,16 +116,6 @@ const RolePlayPage = () => {
     if (!socketRef.current || !localStream) return;
 
     try {
-      const { data } = await rolePlayService.getRoomById(Number(roomId));
-      console.log('Room data:', data);
-
-      const pageData = await rolePlayService.getRolePlayPage({
-        rolePlayingRoomId: Number(roomId),
-        myBookId: Number(myBookId),
-        pageNum
-      });
-      console.log('Page data:', pageData);
-
       socketRef.current.emit('join-room', roomId);
     } catch (error) {
       console.error('역할놀이 시작 실패:', error);
@@ -435,6 +463,41 @@ socketRef.current.on('connect_timeout', () => {
       <InfoHeader type="역할 놀이" />
       <PageContainer>
       <h2>화상회의 테스트</h2>
+      {roomData && (
+          <div>
+            <h3>방 정보</h3>
+            <p>방 이름: {roomData.name}</p>
+          </div>
+        )}
+
+        {currentRole && (
+          <div>
+            <h3>내 역할</h3>
+            <p>캐릭터: {currentRole.result.characterName}</p>
+          </div>
+        )}
+
+    
+        {pageData && (
+          <div>
+            <h3>현재 페이지</h3>
+            <p>시나리오: {pageData.result.content_scenario}</p>
+            {pageData.result.image && (
+              <img src={pageData.result.image} alt="페이지 이미지" />
+            )}
+          </div>
+        )}
+
+        <div>
+          <h3>참가자 목록</h3>
+          {participants.map(participant => (
+            <div key={participant.id}>
+              {participant.name} {participant.role && `(${participant.role})`}
+            </div>
+          ))}
+        </div>
+
+
       <VideoContainer>
   {/* 로컬 비디오 */}
   {localStream && (

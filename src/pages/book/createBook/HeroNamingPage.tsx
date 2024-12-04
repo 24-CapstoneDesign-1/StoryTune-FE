@@ -1,7 +1,5 @@
 import { MainContainer } from "@/entities";
 import { PAGE_URL } from "@/shared";
-import { BookService } from "@/shared/hooks/services/BookService";
-import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { useHeroStore } from "@/shared/hooks/stores/useHeroStore";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
@@ -97,29 +95,31 @@ const HeroNamingPage = () => {
     const location = useLocation();
     const [images, setImages] = useState<HeroNameProps[]>([]);
     const heroStore = useHeroStore();
-    const bookService = BookService();
-    const bookStore = useBookStore();
 
-    const character = async () => {
-        const formData = new FormData();
-        heroStore.getImages().forEach((image, index) => {
-            formData.append("images", image, `hero${index}`);
-        });
-        try{
-            const res = await bookService.bookCharacter({ myBookId: bookStore.bookId, images: formData });
-            return res;
-        } catch (error) {
-            console.error("Image upload failed:", error);
-          }
-    }
+    // const character = async () => {
+    //     const formData = new FormData();
+    //     heroStore.getImages().forEach((image, index) => {
+    //         formData.append("images", image, `hero${index}`);
+    //     });
+    //     try{
+    //         const res = await bookService.bookCharacter(bookStore.bookId, formData);
+    //         console.log("Image upload success:", res);
+    //         return res;
+    //     } catch (error) {
+    //         console.error("Image upload failed:", error);
+    //       }
+    // }
     useEffect(() => {
-        if (!heroStore.getImages().length) {
-            navigate(PAGE_URL.Hero);
-        }
-        
-        const res = character();
-        // heroStore.setHero(res);
-    }, []);
+        const fetchCharacter = async () => {
+            if (!heroStore.getImages().length) {
+                navigate(PAGE_URL.Hero);
+                return;
+            }
+        };
+    
+        fetchCharacter();
+    }, [heroStore, navigate]);
+    
 
     useEffect(() => {
         // heroStore.getImages()가 이미지를 반환한다고 가정하고, 이미지를 업데이트

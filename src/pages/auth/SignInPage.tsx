@@ -84,7 +84,7 @@ interface SignInFormInput {
 const SignInPage = () => {
     const navigate = useNavigate();
     const [isPasswordVisible, setIsPasswordVisible] = useState(true);
-    const { register, handleSubmit, setError, formState: { errors }, } = useForm<SignInFormInput>()
+    const { register, handleSubmit, formState: { errors }, } = useForm<SignInFormInput>()
     const signin = AuthService().signin;
 
     const onSubmit: SubmitHandler<SignInFormInput> = (data) => {

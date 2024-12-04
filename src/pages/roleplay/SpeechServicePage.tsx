@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import * as speechsdk from "microsoft-cognitiveservices-speech-sdk";
-import { MainContainer, CircleButton, Title } from "@/entities";
+import { MainContainer, CircleButton } from "@/entities";
 import { InfoHeader } from "@/widgets";
 
 const BackButton = styled.button`
@@ -40,12 +40,6 @@ const ScoreValue = styled.p`
   margin: 0;
 `;
 
-const NextButton = styled.button`
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-`;
 
 // Component
 const PronunciationEvaluation: React.FC = () => {

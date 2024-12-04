@@ -9,7 +9,7 @@ import { BookService } from "@/shared/hooks/services/BookService";
 
 const TopicPage = () => {
     const navigate = useNavigate();
-    const [topic, setTopic] = useState<string[]>(["우정", "사랑", "용기", "배려", "협력", "가족", "꿈", "여행", "감사"]);
+    const [topic] = useState<string[]>(["우정", "사랑", "용기", "배려", "협력", "가족", "꿈", "여행", "감사"]);
     const [curTopic, setCurTopic] = useState<string>("");
     const bookService = BookService();
     

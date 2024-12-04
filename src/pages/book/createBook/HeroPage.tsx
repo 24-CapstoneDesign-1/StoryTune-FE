@@ -6,7 +6,6 @@ import { useHeroStore } from "@/shared/hooks/stores/useHeroStore";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
-import { set } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 
@@ -95,10 +94,6 @@ const NonContainer = styled.div`
     margin-bottom: 200px;
 `;
 
-interface HeroNameProps {
-    image: string;
-    name: string;
-}
 const HeroPage = () => {
     const navigate = useNavigate();
     const [images, setImages] = useState<Blob[]>([]);
@@ -106,6 +101,25 @@ const HeroPage = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const bookStore = useBookStore();
     const heroStore = useHeroStore();
+    
+    const character = async () => {
+        const formData = new FormData();
+        heroStore.getImages().forEach((f) => {
+            formData.append("images", f);
+        });
+        try{
+            const res = await bookService.bookCharacter(bookStore.bookId, formData)
+            .then((res) => {
+                res.result.myBookCharacterIds.forEach((id, index) => {
+                    heroStore.setIds(index, id);
+                });
+            })
+            .then(() => navigate(PAGE_URL.HeroNaming));
+            return res;
+        } catch (error) {
+            console.error("Image upload failed:", error);
+        }
+    }
     
     const getHero = async () => {
         const resList: any[] = [];
@@ -128,13 +142,13 @@ const HeroPage = () => {
     };
 
     useEffect(() => {
-        getHero().then((res) => {
-            // API 응답을 처리하고 이미지 상태를 업데이트
+        const fetchHeroes = async () => {
+            const res = await getHero();
             const heroImages = res.map((index) => bookStore.getImage(index));
-            setImages(heroImages); // images 상태 업데이트
-            
-            setLoading(false); // 로딩이 완료되었음을 표시
-        });
+            setImages(heroImages);
+            setLoading(false); // 로딩 상태를 마지막에 업데이트
+        };
+        fetchHeroes(); // 함수 호출
     }, []);
 
     if (loading) {
@@ -189,7 +203,9 @@ const HeroPage = () => {
                             {`마음에 들지 않아요.
                             다시 분석하기`}
                         </ButtonSubContainer>
-                        <ButtonSubContainer onClick={() => navigate(PAGE_URL.HeroNaming)}>
+                        <ButtonSubContainer onClick={() => {
+                            character();
+                        }}>
                             {`마음에 들어요! 
                             이어서 하기`}
                         </ButtonSubContainer>

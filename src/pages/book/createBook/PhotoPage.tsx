@@ -1,25 +1,35 @@
 import styled from "@emotion/styled";
 import { InfoHeader } from "@/widgets";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { CiRedo } from "react-icons/ci";
 import { FaCaretRight } from "react-icons/fa";
 import { PAGE_URL } from "@/shared";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { BookService } from "@/shared/hooks/services/BookService";
+import imageCompression from "browser-image-compression";
 
 const PhotoPage = () => {
   const navigate = useNavigate();
   const [images, setImages] = useState<string[]>([]);
   const bookStore = useBookStore();
   const bookService = BookService();
-  const [bookId, setBookId] = useState(bookStore.getBookId());
+  const [bookId] = useState(bookStore.getBookId());
   const [file, setFile] = useState<File[] | null>(null);
 
-  useEffect(() => {
-    console.log('bookId', bookId);
-  }, [bookId]);
-
+  const imageCompress = () => {
+    const options = {
+      maxSizeMB: 0.08,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+    };
+    if (file) {
+      const compressedImages: Promise<File>[] = file.map((file) => {
+        return imageCompression(file, options);
+      });
+      return Promise.all(compressedImages);
+    }
+  }
   // 이미지 변경 시 호출되는 함수
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const file = e.target.files?.[0];
@@ -65,14 +75,20 @@ const PhotoPage = () => {
     });
   };
   
-  // handleNextButton 수정
   const handleNextButton = async () => {
     const formData = new FormData();
     console.log(file);
     if (!file) return;
-    file.forEach((f, index) => {
+  
+    // 비동기적으로 이미지 압축
+    const compressedFiles = await imageCompress();
+    if (!compressedFiles) return;
+    setFile(compressedFiles);
+  
+    compressedFiles.forEach((f, index) => {
       formData.append("images", f, `image-${index}.png`);
     });
+  
     try {
       const res = await bookService.bookImage({
         myBookId: bookId,
@@ -251,7 +267,7 @@ const NextContainer = styled.div`
 
 const SubContainer = styled.div`
   display: flex;
-  width: 80%;
+  width: 100%;
   height: 1000px;
   flex-direction: column;
   align-items: center;

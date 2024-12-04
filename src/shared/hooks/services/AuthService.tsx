@@ -1,9 +1,7 @@
 import { AxiosResponse } from "axios";
-import { API, setAccess, storeAccess } from "@/shared";
-import { useUserStore } from "../stores/useUserStore";
+import { API, getAccess, setAccess, storeAccess } from "@/shared";
 
 export const AuthService = () => {
-    const userStore = useUserStore((statue) => statue);
 
     const signup = async (body: User.SignUpReqDto) => {
         const { data } = (await API.post(
@@ -23,5 +21,16 @@ export const AuthService = () => {
         return data;
       };
 
-    return { signup, signin };
+    const currentUser = async () => {
+        const { data } = (await API.get(
+            "/api/user", {
+            headers: {
+                Authorization: `Bearer ${getAccess()}`,
+            }
+          }
+        )) as AxiosResponse<User.CurrentUserResDto>;
+        return data;
+    };
+
+    return { signup, signin, currentUser };
 };

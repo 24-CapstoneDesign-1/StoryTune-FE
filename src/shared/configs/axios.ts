@@ -2,14 +2,14 @@ import axios from "axios";
 import { PAGE_URL } from "./path";
 
 export const API = axios.create({
-  baseURL: '/api',
+  baseURL: 'https://storytune.shop',
   headers: {
     "Content-Type": "application/json",
   },
 });
 
 export const FORMAPI = axios.create({
-  baseURL: '/api',
+  baseURL: 'https://storytune.shop',
   headers: {
     "Content-Type": "application/json",
   },

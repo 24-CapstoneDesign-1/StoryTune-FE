@@ -69,9 +69,9 @@ export const useBookStore = create<Book.BookStore>() (
             }));
         },
 
-        setIndex: (index) => set((state) => ({ index })),
-        setBookId: (bookId) => set((state) => ({ bookId })),
-        setSubject: (subject) => set((state) => ({ subject })),
+        setIndex: (index) => set(() => ({ index })),
+        setBookId: (bookId) => set(() => ({ bookId })),
+        setSubject: (subject) => set(() => ({ subject })),
         getImages: () => Object.values(get().books).map((book) => book.image),
         getBook(id: number): any {
             const book = this.books[id];

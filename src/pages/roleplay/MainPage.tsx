@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from '@emotion/styled';
-import { MainContainer, SquareButton, Title } from "@/entities";
+import { MainContainer, SquareButton } from "@/entities";
 import { useNavigate } from 'react-router-dom';
 import { PAGE_URL, API, getAccess, RolePlayService } from '@/shared';
 //Modal.tsx에서 가져오니까 오류생겨서 일단 여기에 함 
@@ -124,42 +124,78 @@ const Modal : React.FC<ModalProps>= ({ open, onClose, onNavigate, title, childre
 const MainPage = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [invitedFriends, setInvitedFriends] = useState<any[]>([]); //친구 초대해서 저장
-  const [friends, setFriends] = useState<any[]>([]);
+  const [invitedParticipants, setInvitedParticipants] = useState<RolePlay.RolePlayParticipant[]>([]);
+  const [currentRoomId, setCurrentRoomId] = useState<number | null>(null);
+  const [participants, setParticipants] = useState<RolePlay.RolePlayParticipant[]>([]);
   
   const rolePlayService = RolePlayService();
 
-  const openModal = () => setIsModalOpen(true);
+  const openModal = async () => {
+    try {
+      // 방 생성
+      const createRoomData: RolePlay.CreateRolePlayRoomDto = {
+        username: "", 
+        password: "", 
+        name: "",    
+        age: 0,      
+        gender: "GIRL" 
+      };
+      
+      const roomData = await rolePlayService.createRoom(createRoomData);
+      const roomId = roomData.result.rolePlayingRoomId;
+      setCurrentRoomId(roomId);
+      
+      // 참가자 목록 조회
+      if (roomId) {
+        const participantsData = await rolePlayService.getParticipants(roomId);
+        setParticipants(participantsData.result);
+      }
+      
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error('Failed to create room:', error);
+    }
+  };
+
+
   const closeModal = () => setIsModalOpen(false);
 
   const NextPage = () => {
     closeModal();
-    navigate(PAGE_URL.SelectRole, { state: { friends: invitedFriends } });
+    if (currentRoomId) {
+      navigate(PAGE_URL.SelectRole, { 
+        state: { 
+          rolePlayingRoomId: currentRoomId,
+          participants: invitedParticipants 
+        } 
+      });
+    }
   };
 
-  useEffect(() => {
-    const fetchFriends = async () => {
-      try {
-        const { data } = await rolePlayService.getFriends();
-        setFriends(data);
-      } catch (error) {
-        console.error('Failed to fetch friends:', error);
-      }
-    };
 
-    fetchFriends();
-  }, []);
-
-
-  const handleInviteFriend = async (friendId: number) => {
+  const handleInviteParticipant = async (id: number) => {
+    if (!currentRoomId) return;
+    
     try {
-      await rolePlayService.inviteUser(friendId);
-      const invitedFriend = friends.find(friend => friend.id === friendId);
-      if (invitedFriend && !invitedFriends.includes(invitedFriend)) {
-        setInvitedFriends([...invitedFriends, invitedFriend]);
+      const inviteData: RolePlay.RolePlayInviteReqDto = {
+        rolePlayingRoomId: currentRoomId,
+        userId: id
+      };
+      
+      await rolePlayService.inviteUser(currentRoomId, id);
+      
+      // 참가자 목록 갱신
+      const updatedParticipants = await rolePlayService.getParticipants(currentRoomId);
+      setParticipants(updatedParticipants.result);
+      
+      const invitedParticipant = updatedParticipants.result.find(
+        (p: RolePlay.RolePlayParticipant) => p.id === id
+      );
+      if (invitedParticipant && !invitedParticipants.some(invited => invited.id === id)) {
+        setInvitedParticipants([...invitedParticipants, invitedParticipant]);
       }
     } catch (error) {
-      console.error('Failed to invite friend:', error);
+      console.error('초대 안됨', error);
     }
   };
   
@@ -172,23 +208,25 @@ const MainPage = () => {
                 <SquareButton width="400px" onClick={() => navigate(PAGE_URL.RolePlay)}>혼자 하기</SquareButton>
                 </ButtonSubContainer>
 
-      <Modal open={isModalOpen} onClose={closeModal} onNavigate={NextPage} title="친구 초대하기">
-      <div>
-            <h3>친구 목록</h3>
+                <Modal open={isModalOpen} onClose={closeModal} onNavigate={NextPage} title="친구 초대하기">
+          <div>
+            <h3>참가자 목록</h3>
             <FriendsList>
-              {friends.map(friend => (
-                <FriendItem key={friend.id}>
-                  <span>{friend.name}</span>
-                  {invitedFriends.some(invited => invited.id === friend.id) ? (
+              {participants.map(participant => (
+                <FriendItem key={participant.id}>
+                  <span>{participant.name}</span>
+                  {invitedParticipants.some(invited => invited.id === participant.id) ? (
                     <span>초대된 친구</span>
                   ) : (
-                    <SmallSquareButton onClick={() => handleInviteFriend(friend.id)}>친구 초대</SmallSquareButton>
+                    <SmallSquareButton onClick={() => handleInviteParticipant(participant.id)}>
+                      친구 초대
+                    </SmallSquareButton>
                   )}
                 </FriendItem>
               ))}
-              </FriendsList>
+            </FriendsList>
           </div>
-      </Modal>
+        </Modal>
         </SubContainer>
     </MainContainer>
   );

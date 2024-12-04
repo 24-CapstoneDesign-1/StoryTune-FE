@@ -1,28 +1,28 @@
-import { CircleButton, MainContainer, RecordContent, RecordIcon, SquareButton, StopIcon, Title } from "@/entities";
+import { CircleButton, MainContainer, RecordContent, SquareButton, Title } from "@/entities";
 import { PAGE_URL } from "@/shared";
 import { BookService } from "@/shared/hooks/services/BookService";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { useHeroStore } from "@/shared/hooks/stores/useHeroStore";
 import { InfoHeader, LeftRight } from "@/widgets";
 import styled from "@emotion/styled";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
-import { ReactMediaRecorder } from "react-media-recorder";
 
 const StoryPage = () => {
     const navigate = useNavigate();
-    const [record, setRecord] = useState<string>("");
+    const [record] = useState<string>("");
     const [progress, setProgress] = useState<number>(0);
     const heroStore = useHeroStore();
     const bookStore = useBookStore();
-    const [hero, setHero] = useState<string[]>(heroStore.getAllName());
+    const [hero] = useState<string[]>(heroStore.getAllName());
     const [isRecord, setIsRecord] = useState<boolean>(false);
     const [recordProgress, setRecordProgress] = useState<boolean>(false);
     const [isHelp, setIsHelp] = useState<boolean>(false);
     const [help, setHelp] = useState<string>("");
     const pageNum = bookStore.getAllBook().length;
     const bookService = BookService();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const handleGPTApi = async () => {
         // console.log('bookStore.getAllBook(): ', bookStore.getAllBook()[0].name);
@@ -43,6 +43,11 @@ const StoryPage = () => {
                     {help}
                 </HelpSubContainer>
             </HelpContainer>
+            <LoadingContainer isLoading={isLoading}>
+                <LoadingSubContainer>
+                    Loading ...
+                </LoadingSubContainer>
+            </LoadingContainer>
             <InfoHeader type="나만의 동화 만들기" />
             <SubContainer>
                 <PhotoContainer>
@@ -56,7 +61,7 @@ const StoryPage = () => {
                                 <RecordContainer>
                                     <ImageContainer>
                                         <HelpImg src="../public/images/help.svg" onClick={() => {
-                                            handleGPTApi().then((res) => {
+                                            handleGPTApi().then(() => {
                                                 // setHelp(res.data.choices[0].message.content);
                                             }).then(() => {
                                                 setIsHelp(true);
@@ -78,6 +83,8 @@ const StoryPage = () => {
                                         setRecordProgress={setRecordProgress}
                                         progress={progress}
                                         setProgress={setProgress}
+                                        isLoading={isLoading}
+                                        setIsLoading={setIsLoading}
                                     />
                                     {/* <RecordIcon onClick={
                                         () => setIsRecord(true)
@@ -192,6 +199,36 @@ const HelpContainer = styled.div<{ isHelp: boolean }>`
     align-items: center;
     background-color: rgba(0, 0, 0, 0.8);
     z-index: 9999;
+`;
+const LoadingContainer = styled.div<{ isLoading: boolean }>`
+    display: ${({ isLoading }) => (isLoading ? "flex" : "none")};
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+`
+
+const LoadingSubContainer = styled.div`
+    width: 400px;
+    height: 400px;
+    position: absolute;
+    top: 300px;
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+    z-index: 100;
+    border-radius: 20px;
+    padding: 20px;
+    padding-top: 50px;
+    @media (max-width: 768px) {
+        width: 250px;
+        height: 300px;
+        top: 200px;
+        left: 50px;
+    }
 `;
 const HelpImg = styled.img`
     position: absolute;
