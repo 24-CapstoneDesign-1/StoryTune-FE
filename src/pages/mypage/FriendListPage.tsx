@@ -119,31 +119,31 @@ const FriendListPage = () => {
   const [searchId, setSearchId] = useState("");
   const [searchResults, setSearchResults] = useState<{ id: string; name: string }[]>([]);
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [userInfo, setUserInfo] = useState<any>(null);
 
 
-  useEffect(() => {
-    const fetchFriendsData = async () => {
-      try {
-        setIsLoading(true);
-        const friendsResponse = await friendService.fetchFriendList();
-        const requestsResponse = await friendService.fetchFriendRequests();
+  // useEffect(() => {
+  //   const fetchFriendsData = async () => {
+  //     try {
+  //       setIsLoading(true);
+  //       const friendsResponse = await friendService.fetchFriendList();
+  //       const requestsResponse = await friendService.fetchFriendRequests();
     
-        setFriends(Array.isArray(friendsResponse) ? friendsResponse : []);
-        setReceivedRequests(Array.isArray(requestsResponse) ? requestsResponse : []);
-      } catch (error) {
-        console.error("데이터 로딩 실패:", error);
-        setError("데이터 로딩 실패:");
-        setFriends([]);
-        setReceivedRequests([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  //       setFriends(Array.isArray(friendsResponse) ? friendsResponse : []);
+  //       setReceivedRequests(Array.isArray(requestsResponse) ? requestsResponse : []);
+  //     } catch (error) {
+  //       console.error("데이터 로딩 실패:", error);
+  //       setError("데이터 로딩 실패:");
+  //       setFriends([]);
+  //       setReceivedRequests([]);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
     
-    fetchFriendsData();
-  }, [friendService]);
+  //   fetchFriendsData();
+  // }, [friendService]);
     
   if (isLoading) {
     return <Loading />;

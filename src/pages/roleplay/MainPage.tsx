@@ -132,6 +132,7 @@ const MainPage = () => {
         age: 0,
         gender: "GIRL"
       });
+      console.log('Created room:', room);
       setCurrentRoomId(room.result.rolePlayingRoomId);
       setModalOpen(true);
     } catch (error) {

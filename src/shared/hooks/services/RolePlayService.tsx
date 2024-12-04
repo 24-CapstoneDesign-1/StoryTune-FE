@@ -62,7 +62,7 @@ export const RolePlayService = () => {
   };
 
   const inviteUser = async (rolePlayingRoomId: number, userId: number) => {
-    const { data } = await API.post(`/roleplaying/invite`, { rolePlayingRoomId, userId }, {
+    const { data } = await API.post(`/api/roleplaying/invite`, { rolePlayingRoomId, userId }, {
       headers: {
         "Authorization": `Bearer ${getAccess()}`,
       },
