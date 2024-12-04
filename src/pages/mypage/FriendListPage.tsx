@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { FaUserCheck, FaUserPlus } from "react-icons/fa";
-import {  FriendService } from "@/shared";
-import { Loading } from "@/entities";
+import { FriendService } from "@/shared";
 
 const PageContainer = styled.div`
   background-color: #fff9c4;
@@ -119,81 +118,51 @@ const FriendListPage = () => {
   const [searchId, setSearchId] = useState("");
   const [searchResults, setSearchResults] = useState<{ id: string; name: string }[]>([]);
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [userInfo, setUserInfo] = useState<any>(null);
-
 
   useEffect(() => {
     const fetchFriendsData = async () => {
-      try {
-        
-        const friendsResponse = await friendService.fetchFriendList();
-        const requestsResponse = await friendService.fetchFriendRequests();
-    
-        setFriends(Array.isArray(friendsResponse) ? friendsResponse : []);
-        setReceivedRequests(Array.isArray(requestsResponse) ? requestsResponse : []);
-      } catch (error) {
-        console.error("데이터 로딩 실패:", error);
-        setError("데이터 로딩 실패:");
-        setFriends([]);
-        setReceivedRequests([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
+        try {
+          const { friends, requests } = await friendService.fetchFriendList();  // Assuming the API returns this format
+          setFriends(friends);
+          setReceivedRequests(requests);
+        } catch (error) {
+          console.error("친구 목록 불러오기 실패", error);
+        }
+      };
+      
+
     fetchFriendsData();
   }, [friendService]);
-    
-  if (isLoading) {
-    return <Loading />;
-  }
 
   const handleSearch = async () => {
-    if (!searchId.trim()) {
-      setError("찾을 친구를 입력해주세요.");
-      return;
-    }
-
     try {
-      const results = await friendService.searchFriend(searchId);
-      console.log("API Response:", results);
-      if (Array.isArray(results) && results.length > 0) {
-        const filteredResults = results.filter(
-          user => !friends.some(friend => friend.id === user.id)
-        );
-        setSearchResults(filteredResults);
+      const searchResults = await friendService.searchFriend(searchId);
+      if (searchResults.length > 0) {
+        setSearchResults(searchResults);
         setError("");
       } else {
         setSearchResults([]);
-        setError("검색 결과가 없습니다.");
+        setError("존재하지 않는 사용자이거나 이미 친구입니다.");
       }
     } catch (error) {
       console.error("검색 실패", error);
-      setError("검색 중 오류가 발생했습니다.");
     }
   };
 
   const handleSendRequest = async (user: { id: string; name: string }) => {
     try {
-      await friendService.addFriend(user.id);
-      setSearchResults(prev => prev.filter(result => result.id !== user.id));
-      alert(`${user.name}님에게 친구 요청을 보냈습니다.`);
+      await friendService.addFriend(user.id); 
+      alert(`"${user.name}"님에게 친구 요청을 보냈습니다.`);
     } catch (error) {
       console.error("친구 요청 실패:", error);
-      alert("친구 요청을 보내는데 실패했습니다.");
+      alert("친구 요청에 실패했습니다.");
     }
   };
 
   const handleAcceptRequest = async (id: string) => {
     try {
-      await friendService.acceptRequest(id);
-      const acceptedRequest = receivedRequests.find(request => request.id === id);
-      if (acceptedRequest) {
-        setFriends(prev => [...prev, acceptedRequest]);
-        setReceivedRequests(prev => prev.filter(request => request.id !== id));
-      }
-      alert("친구 요청을 수락했습니다.");
+      await friendService.acceptRequest(id); 
+      alert(`"${id}"님의 요청을 수락했습니다.`);
     } catch (error) {
       console.error("요청 수락 실패:", error);
       alert("요청 수락에 실패했습니다.");
@@ -203,8 +172,7 @@ const FriendListPage = () => {
   const handleRejectRequest = async (id: string) => {
     try {
       await friendService.rejectRequest(id);
-      setReceivedRequests(prev => prev.filter(request => request.id !== id));
-      alert("친구 요청을 거절했습니다.");
+      alert(`"${id}"님의 요청을 거절했습니다.`);
     } catch (error) {
       console.error("요청 거절 실패:", error);
       alert("요청 거절에 실패했습니다.");
@@ -234,14 +202,12 @@ const FriendListPage = () => {
 //     }
 //   };
 
-return (
+  return (
     <PageContainer>
       <header style={{ textAlign: "center", marginBottom: "2rem" }}>
-        <h1 style={{ fontSize: "2rem", color: "#5D4037", marginBottom: "0.5rem" }}>
-          친구 검색
-        </h1>
-        <p style={{ fontSize: "1rem", color: "#5D4037" }}>친구 목록을 확인하세요!</p>
-      </header>
+                <h1 style={{ fontSize: "2rem", color: "#5D4037", marginBottom: "0.5rem" }}>친구 검색</h1>
+                <p style={{ fontSize: "1rem", color: "#5D4037" }}>친구 목록을 확인하세요!</p>
+      </header> 
 
       <SearchContainer>
         <SearchInput
@@ -249,49 +215,42 @@ return (
           value={searchId}
           onChange={(e) => setSearchId(e.target.value)}
           placeholder="아이디나 이름으로 검색하세요."
-          onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
         />
         <SearchButton onClick={handleSearch}>검색</SearchButton>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {searchResults.length > 0 && (
-          <Section>
-            <div>
-              {searchResults.map((result) => (
-                <FriendCard key={result.id}>
-                  <FaUserPlus size={32} color="#FF8A65" />
-                  <FriendName>{result.name}</FriendName>
-                  <small style={{ backgroundColor: "#E6E6E6", padding: "2px 4px", borderRadius: "4px" }}>
-                    {result.id}
-                  </small>
-                  <RequestActions>
-                    <ActionButton onClick={() => handleSendRequest(result)}>
-                      친구 요청
-                    </ActionButton>
-                  </RequestActions>
-                </FriendCard>
-              ))}
-            </div>
-          </Section>
-        )}
+        {error && <p style={{color : "red"}}>{error}</p>}
+        <Section>
+        <div>
+        {searchResults.map((result) => (
+            <FriendCard key={result.id} onClick={() => handleSendRequest(result)}>
+              <FaUserPlus size={32} color="#FF8A65" />
+              <FriendName>{result.name}</FriendName>
+              <small style={{ backgroundColor: "#E6E6E6" }}>
+                {result.id}
+               </small>
+            </FriendCard>
+          ))}
+        </div>
+        </Section>
       </SearchContainer>
+
 
       <Section>
         <h2>친구 목록</h2>
         <div>
-      {Array.isArray(friends) && friends.length > 0 ? (
-        friends.map((friend) => (
-          <FriendCard key={friend.id}>
-            <FaUserCheck size={32} color="#FF8A65" />
-            <FriendName>{friend.name}</FriendName>
+          {(friends).length !== 0 ? (friends.map((friend) => (
+            <FriendCard key={friend.id}>
+              <FaUserCheck size={32} color="#FF8A65" />
+              <FriendName>{friend.name}</FriendName>
             <small style={{ backgroundColor: "#E6E6E6", padding: "2px 4px", borderRadius: "4px" }}>
-              {friend.id}
+            {friend.id}
             </small>
-          </FriendCard>
-        ))
-      ) : (
-        <div>새로운 친구를 찾아보세요!</div>
-      )}
-    </div>
+
+            </FriendCard>
+          ))) : (
+            <>
+            </>
+          )}
+        </div>
       </Section>
 
       <Section>

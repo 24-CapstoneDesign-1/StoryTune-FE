@@ -5,7 +5,7 @@ export const AuthService = () => {
 
     const signup = async (body: User.SignUpReqDto) => {
         const { data } = (await API.post(
-            "/signup",
+            "/api/signup",
             body
         )) as AxiosResponse<User.SignUpResDto>;
         return data;
@@ -13,7 +13,7 @@ export const AuthService = () => {
 
     const signin = async (body: User.SignInReqDto) => {
         const { data } = (await API.post(
-          "/login",
+          "/api/login",
           body,
         )) as AxiosResponse<User.SignInResDto>;
         setAccess(data.result.accessToken);

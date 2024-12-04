@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { MainContainer, SquareButton } from "@/entities";
 import { useNavigate } from 'react-router-dom';
 import { PAGE_URL, RolePlayService, FriendService } from '@/shared';
-import { Loading } from '@/entities';
+
 
 // 스타일 컴포넌트
 const SubContainer = styled.div`
@@ -100,7 +100,7 @@ const MainPage = () => {
   const [friends, setFriends] = useState<Friend[]>([]);
   const [invitedFriends, setInvitedFriends] = useState<Friend[]>([]);
   const [currentRoomId, setCurrentRoomId] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+
 
   const rolePlayService = RolePlayService();
   const friendService = FriendService();
@@ -143,10 +143,8 @@ const MainPage = () => {
     if (!currentRoomId) return;
   
     try {
-      // 초대 API 호출
       await rolePlayService.inviteUser(currentRoomId, Number(friendId));
       
-      // 친구 찾기
       const invitedFriend = friends.find(friend => friend.id === friendId);
   
       if (invitedFriend) {
@@ -175,9 +173,6 @@ const MainPage = () => {
     });
   };
 
-  if (isLoading) {
-    return <Loading />;
-  }
 
   
 

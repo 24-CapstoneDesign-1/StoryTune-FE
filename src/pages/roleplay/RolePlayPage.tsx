@@ -3,10 +3,9 @@ import styled from '@emotion/styled';
 import { MainContainer } from "@/entities";
 import { InfoHeader } from "@/widgets";
 import { io, Socket } from 'socket.io-client';
-import { FaCamera } from "react-icons/fa";
 import { BiSolidCameraOff, BiSolidCamera } from 'react-icons/bi'; 
 import { PiSpeakerSimpleSlashDuotone, PiSpeakerSimpleHighDuotone } from "react-icons/pi";
-import { useWebRTC, RolePlayService } from '@/shared';
+import { RolePlayService } from '@/shared';
 import { useLocation } from 'react-router-dom';
 
 const SubContainer = styled.div`
@@ -64,10 +63,10 @@ const RolePlayPage = () => {
   const [remoteStreams, setRemoteStreams] = useState<Map<string, MediaStream>>(new Map());
   const [isAudioEnabled, setIsAudioEnabled] = useState(true); 
   const [isVideoEnabled, setIsVideoEnabled] = useState(true); 
-  const [isConnected, setIsConnected] = useState(false);
+  const [ setIsConnected] = useState(false);
   const [roomId] = useState(location.state?.roomId || '');
   const [myBookId] = useState(location.state?.myBookId || '');
-  const [pageNum, setPageNum] = useState(1);
+  const [pageNum] = useState(1);
   
   const [roomData, setRoomData] = useState<RolePlay.RolePlayRoom | null>(null);
   const [pageData, setPageData] = useState<RolePlay.RolePlayPageResDto | null>(null);
@@ -167,7 +166,6 @@ socketRef.current.on('connect_timeout', () => {
   
     socketRef.current.on('connect', () => {
       console.log('시그널링 서버 연결됨');
-      setIsConnected(true);
       socketRef.current?.emit('join-room', roomId);
     });
 

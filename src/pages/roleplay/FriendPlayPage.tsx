@@ -1,6 +1,8 @@
 import { InfoHeader } from "@/widgets";
 import { useState } from "react";
 import { MainContainer} from "@/entities";
+// import { PAGE_URL } from "@/shared";
+// import { RolePlayService } from '@/shared';
 
 const FriendPlayPage = () => {
     const [bookList] = useState([
