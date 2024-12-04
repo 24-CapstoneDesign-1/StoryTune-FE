@@ -1,10 +1,12 @@
 import { InfoHeader } from "@/widgets";
-import { useNavigate, useLocation } from "react-router-dom";
-import { PAGE_URL } from "@/shared";
+import { useNavigate } from "react-router-dom";
+import { PAGE_URL, AuthService} from "@/shared";
 import styled from "@emotion/styled";
 import { MainContainer } from "@/entities";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaUser, FaEdit, FaBook, FaUserFriends, FaSignOutAlt } from "react-icons/fa";
+import { useUserStore } from "@/shared/hooks/stores/useUserStore";
+
 
 const SubContainer = styled.div`
   width: 100%;
@@ -111,9 +113,43 @@ const LogoutButton = styled.button`
 
 const MyPage = () => {
   const navigate = useNavigate();
-  const [userInfo, setUserInfo] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const userStore = useUserStore();
+  const auth = AuthService(); // 여기서 service 생성
 
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        setIsLoading(true);
+        const response = await auth.getCurrentUser(); 
+        
+        if (response?.result) {
+          userStore.setUserAllInfo({
+            username: String(response.result.userId),
+            name: response.result.name,
+            age: 0,
+            gender: ''
+          });
+        }
+      } catch (err) {
+        setError("사용자 정보를 불러오는데 실패했습니다.");
+        console.error("Failed to fetch user info:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
+  
+  
+
+  const userInfo = userStore.getUserAllInfo();
+
+  const handleLogout = () => {
+    navigate(PAGE_URL.SignIn);
+  };
 
   return (
     <MainContainer>
@@ -123,7 +159,7 @@ const MyPage = () => {
           <User>
             <FaUser />
           </User>
-          <UserName>{userInfo?.name || "사용자"}</UserName>
+          <UserName>{userInfo.name || "환영합니다"}</UserName>
         </ProfileSection>
 
         <MenuContainer>
@@ -145,7 +181,7 @@ const MyPage = () => {
           </MenuItem>
         </MenuContainer>
 
-        <LogoutButton onClick={() => {}}>
+        <LogoutButton onClick={ handleLogout}>
           <FaSignOutAlt />
           로그아웃
         </LogoutButton>

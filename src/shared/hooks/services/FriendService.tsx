@@ -42,18 +42,31 @@ export const FriendService = () => {
   };
 
   const fetchFriendList = async () => {
-    const { data } = await API.get("api/friend", {
-      headers: {
-        Authorization: `Bearer ${getAccess()}`,
-      },
-    });
-
-    return data.map((friend: any) => ({
-      id: friend.friend,
-      name: friend.user,
-      status: friend.status === "PENDING" ? "친구의 수락을 기다리고 있어요" : "친구",
-    }));
+    try {
+      const { data } = await API.get("api/friend", {
+        headers: {
+          Authorization: `Bearer ${getAccess()}`
+        }
+      });
+  
+      if (!data || !data.result) {
+        return [];
+      }
+  
+      // result가 배열이 아닐 경우 배열로 변환
+      const friendsArray = Array.isArray(data.result) ? data.result : [data.result];
+  
+      return friendsArray.map((friend: any) => ({
+        id: friend.userId || friend.id,
+        name: friend.name,
+        status: friend.status === "PENDING" ? "친구의 수락을 기다리고 있어요" : "친구"
+      }));
+    } catch (error) {
+      console.error('친구 목록 가져오기 실패:', error);
+      return [];
+    }
   };
+
   
   const searchFriend = async (searchTerm: string) => {
     const { data } = await API.get(`api/friend/search?username=${searchTerm}`, {
@@ -74,12 +87,28 @@ export const FriendService = () => {
   };
 
   const fetchFriendRequests = async () => {
-    const { data } = await API.get("api/friend/request", {
-      headers: {
-        Authorization: `Bearer ${getAccess()}`,
-      },
-    });
-    return data;
+    try {
+      const { data } = await API.get("api/friend/request", {
+        headers: {
+          Authorization: `Bearer ${getAccess()}`
+        }
+      });
+  
+      if (!data || !data.result) {
+        return [];
+      }
+  
+      const requestsArray = Array.isArray(data.result) ? data.result : [data.result];
+  
+      return requestsArray.map((request: any) => ({
+        id: request.userId || request.id,
+        name: request.name,
+        status: "PENDING"
+      }));
+    } catch (error) {
+      console.error('친구 요청 목록 가져오기 실패:', error);
+      return [];
+    }
   };
 
   return {

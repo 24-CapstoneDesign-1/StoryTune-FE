@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { FaUserCheck, FaUserPlus } from "react-icons/fa";
 import { API, FriendService } from "@/shared";
-import { getAccess } from "@/shared";
 import { Loading } from "@/entities";
 
 const PageContainer = styled.div`
@@ -121,6 +120,8 @@ const FriendListPage = () => {
   const [searchResults, setSearchResults] = useState<{ id: string; name: string }[]>([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [userInfo, setUserInfo] = useState<any>(null);
+
 
   useEffect(() => {
     const fetchFriendsData = async () => {

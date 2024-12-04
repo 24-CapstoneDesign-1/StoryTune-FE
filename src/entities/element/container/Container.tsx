@@ -21,7 +21,7 @@ const BookContainer = styled.div`
     background-color: #FFFFFF;
     border: 1px solid black;
     border-radius: 10px;
-    width: 220px;
+    width: 219px;
     height: 400px;
     box-shadow: 5px 5px 5px gray;
     margin: 10px;

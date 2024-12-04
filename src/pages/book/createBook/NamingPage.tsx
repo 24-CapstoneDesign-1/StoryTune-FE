@@ -24,6 +24,7 @@ const Photo = styled.img`
     height: 400px;
     margin-top: 5px;
     margin-bottom: 50px;
+    border-radius: 20px;
 `;
 const PhotoContainer = styled.div`
     display: flex;

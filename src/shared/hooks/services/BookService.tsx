@@ -308,7 +308,20 @@ export const BookService = () => {
         return data;
     }
 
+    const getCharacterName = async (myBookId: number) => {
+        const { data } = (await API.get(
+            `/api/mybook/${myBookId}/character`,
+            {
+                headers: {
+                    "Authorization" : `Bearer ${getAccess()}`,
+                }
+            }
+        ));
+        return data;
+    }
+
     return { 
+        getCharacterName,
         myBookDetail,
         newMakeBook, 
         bookImage, 

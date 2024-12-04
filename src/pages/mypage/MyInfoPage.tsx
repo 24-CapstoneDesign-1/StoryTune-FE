@@ -1,6 +1,5 @@
 import { InfoHeader } from "@/widgets";
-import { useNavigate } from "react-router-dom";
-import { PAGE_URL, useUserStore, API, getAccess } from "@/shared";
+import {  API, getAccess } from "@/shared";
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { MainContainer } from "@/entities";

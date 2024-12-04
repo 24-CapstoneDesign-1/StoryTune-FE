@@ -1,19 +1,17 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { MainContainer, SquareButton } from "@/entities";
 import { useNavigate } from 'react-router-dom';
-import { PAGE_URL, RolePlayService } from '@/shared';
-import { useRolePlayStore } from '@/shared/hooks/stores/useRolePlayStore';
+import { PAGE_URL, RolePlayService, FriendService } from '@/shared';
+import { Loading } from '@/entities';
 
+// 스타일 컴포넌트
 const SubContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   height: 100vh;
   margin-top: 150px;
-  @media (max-width: 768px) {
-    margin-top: 80px;
-  }
 `;
 
 const ButtonContainer = styled.div`
@@ -38,37 +36,38 @@ const ModalContent = styled.div`
   background: white;
   border-radius: 8px;
   padding: 20px;
-  text-align: center;
   width: 400px;
 `;
 
 const FriendsList = styled.ul`
   list-style: none;
   padding: 0;
-  margin: 20px 0;
 `;
 
 const FriendItem = styled.li`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 8px;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
 `;
 
-const SmallButton = styled(SquareButton)`
-  width: 120px;
-  height: 40px;
-`;
+interface Friend {
+  id: string;
+  name: string;
+  status: string;
+}
 
-interface ModalProps {
+interface InviteModalProps {
   isOpen: boolean;
   onClose: () => void;
-  participants: RolePlay.RolePlayParticipant[];
-  invited: RolePlay.RolePlayParticipant[];
-  onInvite: (id: number) => void;
+  friends: Friend[];
+  onInvite: (friendId: string) => void;
+  invitedFriends: Friend[];
   onNext: () => void;
 }
 
-const InviteModal: React.FC<ModalProps> = ({ isOpen, onClose, participants, invited, onInvite, onNext }) => {
+const InviteModal = ({ isOpen, onClose, friends, onInvite, invitedFriends, onNext }: InviteModalProps) => {
   if (!isOpen) return null;
 
   return (
@@ -76,92 +75,116 @@ const InviteModal: React.FC<ModalProps> = ({ isOpen, onClose, participants, invi
       <ModalContent onClick={(e) => e.stopPropagation()}>
         <h3>친구 초대하기</h3>
         <FriendsList>
-          {participants.map((participant) => (
-            <FriendItem key={participant.id}>
-              <span>{participant.name}</span>
-              {invited.some((inv) => inv.id === participant.id) ? (
+          {friends.map((friend) => (
+            <FriendItem key={friend.id}>
+              <span>{friend.name}</span>
+              {invitedFriends.some(invited => invited.id === friend.id) ? (
                 <span>초대됨</span>
               ) : (
-                <SmallButton onClick={() => onInvite(participant.id)}>초대</SmallButton>
+                <SquareButton onClick={() => onInvite(friend.id)}>초대하기</SquareButton>
               )}
             </FriendItem>
           ))}
         </FriendsList>
-        <ButtonContainer>
-        <SmallButton onClick={onClose}>닫기</SmallButton>
-          {invited.length > 0 && (
-            <SmallButton onClick={onNext}>역할 배정하기</SmallButton>
-          )}
-        </ButtonContainer>
+        {invitedFriends.length > 0 && (
+          <SquareButton onClick={onNext}>역할놀이 시작하기</SquareButton>
+        )}
       </ModalContent>
     </ModalContainer>
   );
 };
 
-const MainPage: React.FC = () => {
+const MainPage = () => {
   const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
-  const [participants, setParticipants] = useState<RolePlay.RolePlayParticipant[]>([]);
-  const [invitedParticipants, setInvitedParticipants] = useState<RolePlay.RolePlayParticipant[]>([]);
+  const [friends, setFriends] = useState<Friend[]>([]);
+  const [invitedFriends, setInvitedFriends] = useState<Friend[]>([]);
   const [currentRoomId, setCurrentRoomId] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const rolePlayService = RolePlayService();
+  const friendService = FriendService();
 
-  const openModal = async () => {
-    try {
-      const room = await rolePlayService.createRoom({ username: '', password: '', name: '', age: 0, gender: 'GIRL' });
-      const roomId = room.result.rolePlayingRoomId;
-      setCurrentRoomId(roomId);
-
-      if (roomId) {
-        const { result } = await rolePlayService.getParticipants(roomId);
-        setParticipants(result);
+  // 친구 목록 가져오기
+  useEffect(() => {
+    const fetchFriends = async () => {
+      if (isModalOpen) {
+        try {
+          const friendList = await friendService.fetchFriendList();
+          setFriends(friendList);
+        } catch (error) {
+          console.error('Failed to fetch friends:', error);
+        }
       }
+    };
+
+    fetchFriends();
+  }, [isModalOpen]);
+
+  // 방 생성하고 모달 열기
+  const handleCreateRoom = async () => {
+    setIsLoading(true);
+    try {
+      const room = await rolePlayService.createRoom({
+        name: "새로운 역할놀이방",
+        username: "",
+        password: "",
+        age: 0,
+        gender: "GIRL"
+      });
+      setCurrentRoomId(room.result.rolePlayingRoomId);
       setModalOpen(true);
     } catch (error) {
-      console.error('Failed to open modal:', error);
+      console.error('Failed to create room:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const closeModal = () => setModalOpen(false);
-
-  const handleInvite = async (id: number) => {
+  // 친구 초대하기
+  const handleInvite = async (friendId: string) => {
     if (!currentRoomId) return;
 
     try {
-      await rolePlayService.inviteUser(currentRoomId, id);
-      const { result } = await rolePlayService.getParticipants(currentRoomId);
-      setParticipants(result);
-      const newInvite = result.find((p) => p.id === id);
-      if (newInvite) setInvitedParticipants((prev) => [...prev, newInvite]);
+      await rolePlayService.inviteUser(currentRoomId, Number(friendId));
+      const invitedFriend = friends.find(friend => friend.id === friendId);
+      if (invitedFriend) {
+        setInvitedFriends(prev => [...prev, invitedFriend]);
+      }
     } catch (error) {
-      console.error('Failed to invite participant:', error);
+      console.error('Failed to invite friend:', error);
     }
   };
 
-  const navigateToRoleSelection = () => {
-    closeModal();
+  // 다음 페이지로 이동
+  const handleNext = () => {
     navigate(PAGE_URL.SelectRole, {
       state: {
         rolePlayingRoomId: currentRoomId,
-        participants: invitedParticipants,
-      },
+        participants: invitedFriends
+      }
     });
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <MainContainer>
       <SubContainer>
         <ButtonContainer>
-          <SquareButton onClick={openModal}>친구와 함께 하기</SquareButton>
+          <SquareButton onClick={handleCreateRoom}>친구와 함께 하기</SquareButton>
           <SquareButton onClick={() => navigate(PAGE_URL.RolePlay)}>혼자 하기</SquareButton>
         </ButtonContainer>
+
         <InviteModal
           isOpen={isModalOpen}
-          onClose={closeModal}
-          participants={participants}
-          invited={invitedParticipants}
+          onClose={() => setModalOpen(false)}
+          friends={friends}
           onInvite={handleInvite}
+          invitedFriends={invitedFriends}
+          onNext={handleNext}
         />
       </SubContainer>
     </MainContainer>

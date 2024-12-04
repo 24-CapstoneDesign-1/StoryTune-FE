@@ -8,6 +8,7 @@ import { PAGE_URL } from "@/shared";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { BookService } from "@/shared/hooks/services/BookService";
 import imageCompression from "browser-image-compression";
+import { Loading } from "@/entities";
 
 const PhotoPage = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const PhotoPage = () => {
   const bookService = BookService();
   const [bookId] = useState(bookStore.getBookId());
   const [file, setFile] = useState<File[] | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const imageCompress = () => {
     const options = {
@@ -55,25 +57,25 @@ const PhotoPage = () => {
   };
 
   // 다중 이미지 업로드 처리
-  const handleMultiImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    files.forEach((file, index) => {
-      setFile((prevFiles) => {
-        const newFiles = prevFiles ? [...prevFiles] : [];
-        newFiles[index] = file;
-        return newFiles;
-      });
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImages((prevImages) => {
-          const newImages = [...prevImages];
-          newImages[index] = reader.result as string; // URL로 저장
-          return newImages;
-        });
-      };
-      reader.readAsDataURL(file); // 파일을 Data URL로 읽기
-    });
-  };
+  // const handleMultiImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const files = Array.from(e.target.files || []);
+  //   files.forEach((file, index) => {
+  //     setFile((prevFiles) => {
+  //       const newFiles = prevFiles ? [...prevFiles] : [];
+  //       newFiles[index] = file;
+  //       return newFiles;
+  //     });
+  //     const reader = new FileReader();
+  //     reader.onload = () => {
+  //       setImages((prevImages) => {
+  //         const newImages = [...prevImages];
+  //         newImages[index] = reader.result as string; // URL로 저장
+  //         return newImages;
+  //       });
+  //     };
+  //     reader.readAsDataURL(file); // 파일을 Data URL로 읽기
+  //   });
+  // };
   
   const handleNextButton = async () => {
     const formData = new FormData();
@@ -90,6 +92,7 @@ const PhotoPage = () => {
     });
   
     try {
+      setIsLoading(true);
       const res = await bookService.bookImage({
         myBookId: bookId,
         body: formData,
@@ -100,6 +103,7 @@ const PhotoPage = () => {
       console.log('res', res);
       console.log(bookStore.getMyBookCharacterId(0));
       bookStore.setBookImage(formData);
+      setIsLoading(false);
       navigate(PAGE_URL.Hero);
     } catch (error) {
       console.error("Image upload failed:", error);
@@ -109,21 +113,22 @@ const PhotoPage = () => {
   return (
     <MainContainer>
       <InfoHeader type="나만의 동화 만들기" />
-      <form>
+      {isLoading == false ? (
+        <form>
         <SubContainer>
           <TitleContainer>OO이의 동화책에 들어갈 사진을 골라주세요!</TitleContainer>
           <TitleSubContainer onClick={() => {
             setImages(Array(10).fill(""));
             document.getElementById("upload-multi")?.click();
           }}>
-            <div>사진 업로드 하러 가기</div>
+            <div>'?'를 눌러 이미지를 업로드 해주세요!</div>
           </TitleSubContainer>
           <HiddenInput
             type="file"
             id="upload-multi"
             accept="image/*"
             multiple
-            onChange={handleMultiImageUpload}
+            // onChange={handleMultiImageUpload}
           />
           <ImageContainer>
             {Array.from({ length: Math.max(images.length, 10) }).map((_, index) => (
@@ -152,6 +157,13 @@ const PhotoPage = () => {
           </ButtonContainer>
         </SubContainer>
       </form>
+      ): (
+        <>
+          <Loading />
+          <div style={{height: "1000px"}}></div>
+        </>
+      )}
+      
     </MainContainer>
   );
 };

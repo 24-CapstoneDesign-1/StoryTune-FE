@@ -113,6 +113,12 @@ declare namespace RolePlay {
     export interface RolePlayStore {
       currentRoom: RolePlayRoom | null;
       setCurrentRoom: (room: RolePlayRoom) => void;
+      setRolePlayAllInfo: (value: Partial<RolePlayStore>) => void;
+      getRolePlayAllInfo: () => {
+      currentRoom: RolePlayRoom | null;
+      currentRole: RolePlayRole | null;
+      participants: RolePlayParticipant[];
+    };
       updateFriendStatus: (friendId: number, status: "PENDING" | "ACCEPTED") => void;
       currentRole: RolePlayRole | null;
       participants: RolePlayParticipant[];
@@ -120,6 +126,9 @@ declare namespace RolePlay {
       setParticipants: (participants: RolePlayParticipant[]) => void;
       addParticipant: (participant: RolePlayParticipant) => void;
       removeParticipant: (participantId: number) => void;
+      getCurrentRoom: () => RolePlayRoom | null;
+      getCurrentRole: () => RolePlayRole | null;
+      getParticipants: () => RolePlayParticipant[];
       clearRoom: () => void;
     }
 }
