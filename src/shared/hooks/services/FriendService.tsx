@@ -7,42 +7,30 @@ export const FriendService = () => {
 
   const addFriend = async (userId: string) => {
     try {
-      const { data } = await API.post(`/friend/${userId}`, {}, {
-        headers: {
-          "Authorization": `Bearer ${getAccess()}`
-        }
-      });
+      const { data } = await API.post(`/api/friend/${userId}`);
+      friendStore.setFriends([...friendStore.friends, data]); 
       return data;
     } catch (error) {
-      console.error("Add friend error:", error);
+      console.error("친구 추가 실패:", error);
       throw new Error("친구 추가에 실패했습니다.");
     }
   };
 
-  const acceptRequest = async (friendId: string) => {
+  // 친구 요청 수락
+  const acceptRequest = async (requestId: string) => {
     try {
-      const { data } = await API.patch(`/friend/request/${friendId}`, {
-        status: "ACCEPTED"
-      }, {
-        headers: {
-          "Authorization": `Bearer ${getAccess()}`
-        }
-      });
+      const { data } = await API.patch(`/api/friend/request/${requestId}`);
+      friendStore.setFriends([...friendStore.friends, data]); 
       return data;
     } catch (error) {
-      console.error("Accept request error:", error);
+      console.error("친구 요청 수락 실패:", error);
       throw new Error("친구 요청 수락에 실패했습니다.");
     }
   };
 
-
   const rejectRequest = async (requestId: string) => {
     try {
-      const { data } = await API.patch(`/friend/request/${requestId}`,{},{
-        headers: {
-            "Authorization" : `Bearer ${getAccess()}`,
-        }
-      });
+      const { data } = await API.patch(`/api/friend/request/${requestId}`);
       friendStore.setFriends(friendStore.friends.filter((friend) => friend.id !== requestId));
       return data;
     } catch (error) {
@@ -53,54 +41,38 @@ export const FriendService = () => {
 
   const fetchFriendList = async () => {
     try {
-      const { data } = await API.get("/friend", {
-        headers: {
-          "Authorization": `Bearer ${getAccess()}`
+      const { data } = await API.get(
+        "/api/friend", {
+          headers: {
+            "Authorization": `Bearer ${getAccess()}`,
+          },
         }
-      });
-      console.log("Friend list response:", data);
-      
-      const formattedFriends = data.map((friend: any) => ({
-        id: friend.friend,
-        name: friend.user,
-        status: friend.status === "PENDING" ? "친구의 수락을 기다리고 있어요" : "친구"
-      }));
-
-      friendStore.setFriends(formattedFriends);
-      return formattedFriends;
+      );
+      friendStore.setFriends(data); 
+      return data;
     } catch (error) {
-      console.error("Friend list error:", error);
       throw new Error("친구 목록 조회에 실패했습니다.");
     }
   };
 
-
   const searchFriend = async (searchTerm: string) => {
     try {
-      const { data } = await API.get(`/friend/search?query=${searchTerm}`, {
-        headers: {
-          "Authorization": `Bearer ${getAccess()}`
+      const { data } = await API.get(
+        `/api/friend/search?username=${searchTerm}`, {
+          headers: {
+            "Authorization": `Bearer ${getAccess()}`,
+          },
         }
-      });
-      return data?.result ? [{
-        id: data.result.userId,
-        name: data.result.name,
-        username: data.result.username
-      }] : [];
+      );
+      return data;
     } catch (error) {
-      console.error("Search friend error:", error);
       throw new Error("친구 검색에 실패했습니다.");
     }
   };
 
   const fetchFriendRequests = async () => {
     try {
-      const { data } = await API.get("/friend/request",
-        {
-            headers: {
-            "Authorization" : `Bearer ${getAccess()}`,
-        }}
-      );
+      const { data } = await API.get("/api/friend/request");
       return data;
     } catch (error) {
       throw new Error("친구 요청 목록 조회에 실패했습니다.");

@@ -72,77 +72,62 @@ const RolePlayPage = () => {
   const peerConnections = useRef<Map<string, RTCPeerConnection>>(new Map());
   const socketRef = useRef<Socket | null>(null);
 
-  const friends = [
-    { id: 'user1', name: '김민수' },
-    { id: 'user2', name: '이민영' },
-    { id: 'user3', name: '박영수' },
-  ]; // 친구 목록
-
   const rolePlayService = RolePlayService();
 
-  const handleCreateRoom = async () => {
-    try {
-      const roomData = await rolePlayService.createRoom({
-        username: "사용자이름",
-        password: "비밀번호",
-        name: "방이름",
-        age: 0,
-        gender: "GIRL",
-        friends: [
-          {
-            user: "사용자ID",
-            friend: "친구ID",
-            status: "PENDING"
-          }
-        ]
-      });
-
-      // 방 생성 성공 후 WebRTC 연결 시작
-      startCall(roomData.id);
-    } catch (error) {
-      console.error('역할놀이 방 생성 실패:', error);
-    }
-  };
-
-  const startCall = async (roomId: number) => {
-    if (!socketRef.current || !localStream) {
-      console.error('소켓 또는 로컬 스트림이 준비되지 않았습니다.');
-      return;
-    }
+  const startCall = async () => {
+    if (!socketRef.current || !localStream) return;
 
     try {
+      const { data } = await rolePlayService.getRoomById(Number(roomId));
+      console.log('Room data:', data);
+
       const pageData = await rolePlayService.getRolePlayPage({
         rolePlayingRoomId: Number(roomId),
         myBookId: Number(myBookId),
         pageNum
       });
+      console.log('Page data:', pageData);
 
- 
-  useEffect(() => {
-    return () => {
-      if (roomId) {
-        rolePlayService.leaveRoom(Number(roomId), 'userId')
-          .catch(error => console.error('방 나가기 실패:', error));
-      }
-    };
-  }, [roomId]);
-
-  socketRef.current.emit('join-room', roomId);
+      socketRef.current.emit('join-room', roomId);
     } catch (error) {
       console.error('역할놀이 시작 실패:', error);
     }
   };
 
+  useEffect(() => {
+    socketRef.current = io('http://localhost:3001', {
+      withCredentials: true,
+      transports: ['websocket'],
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      timeout: 10000
+    });
+
+    return () => {
+      localStream?.getTracks().forEach(track => track.stop());
+      peerConnections.current.forEach(connection => connection.close());
+      socketRef.current?.disconnect();
+      
+      if (roomId) {
+        rolePlayService.updateInviteStatus(Number(roomId), 'REJECTED')
+      }
+    };
+  }, [roomId]);
+
 
   useEffect(() => {
-socketRef.current = io('http://localhost:3001', {
-  withCredentials: true,
-  transports: ['websocket'],
-  reconnection: true,
-  reconnectionAttempts: 5,
-  reconnectionDelay: 1000,
-  timeout: 10000
-});
+
+    const socket = io('http://localhost:3001', {
+      withCredentials: true,
+      transports: ['websocket'],
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      timeout: 10000,
+    });
+  
+    socketRef.current = socket;
 
 socketRef.current.on('connect_error', (error) => {
   console.error('Socket 연결 오류:', error);
@@ -207,6 +192,10 @@ socketRef.current.on('connect_timeout', () => {
       localStream?.getTracks().forEach(track => track.stop());
       peerConnections.current.forEach(connection => connection.close());
       socketRef.current?.disconnect();
+
+      if (roomId) {
+        rolePlayService.updateInviteStatus(Number(roomId), 'REJECTED')
+      }
     };
   }, [roomId]);
 

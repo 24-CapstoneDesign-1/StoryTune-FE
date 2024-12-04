@@ -5,7 +5,7 @@ import { MainContainer, SquareButton } from "@/entities";
 import { InfoHeader } from "@/widgets";
 import { useNavigate } from 'react-router-dom';
 import { PAGE_URL } from '@/shared';
-
+import { BookService } from '@/shared';
 const NextButton = styled(SquareButton)`
     margin-top : 50px;
     font-size : 15px;

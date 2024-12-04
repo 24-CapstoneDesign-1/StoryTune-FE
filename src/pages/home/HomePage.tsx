@@ -1,8 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PAGE_URL } from "@/shared";
-import { FaSearch, FaBookOpen, FaPlus, FaMask, FaPencilAlt } from "react-icons/fa";
+import { FaSearch, FaBookOpen, FaPlus, FaMask, FaPencilAlt, FaUser } from "react-icons/fa";
 import styled from "@emotion/styled";
+
+const UserContainer = styled.div`
+  display: flex;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  cursor: 'pointer'
+`;
 
 const PageContainer = styled.div`
   background-color: #fff9c4;
@@ -134,11 +141,18 @@ const HomePage = () => {
 
   return (
     <PageContainer>
+        <UserContainer>
+        <FaUser 
+            size={35} 
+            color="#5d4037" 
+            onClick={() => navigate('/mypage')} 
+        />
+      </UserContainer>
       <Header>
         <h1>동화 나라 🌟</h1>
         <p>나만의 동화책을 만들고 친구들과 읽어보세요!</p>
       </Header>
-
+      
       <SearchContainer>
         <input
           type="text"
@@ -150,6 +164,7 @@ const HomePage = () => {
           <FaSearch size={18} />
         </button>
       </SearchContainer>
+      
 
       <Section>
         <CardContainer>

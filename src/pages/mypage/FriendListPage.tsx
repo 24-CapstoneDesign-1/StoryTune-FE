@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { FaUserCheck, FaUserPlus } from "react-icons/fa";
 import { API, FriendService } from "@/shared";
+import { getAccess } from "@/shared";
+import { Loading } from "@/entities";
 
 const PageContainer = styled.div`
   background-color: #fff9c4;
@@ -118,26 +120,33 @@ const FriendListPage = () => {
   const [searchId, setSearchId] = useState("");
   const [searchResults, setSearchResults] = useState<{ id: string; name: string }[]>([]);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchFriendsData = async () => {
-        try {
-          const response = await friendService.fetchFriendList();
-          if (response && typeof response === 'object') {
-            setFriends(Array.isArray(response.friends) ? response.friends : []);
-            setReceivedRequests(Array.isArray(response.requests) ? response.requests : []);
-          } else {
-            console.error("Invalid response format:", response);
-            setError("데이터를 불러오는데 실패했습니다.");
-          }
-        } catch (error) {
-          console.error("친구 목록 불러오기 실패", error);
-          setError("친구 목록을 불러오는데 실패했습니다.");
-        } 
-      };
-  
-      fetchFriendsData();
-    }, []);
+      try {
+        setIsLoading(true);
+        const friendsResponse = await friendService.fetchFriendList();
+        const requestsResponse = await friendService.fetchFriendRequests();
+    
+        setFriends(Array.isArray(friendsResponse) ? friendsResponse : []);
+        setReceivedRequests(Array.isArray(requestsResponse) ? requestsResponse : []);
+      } catch (error) {
+        console.error("데이터 로딩 실패:", error);
+        setError("데이터 로딩 실패:");
+        setFriends([]);
+        setReceivedRequests([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchFriendsData();
+  }, [friendService]);
+    
+  if (isLoading) {
+    return <Loading />;
+  }
 
   const handleSearch = async () => {
     if (!searchId.trim()) {
@@ -268,17 +277,20 @@ return (
       <Section>
         <h2>친구 목록</h2>
         <div>
-          {friends.map((friend) => (
-            <FriendCard key={friend.id}>
-              <FaUserCheck size={32} color="#FF8A65" />
-              <FriendName>{friend.name}</FriendName>
+      {Array.isArray(friends) && friends.length > 0 ? (
+        friends.map((friend) => (
+          <FriendCard key={friend.id}>
+            <FaUserCheck size={32} color="#FF8A65" />
+            <FriendName>{friend.name}</FriendName>
             <small style={{ backgroundColor: "#E6E6E6", padding: "2px 4px", borderRadius: "4px" }}>
-            {friend.id}
+              {friend.id}
             </small>
-
-            </FriendCard>
-          ))}
-        </div>
+          </FriendCard>
+        ))
+      ) : (
+        <div>새로운 친구를 찾아보세요!</div>
+      )}
+    </div>
       </Section>
 
       <Section>

@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { MainContainer, SquareButton, Title } from "@/entities";
 import { useNavigate } from 'react-router-dom';
-import { PAGE_URL } from '@/shared';
+import { PAGE_URL, API, getAccess, RolePlayService } from '@/shared';
 //Modal.tsx에서 가져오니까 오류생겨서 일단 여기에 함 
 
 const SubContainer = styled.div`
@@ -125,12 +125,9 @@ const MainPage = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [invitedFriends, setInvitedFriends] = useState<any[]>([]); //친구 초대해서 저장
-
-  const friends = [
-    { id: 1, name: '김가현' },
-    { id: 2, name: '김나현' },
-    { id: 3, name: '강지혜' },
-  ];
+  const [friends, setFriends] = useState<any[]>([]);
+  
+  const rolePlayService = RolePlayService();
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -140,10 +137,29 @@ const MainPage = () => {
     navigate(PAGE_URL.SelectRole, { state: { friends: invitedFriends } });
   };
 
-  const handleInviteFriend = (friendId: number) => {
-    const invitedFriend = friends.find(friend => friend.id === friendId);
-    if (invitedFriend && !invitedFriends.includes(invitedFriend)) {
-      setInvitedFriends([...invitedFriends, invitedFriend]);
+  useEffect(() => {
+    const fetchFriends = async () => {
+      try {
+        const { data } = await rolePlayService.getFriends();
+        setFriends(data);
+      } catch (error) {
+        console.error('Failed to fetch friends:', error);
+      }
+    };
+
+    fetchFriends();
+  }, []);
+
+
+  const handleInviteFriend = async (friendId: number) => {
+    try {
+      await rolePlayService.inviteUser(friendId);
+      const invitedFriend = friends.find(friend => friend.id === friendId);
+      if (invitedFriend && !invitedFriends.includes(invitedFriend)) {
+        setInvitedFriends([...invitedFriends, invitedFriend]);
+      }
+    } catch (error) {
+      console.error('Failed to invite friend:', error);
     }
   };
   
