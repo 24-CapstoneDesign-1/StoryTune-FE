@@ -1,9 +1,8 @@
 import { InfoHeader } from "@/widgets";
 import { useNavigate } from "react-router-dom";
-import { PAGE_URL, AuthService} from "@/shared";
+import { PAGE_URL } from "@/shared";
 import styled from "@emotion/styled";
 import { MainContainer } from "@/entities";
-import { useState, useEffect } from "react";
 import { FaUser, FaEdit, FaBook, FaUserFriends, FaSignOutAlt } from "react-icons/fa";
 import { useUserStore } from "@/shared/hooks/stores/useUserStore";
 
@@ -113,36 +112,10 @@ const LogoutButton = styled.button`
 
 const MyPage = () => {
   const navigate = useNavigate();
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const userStore = useUserStore();
-  const auth = AuthService(); // 여기서 service 생성
-
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        setIsLoading(true);
-        const response = await auth.getCurrentUser(); 
-        
-        if (response?.result) {
-          userStore.setUserAllInfo({
-            username: String(response.result.userId),
-            name: response.result.name,
-            age: 0,
-            gender: ''
-          });
-        }
-      } catch (err) {
-        setError("사용자 정보를 불러오는데 실패했습니다.");
-        console.error("Failed to fetch user info:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUserInfo();
-  }, []);
   
+  const userStore = useUserStore();
+
+
   
 
   const userInfo = userStore.getUserAllInfo();

@@ -1,7 +1,9 @@
 import { AxiosResponse } from "axios";
-import { API, getAccess, setAccess, storeAccess } from "@/shared";
+import { API, setAccess, storeAccess, getAccess } from "@/shared";
+import { useUserStore } from "../stores/useUserStore";
 
 export const AuthService = () => {
+    const userStore = useUserStore((statue) => statue);
 
     const signup = async (body: User.SignUpReqDto) => {
         const { data } = (await API.post(
@@ -21,16 +23,28 @@ export const AuthService = () => {
         return data;
       };
 
-    const currentUser = async () => {
-        const { data } = (await API.get(
-            "/api/user", {
+      const getCurrentUser = async () => {
+        try {
+          const { data } = await API.get("/api/user", {
             headers: {
-                Authorization: `Bearer ${getAccess()}`,
+              Authorization: `Bearer ${getAccess()}`
             }
+          }) as AxiosResponse<User.CurrentUserResDto>;
+    
+          if (data?.result) {
+            userStore.setUserAllInfo({
+              username: String(data.result.userId),
+              name: data.result.name,
+              age: 0,
+              gender: ''
+            });
           }
-        )) as AxiosResponse<User.CurrentUserResDto>;
-        return data;
-    };
+          return data;
+        } catch (error) {
+          console.error('Failed to get user info:', error);
+          throw error;
+        }
+      };
 
-    return { signup, signin, currentUser };
+    return { signup, signin, getCurrentUser };
 };
