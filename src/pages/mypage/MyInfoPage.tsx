@@ -87,84 +87,100 @@ const ErrorMessage = styled.div`
 `;
 
 const MyInfo = () => {
- const [error, setError] = useState<string | null>(null);
- const [isLoading, setIsLoading] = useState(true);
- const [userInfo, setUserInfo] = useState<any>(null);
-
- useEffect(() => {
-   const fetchUserInfo = async () => {
-     try {
-       const { data } = await API.get("/api/user", {
-         headers: {
-           "Authorization": `Bearer ${getAccess()}`,
-         },
-       });
-       setUserInfo(data);
-       setError(null);
-     } catch (err) {
-       setError("사용자 정보를 불러오는 데 실패했습니다.");
-       console.error("사용자 정보를 불러오는 데 실패했습니다.", err);
-     } finally {
-       setIsLoading(false);
-     }
-   };
-   fetchUserInfo();
- }, []);
-
- if (isLoading) {
-   return <Loading />;
- }
-
- if (error) {
-   return (
-     <MainContainer>
-       <InfoHeader type="내 정보" />
-       <ErrorMessage>{error}</ErrorMessage>
-     </MainContainer>
-   );
- }
-
- if (!userInfo) {
-   return (
-     <MainContainer>
-       <InfoHeader type="내 정보" />
-       <ErrorMessage>사용자 정보가 없습니다.</ErrorMessage>
-     </MainContainer>
-   );
- }
-
- return (
-   <MainContainer>
-     <InfoHeader type="내 정보" />
-     <PageContainer>
-       <ProfileContainer>
-         <ProfileHeader>
-           <ProfileUser>
-             <FaUser />
-           </ProfileUser>
-         </ProfileHeader>
-         <InfoCard>
-           <InfoItem>
-             <span>아이디</span>
-             <span>{userInfo.username}</span>
-           </InfoItem>
-           <InfoItem>
-             <span>이름</span>
-             <span>{userInfo.name}</span>
-           </InfoItem>
-           <InfoItem>
-             <span>나이</span>
-             <span>{userInfo.age}세</span>
-           </InfoItem>
-           <InfoItem>
-             <span>성별</span>
-             <span>{userInfo.gender}</span>
-           </InfoItem>
-         </InfoCard>
-       </ProfileContainer>
-     </PageContainer>
-   </MainContainer>
- );
-};
-
-export default MyInfo;
+    const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [userInfo, setUserInfo] = useState<{
+      username: string;
+      name: string;
+      age: number;
+      gender: string;
+    } | null>(null);
+  
+    useEffect(() => {
+      const fetchUserInfo = async () => {
+        try {
+          setIsLoading(true);
+          const { data } = await API.get("/api/user", {
+            headers: {
+              "Authorization": `Bearer ${getAccess()}`
+            }
+          });
+  
+          if (data?.result) {
+            // API 응답에 맞게 userInfo 구조화
+            setUserInfo({
+              username: String(data.result.userId), // userId를 username으로 사용
+              name: data.result.name,
+              age: 0,  // API에서 제공하지 않는 정보
+              gender: '' // API에서 제공하지 않는 정보
+            });
+          }
+          setError(null);
+        } catch (err) {
+          setError("사용자 정보를 불러오는 데 실패했습니다.");
+          console.error("사용자 정보를 불러오는 데 실패했습니다.", err);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+  
+      fetchUserInfo();
+    }, []);
+  
+    if (isLoading) {
+      return <Loading />;
+    }
+  
+    if (error) {
+      return (
+        <MainContainer>
+          <InfoHeader type="내 정보" />
+          <ErrorMessage>{error}</ErrorMessage>
+        </MainContainer>
+      );
+    }
+  
+    if (!userInfo) {
+      return (
+        <MainContainer>
+          <InfoHeader type="내 정보" />
+          <ErrorMessage>사용자 정보가 없습니다.</ErrorMessage>
+        </MainContainer>
+      );
+    }
+  
+    return (
+      <MainContainer>
+        <InfoHeader type="내 정보" />
+        <PageContainer>
+          <ProfileContainer>
+            <ProfileHeader>
+              <ProfileUser>
+                <FaUser />
+              </ProfileUser>
+            </ProfileHeader>
+            <InfoCard>
+              <InfoItem>
+                <span>아이디</span>
+                <span>{userInfo.username}</span>
+              </InfoItem>
+              <InfoItem>
+                <span>이름</span>
+                <span>{userInfo.name}</span>
+              </InfoItem>
+              <InfoItem>
+                <span>나이</span>
+                <span>{userInfo.age ? `${userInfo.age}세` : '-'}</span>
+              </InfoItem>
+              <InfoItem>
+                <span>성별</span>
+                <span>{userInfo.gender || '-'}</span>
+              </InfoItem>
+            </InfoCard>
+          </ProfileContainer>
+        </PageContainer>
+      </MainContainer>
+    );
+  };
+  
+  export default MyInfo;
