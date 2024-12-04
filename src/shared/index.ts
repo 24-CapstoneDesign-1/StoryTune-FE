@@ -12,6 +12,9 @@ export {
 
 
 export { AuthService } from "./hooks/services/AuthService";
-export { useWebRTC } from "./hooks/useWebRTC";
-export { useUserStore } from "./hooks/stores/useUserStore";
 export { FriendService } from "./hooks/services/FriendService";
+export { BookService } from "./hooks/services/BookService";
+export { RolePlayService } from "./hooks/services/RolePlayService";
+
+export { useUserStore } from "./hooks/stores/useUserStore";
+export { useWebRTC } from "./hooks/useWebRTC";

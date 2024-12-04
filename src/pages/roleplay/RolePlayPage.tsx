@@ -2,9 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled'; 
 import { MainContainer } from "@/entities";
 import { InfoHeader } from "@/widgets";
-import { io } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 import { BiSolidCameraOff, BiSolidCamera } from 'react-icons/bi'; 
 import { PiSpeakerSimpleSlashDuotone, PiSpeakerSimpleHighDuotone } from "react-icons/pi";
+import { RolePlayService } from '@/shared';
+import { useLocation } from 'react-router-dom';
 
 const SubContainer = styled.div`
     height: 20vh;
@@ -56,107 +58,338 @@ const VisualizerBar = styled.div<{ height: number }>`
 `;
 
 const RolePlayPage = () => {
+  const location = useLocation();
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
-  const [remoteStreams, setRemoteStreams] = useState<MediaStream[]>([]);
+  const [remoteStreams, setRemoteStreams] = useState<Map<string, MediaStream>>(new Map());
   const [isAudioEnabled, setIsAudioEnabled] = useState(true); 
   const [isVideoEnabled, setIsVideoEnabled] = useState(true); 
-  const peerConnections = useRef<{ [id: string]: RTCPeerConnection }>({});
-  const socketRef = useRef<any>(null); 
-
-  const friends = [
-    { id: 'user1', name: '김민수' },
-    { id: 'user2', name: '이민영' },
-    { id: 'user3', name: '박영수' },
-  ]; // 친구 목록
+  const [ setIsConnected] = useState(false);
+  const [roomId] = useState(location.state?.roomId || '');
+  const [myBookId] = useState(location.state?.myBookId || '');
+  const [pageNum] = useState(1);
+  
+  const [roomData, setRoomData] = useState<RolePlay.RolePlayRoom | null>(null);
+  const [pageData, setPageData] = useState<RolePlay.RolePlayPageResDto | null>(null);
+  const [currentRole, setCurrentRole] = useState<RolePlay.RolePlayRoleResDto | null>(null);
+  const [participants, setParticipants] = useState<RolePlay.RolePlayParticipant[]>([]);
 
   useEffect(() => {
+    const fetchRoomData = async () => {
+      if (!roomId) return;
 
-    socketRef.current = io('http://localhost:5000'); // 시그널링 서버 URL
+      try {
+        // 방 정보 조회
+        const roomResponse = await rolePlayService.getRoomById(Number(roomId));
+        setRoomData(roomResponse.data);
 
-   
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        setLocalStream(stream);
-      })
-      .catch((err) => console.error("오류가 발생했습니다.", err));
+        // 페이지 정보 조회
+        const pageResponse = await rolePlayService.getRolePlayPage({
+          rolePlayingRoomId: Number(roomId),
+          myBookId: Number(myBookId),
+          pageNum
+        });
+        setPageData(pageResponse.data);
 
- 
-    socketRef.current.on('offer', handleReceiveOffer);
-    socketRef.current.on('answer', handleReceiveAnswer);
-    socketRef.current.on('candidate', handleReceiveCandidate);
-    socketRef.current.on('newUser', handleNewUser); // 새로운 사용자가 들어올 때
+        // 역할 정보 조회
+        const roleResponse = await rolePlayService.getRolePlayRole(Number(roomId), Number(myBookId));
+        setCurrentRole(roleResponse.data);
 
-    return () => {
-      socketRef.current.disconnect();
-    };
-  }, []);
+        // 참가자 정보 조회
+        const participantsResponse = await rolePlayService.getParticipants(Number(roomId));
+        setParticipants(participantsResponse.data.result);
 
-  const handleNewUser = async (newUserId: string) => {
-    const peerConnection = createPeerConnection(newUserId);
-    const offer = await peerConnection.createOffer();
-    await peerConnection.setLocalDescription(offer);
-    socketRef.current.emit('offer', { to: newUserId, offer });
-  };
-
-  const handleReceiveOffer = async ({ from, offer }: any) => {
-    const peerConnection = createPeerConnection(from);
-    await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
-
-    const answer = await peerConnection.createAnswer();
-    await peerConnection.setLocalDescription(answer);
-
-    socketRef.current.emit('answer', { to: from, answer });
-  };
-
-  const handleReceiveAnswer = async ({ from, answer }: any) => {
-    const peerConnection = peerConnections.current[from];
-    if (peerConnection) {
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-    }
-  };
-
-  const handleReceiveCandidate = async ({ from, candidate }: any) => {
-    const peerConnection = peerConnections.current[from];
-    if (peerConnection) {
-      await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-    }
-  };
-
-  const createPeerConnection = (id: string) => {
-    const peerConnection = new RTCPeerConnection({
-      iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' }, 
-      ],
-    });
-
-    peerConnection.onicecandidate = (event) => {
-      if (event.candidate) {
-        socketRef.current.emit('candidate', { to: id, candidate: event.candidate });
+      } catch (error) {
+        console.error('실패:', error);
       }
     };
 
+    fetchRoomData();
+  }, [roomId, myBookId]);
+
+  const peerConnections = useRef<Map<string, RTCPeerConnection>>(new Map());
+  const socketRef = useRef<Socket | null>(null);
+
+  const rolePlayService = RolePlayService();
+
+  const startCall = async () => {
+    if (!socketRef.current || !localStream) return;
+
+    try {
+      socketRef.current.emit('join-room', roomId);
+    } catch (error) {
+      console.error('역할놀이 시작 실패:', error);
+    }
+  };
+
+  useEffect(() => {
+    socketRef.current = io('http://localhost:3001', {
+      withCredentials: true,
+      transports: ['websocket'],
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      timeout: 10000
+    });
+
+    return () => {
+      localStream?.getTracks().forEach(track => track.stop());
+      peerConnections.current.forEach(connection => connection.close());
+      socketRef.current?.disconnect();
+      
+      if (roomId) {
+        rolePlayService.updateInviteStatus(Number(roomId), 'REJECTED')
+      }
+    };
+  }, [roomId]);
+
+
+  useEffect(() => {
+
+    const socket = io('http://localhost:3001', {
+      withCredentials: true,
+      transports: ['websocket'],
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      timeout: 10000,
+    });
+  
+    socketRef.current = socket;
+
+socketRef.current.on('connect_error', (error) => {
+  console.error('Socket 연결 오류:', error);
+});
+
+socketRef.current.on('connect_timeout', () => {
+  console.error('Socket 연결 타임아웃');
+});
+  
+    socketRef.current.on('connect', () => {
+      console.log('시그널링 서버 연결됨');
+      socketRef.current?.emit('join-room', roomId);
+    });
+
+    socketRef.current.on('error', (error) => {
+      console.error('Socket error:', error);
+    });
+
+    socketRef.current.on('offer', async ({ from, offer }) => {
+      console.log('Offer 수신:', from);
+      try {
+        const peerConnection = createPeerConnection(from);
+        
+        // 원격
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+        console.log('원격 설명 설정됨');
+        
+        const answer = await peerConnection.createAnswer();
+        console.log('응답 생성됨');
+        
+        // 로컬 
+        await peerConnection.setLocalDescription(answer);
+        console.log('로컬 설명 설정됨');
+        
+        
+        socketRef.current?.emit('answer', { 
+          to: from, 
+          answer,
+          from: socketRef.current.id 
+        });
+      } catch (error) {
+        console.error('Offer 처리 중 오류:', error);
+      }
+    });
+
+    // 미디어 스트림 획득 -> 원격만 지금 되고 있음
+    navigator.mediaDevices.getUserMedia({ 
+      video: true, 
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true
+      } 
+    })
+    .then(stream => {
+      setLocalStream(stream);
+    })
+    .catch(err => console.error("미디어 스트림 획득 실패:", err));
+
+    return () => {
+      localStream?.getTracks().forEach(track => track.stop());
+      peerConnections.current.forEach(connection => connection.close());
+      socketRef.current?.disconnect();
+
+      if (roomId) {
+        rolePlayService.updateInviteStatus(Number(roomId), 'REJECTED')
+      }
+    };
+  }, [roomId]);
+
+  useEffect(() => {
+    if (!socketRef.current || !localStream) return;
+
+    socketRef.current.on('new-user', handleNewUser);
+
+    
+    socketRef.current.on('users-in-room', ({ users }) => {
+      console.log('방의 현재 사용자들:', users);
+      users.forEach(async (userId: string) => {
+        if (!peerConnections.current.has(userId)) {
+          const peerConnection = createPeerConnection(userId);
+          const offer = await peerConnection.createOffer({
+            offerToReceiveAudio: true,
+            offerToReceiveVideo: true
+          });
+          await peerConnection.setLocalDescription(offer);
+          socketRef.current?.emit('offer', { 
+            to: userId, 
+            offer,
+            from: socketRef.current.id 
+          });
+        }
+      });
+    });
+
+    socketRef.current.on('user-left', ({ userId }) => {
+      console.log('사용자 퇴장:', userId);
+      if (peerConnections.current.has(userId)) {
+        peerConnections.current.get(userId)?.close();
+        peerConnections.current.delete(userId);
+        setRemoteStreams(prevStreams => {
+          const newStreams = new Map(prevStreams);
+          newStreams.delete(userId);
+          return newStreams;
+        });
+      }
+    });
+
+    socketRef.current.on('offer', async ({ from, offer }) => {
+      console.log('Offer 수신:', from);
+      try {
+        if (peerConnections.current.has(from)) {
+          peerConnections.current.get(from)?.close();
+          peerConnections.current.delete(from);
+        }
+        
+        const peerConnection = createPeerConnection(from);
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+        
+        const answer = await peerConnection.createAnswer();
+        const modifiedAnswer = {
+          type: answer.type,
+          sdp: answer.sdp
+        };
+        
+        await peerConnection.setLocalDescription(modifiedAnswer);
+        socketRef.current?.emit('answer', { to: from, answer: modifiedAnswer });
+      } catch (error) {
+        console.error('Offer 처리 중 오류:', error);
+      }
+    });
+
+    socketRef.current.on('answer', async ({ from, answer }) => {
+      console.log('Answer 수신:', from);
+      const peerConnection = peerConnections.current.get(from);
+      if (peerConnection) {
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+      }
+    });
+
+    socketRef.current.on('ice-candidate', async ({ from, candidate }) => {
+      console.log('ICE candidate 수신:', from);
+      const peerConnection = peerConnections.current.get(from);
+      if (peerConnection) {
+        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+      }
+    });
+
+  }, [localStream]);
+
+  const createPeerConnection = (userId: string) => {
+    if (peerConnections.current.has(userId)) {
+      console.log('기존 연결 재사용:', userId);
+      return peerConnections.current.get(userId)!;
+    }
+  
+    console.log('새 연결 생성:', userId);
+    const peerConnection = new RTCPeerConnection({
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' }
+      ]
+    });
+  
+    peerConnection.oniceconnectionstatechange = () => {
+      console.log(`ICE 연결 상태 (${userId}):`, peerConnection.iceConnectionState);
+    };
+
+    peerConnection.onconnectionstatechange = () => {
+      console.log(`연결 상태 (${userId}):`, peerConnection.connectionState);
+    };
+  
     peerConnection.ontrack = (event) => {
-      setRemoteStreams((prev) => [...prev, event.streams[0]]);
+      console.log('트랙 이벤트 발생:', {
+        userId,
+        trackKind: event.track.kind,
+        trackEnabled: event.track.enabled,
+        streamActive: event.streams[0].active
+      });
+    
+      setRemoteStreams(prevStreams => {
+        const newStreams = new Map(prevStreams);
+        newStreams.set(userId, event.streams[0]);
+        return newStreams;
+      });
+    
+      event.track.onended = () => {
+        console.log('트랙 종료:', userId, event.track.kind);
+      };
     };
 
     if (localStream) {
-      localStream.getTracks().forEach((track) => {
+      console.log(`로컬 트랙 추가 (${userId}):`, localStream.getTracks().length);
+      localStream.getTracks().forEach(track => {
         peerConnection.addTrack(track, localStream);
       });
     }
-
-    peerConnections.current[id] = peerConnection;
+  
+    peerConnections.current.set(userId, peerConnection);
     return peerConnection;
   };
 
-  const startCall = async () => {
-    friends.forEach(async (friend) => {
-      const peerConnection = createPeerConnection(friend.id);
-      const offer = await peerConnection.createOffer();
-      await peerConnection.setLocalDescription(offer);
+  const handleNewUser = async (newUserId: string) => {
+    console.log('새 사용자 연결 시작:', newUserId);
+    
+    if (peerConnections.current.has(newUserId)) {
+      peerConnections.current.get(newUserId)?.close();
+      peerConnections.current.delete(newUserId);
+    }
+    
+    const peerConnection = createPeerConnection(newUserId);
+    
+    try {
+      const offer = await peerConnection.createOffer({
+        offerToReceiveAudio: true,
+        offerToReceiveVideo: true
+      });
 
-      socketRef.current.emit('offer', { to: friend.id, offer });
-    });
+      const modifiedOffer = {
+        type: offer.type,
+        sdp: offer.sdp
+      };
+      
+      await peerConnection.setLocalDescription(modifiedOffer);
+      console.log('Offer 생성 완료, 전송');
+      
+      socketRef.current?.emit('offer', {
+        to: newUserId,
+        offer: modifiedOffer
+      });
+    } catch (error) {
+      console.error('Offer 생성 중 오류:', error);
+      peerConnection.close();
+      peerConnections.current.delete(newUserId);
+    }
   };
 
  
@@ -228,13 +461,87 @@ const RolePlayPage = () => {
       <InfoHeader type="역할 놀이" />
       <PageContainer>
       <h2>화상회의 테스트</h2>
-      <VideoContainer>
-        {localStream && <VideoBox autoPlay muted playsInline ref={(ref) => ref && (ref.srcObject = localStream)} />}
+      {roomData && (
+          <div>
+            <h3>방 정보</h3>
+            <p>방 이름: {roomData.name}</p>
+          </div>
+        )}
 
-        {remoteStreams.map((stream, index) => (
-          <VideoBox key={index} autoPlay playsInline ref={(ref) => ref && (ref.srcObject = stream)} />
-        ))}
-      </VideoContainer>
+        {currentRole && (
+          <div>
+            <h3>내 역할</h3>
+            <p>캐릭터: {currentRole.result.characterName}</p>
+          </div>
+        )}
+
+    
+        {pageData && (
+          <div>
+            <h3>현재 페이지</h3>
+            <p>시나리오: {pageData.result.content_scenario}</p>
+            {pageData.result.image && (
+              <img src={pageData.result.image} alt="페이지 이미지" />
+            )}
+          </div>
+        )}
+
+        <div>
+          <h3>참가자 목록</h3>
+          {participants.map(participant => (
+            <div key={participant.id}>
+              {participant.name} {participant.role && `(${participant.role})`}
+            </div>
+          ))}
+        </div>
+
+
+      <VideoContainer>
+  {/* 로컬 비디오 */}
+  {localStream && (
+    <VideoBox 
+      autoPlay 
+      muted 
+      playsInline 
+      ref={ref => {
+        if (ref) {
+          ref.srcObject = localStream;
+          console.log('로컬 비디오 소스 설정됨');
+        }
+      }} 
+    />
+  )}
+
+  {/* 원격 비디오 */}
+  {Array.from(remoteStreams.entries()).map(([userId, stream]) => (
+    <VideoBox
+      key={userId}
+      autoPlay
+      playsInline
+      ref={ref => {
+        if (ref) {
+          ref.srcObject = stream;
+          console.log('원격 비디오 소스 설정됨:', userId);
+          
+          // 비디오 재생 상태 모니터링 -> 콘솔에 로드도 안 뜨고 실패도 안 뜸
+          ref.onloadedmetadata = () => {
+            console.log('비디오 메타데이터 로드됨:', userId);
+            ref.play().catch(e => console.error('비디오 재생 실패:', e));
+          };
+
+          ref.onplay = () => console.log('비디오 재생 시작:', userId);
+          ref.onpause = () => console.log('비디오 일시정지:', userId);
+          ref.onerror = (e) => console.error('비디오 에러:', userId, e);
+        }
+      }}
+      style={{
+        border: '2px solid red', 
+        minWidth: '300px',
+        minHeight: '200px'
+      }}
+    />
+  ))}
+</VideoContainer>
       <SubContainer>
       <AudioVisualizer stream={localStream} />
       </SubContainer>

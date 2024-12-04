@@ -1,14 +1,18 @@
 import axios from "axios";
+import { PAGE_URL } from "./path";
 
 export const API = axios.create({
-  baseURL: import.meta.env.VITE_SERVER_URL,
+  baseURL: 'https://storytune.shop',
   headers: {
     "Content-Type": "application/json",
   },
 });
 
 export const FORMAPI = axios.create({
-  baseURL: import.meta.env.VITE_SERVER_URL,
+  baseURL: 'https://storytune.shop',
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 const storageAccessKey = "JWT_ACCESS_TOKEN";
@@ -54,4 +58,9 @@ export const getAccess = (): string | null => {
 //     return Promise.reject(error);
 //   }
 // );
+
+
+
+
+
 

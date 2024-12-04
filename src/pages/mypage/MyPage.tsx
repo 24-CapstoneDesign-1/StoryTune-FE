@@ -1,106 +1,163 @@
 import { InfoHeader } from "@/widgets";
 import { useNavigate } from "react-router-dom";
 import { PAGE_URL } from "@/shared";
-// import { useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
 import { MainContainer } from "@/entities";
-import { API } from "@/shared";
-import { useEffect, useState } from "react";
+import { FaUser, FaEdit, FaBook, FaUserFriends, FaSignOutAlt } from "react-icons/fa";
+import { useUserStore } from "@/shared/hooks/stores/useUserStore";
+
 
 const SubContainer = styled.div`
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-`;
-
-const TitleContainer = styled.div`
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  margin-bottom: 20px;
+  align-items: center;
 `;
 
-const UserName = styled.h2`
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #5d4037;
+const ProfileSection = styled.div`
+  width: 100%;
+  padding: 20px;
+  background-color: #fffde7;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+  text-align: center;
 `;
 
-const MenuContainer = styled.div`
+const User = styled.div`
+  width: 80px;
+  height: 80px;
+  background-color: #ffeb3b;
+  border-radius: 50%;
+  margin: 0 auto 15px;
   display: flex;
-  flex-direction: column;
-  margin-top: 20px;
-`;
-
-const MenuItem = styled.p`
-  padding: 15px 0;
-  border-bottom: 1px solid #ccc;
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: #5d4037;
-  cursor: pointer;
-
-  &:hover {
-    color: #555;
+  align-items: center;
+  justify-content: center;
+  
+  svg {
+    font-size: 40px;
+    color: #5d4037;
   }
 `;
 
-const LogoutButton = styled.button`
-  width: 90%;
-  margin-top: 20px;
-  background-color: #FFEB3B;
-  color: black;
+const UserName = styled.h2`
+  font-size: 1.8rem;
   font-weight: bold;
-  border-radius: 10px;
-  padding: 10px;
+  color: #5d4037;
+  margin-bottom: 10px;
+`;
+
+const MenuContainer = styled.div`
+  width: 100%;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+`;
+
+const MenuItem = styled.div`
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
   cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid #f0f0f0;
+
+  svg {
+    color: #5d4037;
+    font-size: 20px;
+  }
 
   &:hover {
-    background-color: #f4c300;
+    background-color: #fff9c4;
+    transform: translateX(5px);
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+`;
+
+const MenuText = styled.span`
+  font-size: 1.1rem;
+  color: #5d4037;
+  font-weight: 500;
+`;
+
+const LogoutButton = styled.button`
+  width: 100%;
+  margin-top: 30px;
+  background-color: #fff;
+  color: #d32f2f;
+  font-weight: bold;
+  border: 2px solid #d32f2f;
+  border-radius: 10px;
+  padding: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #d32f2f;
+    color: white;
   }
 `;
 
 const MyPage = () => {
   const navigate = useNavigate();
-  // const location = useLocation();
-  // const params = new URLSearchParams(location.search);
-  // const name = params.get("name");
-  const [userInfo, setUserInfo] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
+  
+  const userStore = useUserStore();
 
-  const fetchUserInfo = async () => {
-    try {
-      console.log(error)
-      const response = await API.get("/myinfo");
-      setUserInfo(response.data);
-    } catch (err) {
-      console.error(err);
-      setError("사용자 정보를 불러오는 데 실패했습니다.");
-    }
+
+  
+
+  const userInfo = userStore.getUserAllInfo();
+
+  const handleLogout = () => {
+    navigate(PAGE_URL.SignIn);
   };
-
-  useEffect(() => {
-    fetchUserInfo();
-  }, []);
 
   return (
     <MainContainer>
       <InfoHeader type="마이페이지" />
       <SubContainer>
-      <TitleContainer>
-        <UserName>{userInfo?.name}</UserName>
-      </TitleContainer>
-      <MenuContainer>
-        <MenuItem onClick={() => navigate(PAGE_URL.MyInfo)}>내 정보</MenuItem>
-        <MenuItem onClick={() => navigate(PAGE_URL.ChangeInfo)}>내 정보 수정</MenuItem>
-        <MenuItem onClick={() => navigate(PAGE_URL.Maked)}>나의 책장</MenuItem>
-        <MenuItem onClick={() => navigate(PAGE_URL.FriendList)}>친구 목록</MenuItem>
-      </MenuContainer>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <LogoutButton onClick={() => {}}>로그아웃</LogoutButton>
-      </div>
+        <ProfileSection>
+          <User>
+            <FaUser />
+          </User>
+          <UserName>{userInfo.name || "환영합니다"}</UserName>
+        </ProfileSection>
+
+        <MenuContainer>
+          <MenuItem onClick={() => navigate(PAGE_URL.MyInfo)}>
+            <FaUser />
+            <MenuText>내 정보</MenuText>
+          </MenuItem>
+          <MenuItem onClick={() => navigate(PAGE_URL.ChangeInfo)}>
+            <FaEdit />
+            <MenuText>내 정보 수정</MenuText>
+          </MenuItem>
+          <MenuItem onClick={() => navigate(PAGE_URL.Maked)}>
+            <FaBook />
+            <MenuText>나의 책장</MenuText>
+          </MenuItem>
+          <MenuItem onClick={() => navigate(PAGE_URL.FriendList)}>
+            <FaUserFriends />
+            <MenuText>친구 목록</MenuText>
+          </MenuItem>
+        </MenuContainer>
+
+        <LogoutButton onClick={ handleLogout}>
+          <FaSignOutAlt />
+          로그아웃
+        </LogoutButton>
       </SubContainer>
     </MainContainer>
   );

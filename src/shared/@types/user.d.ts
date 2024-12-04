@@ -3,8 +3,11 @@ declare namespace User {
 
     export interface CurrentUserResDto {
         result: {
+            username: string;
             userId: number;
             name: string;
+            age: 0;
+            gender: "GIRL"
         }
     }
     export interface SignInReqDto {
