@@ -35,6 +35,7 @@ export const Record = () => {
                                     console.log('file', file);
                                 }).then(() => navigate(PAGE_URL.Maked));
                             }}} /> : <RecordIcon onClick={() => {
+                            stopRecording();
                             setRecording(true);
                             startRecording();
                             }} />
@@ -100,8 +101,9 @@ export const RecordContent = ({
                                     }
                                 }}
                             /> : <RecordIcon onClick={() => {
-                            setRecording(true);
-                            startRecording();
+                                stopRecording();
+                                setRecording(true);
+                                startRecording();
                             }} />
                         }
                         <br />
@@ -133,10 +135,19 @@ export const CharacterRecord = ({index} : {index: number}) => {
                         {recording ? <StopIcon onClick={() => {
                             setRecording(false);
                             stopRecording();
+                            setTimeout(() => {
+                                if (mediaBlobUrl) {
+                                    console.log("Media URL:", mediaBlobUrl);
+                                    // Blob 처리 로직
+                                } else {
+                                    console.error("MediaBlobUrl not created.");
+                                }
+                            }, 1000);
                             if (mediaBlobUrl) {
                                 fetch(mediaBlobUrl)
                                 .then(res => res.blob())
                                 .then(blob => {
+                                    console.log('3');
                                     const file = new File([blob], 'audio.mp3', {
                                         type: 'audio/mp3',
                                     });
@@ -149,13 +160,13 @@ export const CharacterRecord = ({index} : {index: number}) => {
                                     return res;
                                 }).then((res) => navigate(PAGE_URL.HeroNaming, {state: {index: index, name: res}}));;
                             }}} /> : <RecordIcon onClick={() => {
-                            setRecording(true);
-                            startRecording();
+                                setRecording(true);
+                                startRecording();
                             }} />
                         }
                         <br />
                         <>
-                        <audio src={mediaBlobUrl} controls />
+                        {/* <audio src={mediaBlobUrl} controls /> */}
                         </>
                     </div>
                 )}

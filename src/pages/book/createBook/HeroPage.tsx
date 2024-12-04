@@ -1,4 +1,4 @@
-import { MainContainer } from "@/entities";
+import { Loading, MainContainer } from "@/entities";
 import { PAGE_URL } from "@/shared";
 import { BookService } from "@/shared/hooks/services/BookService";
 import { useBookStore } from "@/shared/hooks/stores/useBookStore";
@@ -73,16 +73,7 @@ const SubContainer = styled.div`
     flex-direction: column;
     align-items: center;
 `;
-const SubLoadingContainer = styled.div`
-    width: 100%;
-    height: 80vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 3rem;
-    font-weight: bold;
-    margin-top: 20px;
-`;
+
 const NonContainer = styled.div`
     width: 300px;
     display: flex;
@@ -144,9 +135,9 @@ const HeroPage = () => {
     useEffect(() => {
         const fetchHeroes = async () => {
             const res = await getHero();
-            const heroImages = res.map((index) => bookStore.getImage(index));
+            const heroImages = res.map((index) => bookStore.getImage(index))
             setImages(heroImages);
-            setLoading(false); // 로딩 상태를 마지막에 업데이트
+            setLoading(false);
         };
         fetchHeroes(); // 함수 호출
     }, []);
@@ -154,12 +145,10 @@ const HeroPage = () => {
     if (loading) {
         return (
             <MainContainer>
-            <InfoHeader type="나만의 동화 만들기" />
-            <SubLoadingContainer>
-                Loading ...
-            </SubLoadingContainer>
-            <div style={{height: "300px"}}></div>
-        </MainContainer>
+                <InfoHeader type="나만의 동화 만들기" />
+                <Loading />
+                <div style={{height: "1000px"}}></div>
+            </MainContainer>
         );
     }
 

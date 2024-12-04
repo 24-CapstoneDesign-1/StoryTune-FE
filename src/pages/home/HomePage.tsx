@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PAGE_URL } from "@/shared";
 import { FaSearch, FaBookOpen, FaMask, FaPencilAlt } from "react-icons/fa";
 import styled from "@emotion/styled";
+import { BookService } from "@/shared/hooks/services/BookService";
 
 const PageContainer = styled.div`
   background-color: #fff9c4;
@@ -85,6 +86,7 @@ const Card = styled.div`
 const BookListContainer = styled.div`
   display: flex;
   gap: 1rem;
+  justify-content: space-around;
   overflow-x: auto;
   padding-bottom: 1rem;
 `;
@@ -121,11 +123,14 @@ const BookCard = styled.div`
 const HomePage = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const [bookList] = useState([
-    { title: "피노키오", createdAt: "2024.01.02", photo: "pinocchio-cover.jpg" },
-    { title: "피노키오", createdAt: "2024.01.02", photo: "pinocchio-cover.jpg" },
-    { title: "피노키오", createdAt: "2024.01.02", photo: "pinocchio-cover.jpg" },
-    { title: "피노키오", createdAt: "2024.01.02", photo: "pinocchio-cover.jpg" },
+  const bookService = BookService();
+  const [bookList, setBookList] = useState([
+    {
+      myBookId: 0,
+      cover: "",
+      title: "",
+      updatedAt: "",
+    }
   ]);
 
   // const user = async () => {
@@ -143,6 +148,16 @@ const HomePage = () => {
   const handleSearch = () => {
     if (search.trim()) navigate(PAGE_URL.Search, { state: { search } });
   };
+
+  const getBookList = async () => {
+    const data = await bookService.myBook()
+        .then((res) => setBookList(res.result.myBooks));
+    return data;
+  }
+
+  useEffect(() => {
+    getBookList();
+  }, []);
 
   return (
     <PageContainer>
@@ -184,13 +199,14 @@ const HomePage = () => {
         <h2 style={{ fontSize: "1.5rem", marginBottom: "1rem", color: "#5D4037" }}>내가 만든 책</h2>
         <BookListContainer>
           {bookList.map((book, index) => (
-            <BookCard key={index}>
-              <img src={book.photo} alt={book.title} />
+            index < 6 ? (
+            <BookCard key={index} onClick={() => navigate(`/book/${book.myBookId}`)}>
+              <img src={book.cover} alt={book.title} />
               <div>
                 <p>{book.title}</p>
-                <small>{book.createdAt}</small>
+                <small>{book.updatedAt}</small>
               </div>
-            </BookCard>
+            </BookCard>): (null)
           ))}
         </BookListContainer>
       </Section>

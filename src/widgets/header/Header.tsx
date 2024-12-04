@@ -1,4 +1,5 @@
 import { MenuButton, SearchButton } from "@/entities";
+import { PAGE_URL } from "@/shared";
 import styled from "@emotion/styled";
 import { IoChevronBack } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 const HeaderContainer = styled.header`
     display: flex;
     width: 100%;
-    height: 60px;
+    height: 55px;
     justify-content: center;
     background-color: #FFFFFF;
     align-items: center;
@@ -48,7 +49,7 @@ export const InfoHeader = ({type} : {type : string}) => {
     const navigate = useNavigate();
     return (
         <HeaderContainer>
-            <BackButton onClick={() => navigate(-1)}/>
+            <BackButton onClick={() => navigate(PAGE_URL.Home)}/>
             <Title>
                 {type}
             </Title>

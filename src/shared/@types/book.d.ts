@@ -16,10 +16,14 @@ declare namespace Book {
 
     export interface MyBookRes {
         result: {
-            myBookId: number;
-            cover: string;
-            title: string;
-            updatedAt: string;
+            myBooks: [
+                {
+                    myBookId: number,
+                    cover: string,
+                    title: string,
+                    updatedAt: string,
+                }
+            ]
         }
     }
 
