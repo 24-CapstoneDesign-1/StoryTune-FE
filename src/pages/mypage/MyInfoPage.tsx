@@ -1,5 +1,5 @@
 import { InfoHeader } from "@/widgets";
-import { useUserStore } from "@/shared";
+import { AuthService } from "@/shared";
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { MainContainer } from "@/entities";
@@ -38,17 +38,19 @@ const InfoItem = styled.div`
 `;
 
 const MyInfo = () => {
-  const [error, setError] = useState<string | null>(null);
-  
-  const { getUserAllInfo } = useUserStore();
-  const userInfo = getUserAllInfo(); 
+  const [error] = useState<string | null>(null);
+  const [userInfo, setUserInfo] = useState({
+    userId: 0,
+    name: "",
+  })
+  const authService = AuthService();
 
   useEffect(() => {
-    if (!userInfo) {
-      setError("사용자 정보를 불러오는 데 실패했습니다.");
-    }
-    console.log(userInfo);
-  }, [userInfo]);
+    authService.currentUser()
+    .then((data) => {
+      setUserInfo(data.result);
+    })
+  }, []);
 
   if (error) {
     return <div>{error}</div>;
@@ -65,15 +67,15 @@ const MyInfo = () => {
           </InfoItem>
           <InfoItem>
             <span>아이디</span>
-            <span>{userInfo?.username}</span>
+            <span>{userInfo.userId}</span>
           </InfoItem>
           <InfoItem>
             <span>나이</span>
-            <span>{userInfo?.age}</span>
+            <span>{}</span>
           </InfoItem>
           <InfoItem>
             <span>성별</span>
-            <span>{userInfo?.gender}</span>
+            <span>{}</span>
           </InfoItem>
         </InfoCard>
       </PageContainer>
