@@ -4,15 +4,34 @@ import { MainContainer, SquareButton } from "@/entities";
 import { InfoHeader } from "@/widgets";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { PAGE_URL, RolePlayService } from '@/shared';
+import {  FaTheaterMasks } from 'react-icons/fa';
 
 const NextButton = styled(SquareButton)`
-    margin-top : 50px;
-    font-size : 15px;
-    height: 7vh;
-    width : 30vh;
-    background-color: #f5f5f5;
-`;
+ height : 50px;
+ margin-top: 30px;
+ padding: 1px 1px;
+ background-color: #FFB74D;
+ border-radius: 25px;
+ border: none;
+ font-size: 16px;
+ color: white;
+ display: flex;
+ align-items: center;
+ gap: 10px;
+ box-shadow: 0 4px 15px rgba(255, 183, 77, 0.3);
+ transform: translateY(0);
+ transition: all 0.2s ease;
 
+ &:hover {
+   background-color: #FFA726;
+   transform: translateY(-2px);
+   box-shadow: 0 6px 20px rgba(255, 183, 77, 0.4);
+ }
+
+ svg {
+   font-size: 18px;
+ }
+`;
 const SubContainer = styled.div`
     display: flex;
     margin-top: 10px;
@@ -124,7 +143,12 @@ const SelectRolePage = () => {
       <>
         {console.log(assignedRoles)}
       </>
-      <NextButton onClick={() => {navigate(PAGE_URL.RolePlay, {state: {myRoomId: roomId, myBookId: myBookId, role: assignedRoles}})}}>역할 놀이 하러 가기</NextButton>
+      <NextButton onClick={() => {navigate(PAGE_URL.RolePlay, {
+ state: {myRoomId: roomId, myBookId: myBookId, role: assignedRoles}
+})}}>
+ <FaTheaterMasks />
+ 역할 놀이 시작하기
+</NextButton>
       </PageContainer>
     </MainContainer>
   );

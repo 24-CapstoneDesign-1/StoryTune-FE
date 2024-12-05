@@ -4,23 +4,27 @@ import { MainContainer, SquareButton, Loading } from "@/entities";
 import { useNavigate, useLocation } from "react-router-dom";
 import { PAGE_URL, BookService } from "@/shared";
 import styled from "@emotion/styled";
+import { FaArrowRight } from "react-icons/fa"; // React Icon 추가
 
 const BookGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 2rem;
-  padding: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding: 1.5rem 1rem;
+  justify-content: center;
 `;
 
 const BookCard = styled.div`
-  background-color: #FFFFFF;
-  border-radius: 12px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  transition: transform 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
+  width: 250px;  // 고정 너비 설정
   
   &:hover {
     transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
   }
 `;
 
@@ -28,6 +32,7 @@ const BookImage = styled.img`
   width: 100%;
   height: 200px;
   object-fit: cover;
+  border-bottom: 2px solid #ddd;
 `;
 
 const BookInfo = styled.div`
@@ -36,14 +41,41 @@ const BookInfo = styled.div`
 `;
 
 const BookTitle = styled.h3`
-  margin: 0.5rem 0;
+  font-size: 1.2rem;
   color: #333;
+  margin-bottom: 0.5rem;
 `;
 
 const BookDate = styled.p`
-  color: #666;
+  color: #888;
   font-size: 0.9rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
+`;
+
+const StyledSquareButton = styled(SquareButton)`
+  width: 100%;
+  height: 50px;
+ background-color: #FFB74D;
+ color: white;
+ font-size: 1rem;
+ padding: 0.1rem 0.1rem;
+ border-radius: 15px;
+ border: none;
+ box-shadow: 0 2px 4px rgba(255, 183, 77, 0.2);
+ transition: all 0.2s ease;
+ display: flex;
+ align-items: center;
+ gap: 0.3rem;
+
+ &:hover {
+   transform: scale(1.03);
+   background-color: #FFA726;
+   box-shadow: 0 3px 6px rgba(255, 183, 77, 0.3);
+ }
+
+ svg {
+   font-size: 0.9rem;
+ }
 `;
 
 interface Book {
@@ -53,13 +85,13 @@ interface Book {
   updatedAt: string;
 }
 
-const FriendPlayPage = () => {
+const RolePlayBookPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [books, setBooks] = useState<Book[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   const bookService = BookService();
   const roomId = location.state?.rolePlayingRoomId;
 
@@ -84,11 +116,7 @@ const FriendPlayPage = () => {
 
   const handleBookSelect = async (myBookId: number) => {
     try {
-      // 새로운 책 생성
-
-
       console.log('roleplay: ', roomId, myBookId);
-      // 역할놀이 방으로 이동
       navigate(PAGE_URL.SelectRole, {
         state: {
           rolePlayingRoomId: roomId,
@@ -113,7 +141,7 @@ const FriendPlayPage = () => {
   return (
     <MainContainer>
       <InfoHeader type="역할 놀이" />
-      <h2 style={{ margin: '2rem 1rem' }}>어떤 책으로 역할놀이를 할까요?</h2>
+      <h2 style={{ margin: '2rem 1rem', fontSize: '1.5rem', color: '#5d4037' }}>어떤 책으로 역할놀이를 할까요?</h2>
       <BookGrid>
         {books.map((book) => (
           <BookCard key={book.myBookId}>
@@ -121,9 +149,10 @@ const FriendPlayPage = () => {
             <BookInfo>
               <BookTitle>{book.title}</BookTitle>
               <BookDate>{book.updatedAt}</BookDate>
-              <SquareButton onClick={() => handleBookSelect(book.myBookId)}>
+              <StyledSquareButton onClick={() => handleBookSelect(book.myBookId)}>
+                <FaArrowRight size={18} style={{ marginRight: '0.5rem' }} />
                 선택하기
-              </SquareButton>
+              </StyledSquareButton>
             </BookInfo>
           </BookCard>
         ))}
@@ -132,4 +161,4 @@ const FriendPlayPage = () => {
   );
 };
 
-export default FriendPlayPage;
+export default RolePlayBookPage;
