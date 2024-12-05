@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PAGE_URL } from "@/shared";
-import { FaSearch, FaBookOpen, FaMask, FaPencilAlt } from "react-icons/fa";
+import { FaSearch, FaUser, FaBookOpen, FaMask, FaPencilAlt } from "react-icons/fa";
 import styled from "@emotion/styled";
 import { BookService } from "@/shared/hooks/services/BookService";
 
@@ -13,7 +13,9 @@ const PageContainer = styled.div`
 `;
 
 const Header = styled.header`
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 2rem;
 
   h1 {
@@ -24,6 +26,12 @@ const Header = styled.header`
 
   p {
     font-size: 1rem;
+    color: #5d4037;
+  }
+
+  .user-icon {
+    cursor: pointer;
+    font-size: 1.5rem;
     color: #5d4037;
   }
 `;
@@ -141,7 +149,7 @@ const HomePage = () => {
     const data = await bookService.myBook()
         .then((res) => setBookList(res.result.myBooks));
     return data;
-  }
+  };
 
   useEffect(() => {
     getBookList();
@@ -150,8 +158,11 @@ const HomePage = () => {
   return (
     <PageContainer>
       <Header>
-        <h1>동화 나라 🌟</h1>
-        <p>나만의 동화책을 만들고 친구들과 읽어보세요!</p>
+        <div>
+          <h1>동화 나라 🌟</h1>
+          <p>나만의 동화책을 만들고 친구들과 읽어보세요!</p>
+        </div>
+        <FaUser className="user-icon" onClick={() => navigate(PAGE_URL.MyPage)} />
       </Header>
 
       <SearchContainer>
@@ -194,7 +205,7 @@ const HomePage = () => {
                 <p>{book.title}</p>
                 <small>{book.updatedAt}</small>
               </div>
-            </BookCard>): (null)
+            </BookCard>) : null
           ))}
         </BookListContainer>
       </Section>
