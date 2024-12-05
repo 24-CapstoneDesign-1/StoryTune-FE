@@ -232,7 +232,7 @@ const RolePlayPage: React.FC = () => {
   const roomId = 1234;
 
   useEffect(() => {
-    socket.current = io("http://localhost:5004");
+    socket.current = io(import.meta.env.VITE_SOCKET_SERVER_URL);
 
     socket.current.emit("join", roomId);
 
