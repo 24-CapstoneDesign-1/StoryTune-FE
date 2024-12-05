@@ -5,23 +5,119 @@ import { useBookStore } from "@/shared/hooks/stores/useBookStore";
 import { InfoHeader } from "@/widgets";
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
-import { FaPlay } from "react-icons/fa6";
+
 import { useNavigate } from "react-router-dom";
+import { SlMagicWand } from "react-icons/sl";
 
 const MainSubContainer = styled.div`
-    width: 80%;
+ width: 90%;
+ max-width: 1200px;
+ margin: 0 auto;
+ padding: 2rem;
 `;
 
 const TitleContainer = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 20px;
-    width: 100%;
-    @media (max-width: 768px) {
-        font-size: 0.7rem;
-    }
+ text-align: center;
+ margin-bottom: 3rem;
+ 
+ h1 {
+   font-size: 2rem;
+   color: #5D4037;
+   margin-bottom: 1rem;
+ }
 `;
+
+const SearchContainer = styled.div`
+ display: flex;
+ align-items: center;
+ gap: 1rem;
+ max-width: 600px;
+ margin: 0 auto;
+ 
+ input {
+   flex: 1;
+   padding: 0.8rem 1.5rem;
+   border: 2px solid;
+   border-radius: 30px;
+   font-size: 1rem;
+   background: #FFF8E1;
+   
+   &:focus {
+     outline: none;
+     border-color: #FF9800;
+   }
+ }
+`;
+
+const BookListContainer = styled.div`
+ display: grid;
+ grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+ gap: 2rem;
+ margin-top: 3rem;
+`;
+
+const BookCard = styled.div`
+ background: white;
+ border-radius: 20px;
+ overflow: hidden;
+ box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+ transition: transform 0.3s ease;
+ cursor: pointer;
+
+ &:hover {
+   transform: translateY(-5px);
+ }
+`;
+
+const BookImage = styled.img`
+ width: 100%;
+ height: 300px;
+ object-fit: cover;
+`;
+
+const BookInfo = styled.div`
+ padding: 1.5rem;
+ 
+ h3 {
+   font-size: 1.2rem;
+   color: #5D4037;
+   margin-bottom: 0.5rem;
+ }
+ 
+ p {
+   color: #795548;
+   font-size: 0.9rem;
+ }
+`;
+
+const NewBookButton = styled.button`
+ display: flex;
+ align-items: center;
+ gap: 0.5rem;
+ padding: 1rem 2rem;
+ background: #FFB74D;
+ color: white;
+ border: none;
+ border-radius: 30px;
+ font-size: 1.1rem;
+ font-weight: bold;
+ cursor: pointer;
+ transition: all 0.2s ease;
+ box-shadow: 0 4px 10px rgba(255,183,77,0.3);
+
+ &:hover {
+   background: #FF9800;
+   transform: translateY(-2px);
+ }
+
+ svg {
+   font-size: 1.2rem;
+ }
+`;
+
+
+
+
 
 
 interface Book {
@@ -56,41 +152,6 @@ const SelectBookPage = () => {
 
 export default SelectBookPage;
 
-const SubTitleContainer = styled.div`
-    width: 80%;
-    margin-bottom: 10px;
-`;
-
-const BookListContainer = styled.div`
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    flex-wrap: wrap;
-    white-space: nowrap;
-    padding-bottom: 10px;
-`;
-
-const NewButtonContainer = styled.div`
-    display: flex;
-    justify-content: space-evenly;
-    margin-top: 20px;
-    font-weight: bold;
-    @media (max-width: 768px) {
-        align-items: center;
-        margin-bottom: 20px;
-    }
-`;
-
-const PlayButton = styled(FaPlay)`
-    margin-left: 10px;
-`;
-
-const TitleSubContainer = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 120%;
-`;
 
 interface Book {
     bookId: number;
@@ -135,28 +196,35 @@ const SelectBookList = ( {title, bookList}
         return data;
     }
     return (
-        <div>
-            <TitleContainer>
-                <SubTitleContainer>
-                    <TitleSubContainer>
-                        <h1>{title}</h1>
-                        <NewButtonContainer onClick={() => {
-                            myBook({ request: { bookId: null } });
-                        }}>
-                            새로 만들기
-                            <PlayButton />
-                        </NewButtonContainer>
-                    </TitleSubContainer>
-                    <Search value={search} change={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)} onSearch={handleSearch}/>
-                </SubTitleContainer>
-            </TitleContainer>
-            <BookListContainer>
-                {bookList.map((book, index) => (
-                    index < 4 ? (
-                        <Book key={index} {...book} clickEvent={() => clickEvent(book.bookId)} />
-                    ) : null
-                ))}
-            </BookListContainer>
-        </div>
-    );
-};
+        <MainSubContainer>
+          <TitleContainer>
+            <h1>{title}</h1>
+            <SearchContainer>
+              <input 
+                type="text" 
+                placeholder="동화책 검색하기..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <NewBookButton onClick={() => myBook({ request: { bookId: null } })}>
+                <SlMagicWand />
+                새로운 동화 만들기
+              </NewBookButton>
+            </SearchContainer>
+          </TitleContainer>
+          
+          <BookListContainer>
+            {bookList.map((book, index) => (
+              <BookCard key={index} onClick={() => clickEvent(book.bookId)}>
+                <BookImage src={book.cover} alt={book.title} />
+                <BookInfo>
+                  <h3>{book.title}</h3>
+                  <p>{book.author}</p>
+                </BookInfo>
+              </BookCard>
+            ))}
+          </BookListContainer>
+        </MainSubContainer>
+      );
+     };
+               

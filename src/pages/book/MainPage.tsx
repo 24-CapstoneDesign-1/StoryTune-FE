@@ -23,7 +23,7 @@ const StyledButton = styled(Button)`
 display: inline-flex;
  background: #fff;
  color: #5D4037;
- border: 2px solid #FFB74D;
+ border: 2px solid ;
  border-radius: 20px;
  padding: 12px 40px;
  font-weight: bold;
