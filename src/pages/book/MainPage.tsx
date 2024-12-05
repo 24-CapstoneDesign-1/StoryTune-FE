@@ -5,6 +5,54 @@ import { Button, Search, MainContainer } from "@/entities";
 import { PAGE_URL } from "@/shared";
 import { useNavigate } from "react-router-dom";
 import { BookService } from "@/shared/hooks/services/BookService";
+import {  FaBookOpen } from 'react-icons/fa6';
+import { SlMagicWand } from "react-icons/sl";
+
+const ButtonContainer = styled.div`
+ display: flex;
+ justify-content: center;
+ gap: 20px;
+ margin-top: 30px;
+ @media (max-width: 768px) {
+   flex-direction: row;
+   align-items: center;
+ }
+`;
+
+const StyledButton = styled(Button)`
+display: inline-flex;
+ background: #fff;
+ color: #5D4037;
+ border: 2px solid #FFB74D;
+ border-radius: 20px;
+ padding: 12px 40px;
+ font-weight: bold;
+ display: inline-flex;
+ align-items: center;
+ justify-content: center;
+ gap: 10px;
+ box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+ transition: all 0.2s ease;
+font-size: 1rem; 
+white-space: nowrap;
+ &:hover {
+   transform: translateY(-2px);
+   background: #FFF8E1;
+   box-shadow: 0 6px 12px rgba(255,183,77,0.2);
+ }
+
+ svg {
+   font-size:100px;
+   color: #FFB74D;
+ }
+
+ @media (max-width: 768px) {
+   width: 220px;
+   height: 50px;
+   margin: 8px;
+   font-size: 0.9rem;
+ }
+`;
 
 const MainSubContainer = styled.div`
     width: 80%;
@@ -25,28 +73,7 @@ const TitleContainer = styled.div`
     }
 `;
 
-const ButtonContainer = styled.div`
-    display: flex;
-    justify-content: space-evenly;
-    margin-top: 20px;
-    @media (max-width: 768px) {
-        flex-direction: column;
-        align-items: center;
-    }
-`;
 
-const CustomButton = styled(Button)`
-    color: black;
-    background-color: #FFFFFF;
-    font-weight: bold;
-    border-radius: 15px;
-    @media (max-width: 768px) {
-        font-size: 1rem;
-        width: 230px;
-        height: 50px;
-        margin: 10px;
-    }
-`;
 
 interface Book {
     bookId: number;
@@ -97,10 +124,16 @@ const MainPage = () => {
                     <h1>나만의 동화를 만들고 싶어요!</h1>
                 </div>
             </TitleContainer>
-                <ButtonContainer>
-                    <CustomButton width="250px" height="70px" onClick={() => navigate(PAGE_URL.SelectBook)}>동화 만들러 가기</CustomButton>
-                    <CustomButton width="250px" height="70px">이어서 만들래요!</CustomButton>
-                </ButtonContainer>
+            <ButtonContainer>
+ <StyledButton onClick={() => navigate(PAGE_URL.SelectBook)}>
+   <SlMagicWand />
+   동화 만들러 가기
+ </StyledButton>
+ <StyledButton>
+   <FaBookOpen />
+   이어서 만들래요!
+ </StyledButton>
+</ButtonContainer>
             </MainSubContainer>
             <div style={{height: "140px"}}></div>
         </ MainContainer>
