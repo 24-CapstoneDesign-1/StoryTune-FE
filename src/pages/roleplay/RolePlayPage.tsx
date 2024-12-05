@@ -169,7 +169,7 @@ const RolePlayPage: React.FC = () => {
 
   const [page, setPage] = useState<number>(0);
     const bookService = BookService();
-    const [ setTitle] = useState("");
+
 
     const [userInfo, setUserInfo] = useState<string>('');
 
