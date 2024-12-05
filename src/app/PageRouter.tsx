@@ -38,6 +38,7 @@ const RolePlay = lazy(() => import("@/pages/roleplay/RolePlayPage"));
 const Index = lazy(() => import("@/pages/book/createBook/IndexPage"));
 const SelectBook = lazy(() => import("@/pages/book/SelectBookPage"));
 const Book = lazy(() => import("@/pages/book/BookPage"));
+const Error = lazy(() => import("@/pages/ErrorPage"));
 
 const PageRouter = () => {
     return (
@@ -79,6 +80,7 @@ const PageRouter = () => {
                             <Route path={PAGE_URL.Index} element={<Index />} />
                             <Route path={PAGE_URL.Search} element={<Search />} />
                             <Route path={PAGE_URL.Book} element={<Book />} />
+                            <Route path="*" element={<Error />} />
                         </Route>
                     </Routes>
                 </AuthRouter>

@@ -31,7 +31,7 @@ const MainPage = () => {
 
     return (
         <MainContainer>
-            <ImageContainer src="/src/asset/images/logo.svg" />
+            <ImageContainer src="/images/logo.svg" />
             <LoginButton width="300px" height="50px" onClick={() => navigate(PAGE_URL.SignIn)}>로그인</LoginButton>
         </MainContainer>
     );

@@ -65,7 +65,7 @@ const StoryPage = () => {
                             <>
                                 <RecordContainer>
                                     <ImageContainer>
-                                        <HelpImg src="/src/asset/images/help.svg" onClick={() => {
+                                        <HelpImg src="/images/help.svg" onClick={() => {
                                             handleGPTApi().then(() => {
                                                 // setHelp(res.data.choices[0].message.content);
                                             }).then(() => {
