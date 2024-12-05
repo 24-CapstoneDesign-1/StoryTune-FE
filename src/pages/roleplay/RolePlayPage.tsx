@@ -232,7 +232,7 @@ const RolePlayPage: React.FC = () => {
   const roomId = 1234;
 
   useEffect(() => {
-    socket.current = io(import.meta.env.VITE_SOCKET_SERVER_URL);
+    socket.current = io("http://localhost:5004");
 
     socket.current.emit("join", roomId);
 
@@ -308,10 +308,11 @@ const RolePlayPage: React.FC = () => {
         myFaceRef.current.srcObject = myStream.current;
       }
     } catch (error) {
+      alert("카메라 및 마이크 권한이 필요합니다.");
       console.error("미디어 스트림 에러", error);
     }
   };
-
+  
   const createOffer = async () => {
     await getMedia();
     if (myStream.current) {
