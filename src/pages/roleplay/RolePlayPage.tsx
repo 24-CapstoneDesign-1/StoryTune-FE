@@ -1,51 +1,123 @@
-import { useEffect, useRef, useState } from 'react';
-import styled from '@emotion/styled'; 
-import { MainContainer } from "@/entities";
-import { InfoHeader } from "@/widgets";
-import { io } from 'socket.io-client';
-import { BiSolidCameraOff, BiSolidCamera } from 'react-icons/bi'; 
-import { PiSpeakerSimpleSlashDuotone, PiSpeakerSimpleHighDuotone } from "react-icons/pi";
-
-const SubContainer = styled.div`
-    height: 20vh;
-    @media (max-width: 768px) {
-        flex-direction: column;
-        height: 100%;
-        width: 100%;
-    }
-`;
+import React, { useState, useEffect, useRef } from "react";
+import io, { Socket } from "socket.io-client";
+import styled from '@emotion/styled';
+import { FaMask } from "react-icons/fa";
+import { BookService } from "@/shared/hooks/services/BookService";
+import { useLocation } from "react-router-dom";
+import {  API, getAccess } from "@/shared";
 
 const PageContainer = styled.div`
-  display: flex;
-  width: 20%;
-  justify-content: center;
-  flex-direction : column;
-  margin-top: 20px;
-  @media (max-width: 768px) {
-    width: 100%;
+  background-color: #FFF9C4;
+  min-height: 100vh;
+  padding: 1.5rem;
+  font-family: "Roboto", sans-serif;
+`;
+
+const Header = styled.div`
+  text-align: center;
+  margin-bottom: 2rem;
+
+  h1 {
+    font-size: 2rem;
+    color: #5D4037;
+    margin-bottom: 0.5rem;
   }
 `;
 
-const VideoContainer = styled.div`
+const VideoSection = styled.div`
   display: flex;
   justify-content: center;
-  gap: 20px;
-  margin-top: 20px;
+  gap: 2rem;
+  margin-bottom: 2rem;
 `;
 
-const VideoBox = styled.video`
-  width: 300px;
-  height: 200px;
-  background-color: black;
+const VideoBox = styled.div`
+  background-color: #FFFDE7;
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 280px;
+
+  h3 {
+    color: #5D4037;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+  }
+`;
+
+const Video = styled.video`
+  width: 100%;
+  height: 210px;
   border-radius: 8px;
+  object-fit: cover;
+  border: 2px solid #FFB74D;
+`;
+
+const StorySection = styled.div`
+  background-color: #FFFDE7;
+  border-radius: 16px;
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 800px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const StoryImage = styled.img`
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+`;
+
+const StoryContent = styled.p`
+  color: #5D4037;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  margin: 1.5rem 0;
+`;
+
+const Button = styled.button`
+  background-color: #FF8A65;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &:disabled {
+    background-color: #BDBDBD;
+    cursor: not-allowed;
+  }
 `;
 
 const VisualizerContainer = styled.div`
   display: flex;
-  align-items: center;
   justify-content: center;
-  margin-top: 20px;
+  align-items: flex-end;
+  height: 60px;
+  gap: 2px;
+  margin: 1rem 0;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  padding: 0.5rem;
 `;
+
 
 const VisualizerBar = styled.div<{ height: number }>`
   width: 3px;
@@ -55,128 +127,227 @@ const VisualizerBar = styled.div<{ height: number }>`
   
 `;
 
-const RolePlayPage = () => {
-  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
-  const [remoteStreams, setRemoteStreams] = useState<MediaStream[]>([]);
-  const [isAudioEnabled, setIsAudioEnabled] = useState(true); 
-  const [isVideoEnabled, setIsVideoEnabled] = useState(true); 
-  const peerConnections = useRef<{ [id: string]: RTCPeerConnection }>({});
-  const socketRef = useRef<any>(null); 
+const ControlButton = styled.button`
+  background-color: #FFB74D;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 15px 30px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease-in-out;
 
-  const friends = [
-    { id: 'user1', name: '김민수' },
-    { id: 'user2', name: '이민영' },
-    { id: 'user3', name: '박영수' },
-  ]; // 친구 목록
+  &:hover {
+    background-color: #FF9800;
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+`;
+
+
+interface RoleInfo {
+  friend: string;
+  role: string;
+}
+
+const RolePlayPage: React.FC = () => {
+  const location = useLocation();
+  const { myBookId, myRoomId, role } = location.state || {};
+  const roles = role as RoleInfo[];
+
+  const [book, setBook] = useState([{
+    pageNum: 0,
+    image: "",
+    content_scenario: "",
+  }]);
+
+  const [page, setPage] = useState<number>(0);
+    const bookService = BookService();
+    // const [title, setTitle] = useState("");
+
+    const [userInfo, setUserInfo] = useState<string>('');
 
   useEffect(() => {
-
-    socketRef.current = io('http://localhost:5000'); // 시그널링 서버 URL
-
-   
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        setLocalStream(stream);
-      })
-      .catch((err) => console.error("오류가 발생했습니다.", err));
-
- 
-    socketRef.current.on('offer', handleReceiveOffer);
-    socketRef.current.on('answer', handleReceiveAnswer);
-    socketRef.current.on('candidate', handleReceiveCandidate);
-    socketRef.current.on('newUser', handleNewUser); // 새로운 사용자가 들어올 때
-
-    return () => {
-      socketRef.current.disconnect();
+    const fetchUserInfo = async () => {
+      try {
+        const { data } = await API.get("/api/user", {
+          headers: {
+            "Authorization": `Bearer ${getAccess()}`
+          }
+        });
+        setUserInfo(data.result.name);
+      } catch (err) {
+        console.error("사용자 정보 로드 실패:", err);
+      }
     };
+    fetchUserInfo();
   }, []);
 
-  const handleNewUser = async (newUserId: string) => {
-    const peerConnection = createPeerConnection(newUserId);
-    const offer = await peerConnection.createOffer();
-    await peerConnection.setLocalDescription(offer);
-    socketRef.current.emit('offer', { to: newUserId, offer });
-  };
 
-  const handleReceiveOffer = async ({ from, offer }: any) => {
-    const peerConnection = createPeerConnection(from);
-    await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+    useEffect(() => {
+      console.log(myRoomId);
+      if (myBookId) {
+        getDetail();
+      }
+    }, [myBookId]);
 
-    const answer = await peerConnection.createAnswer();
-    await peerConnection.setLocalDescription(answer);
-
-    socketRef.current.emit('answer', { to: from, answer });
-  };
-
-  const handleReceiveAnswer = async ({ from, answer }: any) => {
-    const peerConnection = peerConnections.current[from];
-    if (peerConnection) {
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-    }
-  };
-
-  const handleReceiveCandidate = async ({ from, candidate }: any) => {
-    const peerConnection = peerConnections.current[from];
-    if (peerConnection) {
-      await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-    }
-  };
-
-  const createPeerConnection = (id: string) => {
-    const peerConnection = new RTCPeerConnection({
-      iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' }, 
-      ],
-    });
-
-    peerConnection.onicecandidate = (event) => {
-      if (event.candidate) {
-        socketRef.current.emit('candidate', { to: id, candidate: event.candidate });
+  
+    const getDetail = async () => {
+      try {
+        const data = await bookService.myBookDetail(myBookId);
+        console.log("Book detail:", data);
+        if (data?.result) {
+          setBook(data.result.details);
+          // setTitle(data.result.title);
+        }
+      } catch (error) {
+        console.error("Failed to fetch book details:", error);
       }
     };
 
-    peerConnection.ontrack = (event) => {
-      setRemoteStreams((prev) => [...prev, event.streams[0]]);
-    };
-
-    if (localStream) {
-      localStream.getTracks().forEach((track) => {
-        peerConnection.addTrack(track, localStream);
-      });
-    }
-
-    peerConnections.current[id] = peerConnection;
-    return peerConnection;
+  const handleNextPage = () => {
+    setPage(prev => Math.min(prev + 1, book.length - 1));
   };
 
-  const startCall = async () => {
-    friends.forEach(async (friend) => {
-      const peerConnection = createPeerConnection(friend.id);
-      const offer = await peerConnection.createOffer();
-      await peerConnection.setLocalDescription(offer);
+  const handlePrevPage = () => {
+    setPage(prev => Math.max(prev - 1, 0));
+  };
 
-      socketRef.current.emit('offer', { to: friend.id, offer });
+  const myFaceRef = useRef<HTMLVideoElement | null>(null);
+  const peerVideoRef = useRef<HTMLVideoElement | null>(null);
+  const myStream = useRef<MediaStream | null>(null);
+  const socket = useRef<Socket | null>(null);
+
+  const myPeerConnection = useRef(
+    new RTCPeerConnection({
+      iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+    })
+  );
+
+  const roomId = 1234;
+
+  useEffect(() => {
+    socket.current = io("http://localhost:5004");
+
+    socket.current.emit("join", roomId);
+
+    socket.current.on("room-full", () => {
+      alert("입장 인원 초과");
+      window.location.reload();
+    });
+
+    socket.current.on("rtc-message", async (message: string) => {
+      const content: { event: string; data: any } = JSON.parse(message);
+
+      switch (content.event) {
+        case "offer":
+          console.log("Receive Offer", content.data);
+          await handleReceiveOffer(content.data);
+          break;
+
+        case "answer":
+          console.log("Receive Answer");
+          await myPeerConnection.current.setRemoteDescription(content.data);
+          break;
+
+        case "candidate":
+          console.log("Receive Candidate");
+          if (content.data) {
+            await myPeerConnection.current.addIceCandidate(content.data);
+          }
+          break;
+
+        default:
+          console.warn("Unknown RTC event:", content.event);
+      }
+    });
+
+    myPeerConnection.current.onicecandidate = (event) => {
+      if (event.candidate) {
+        console.log("Send Candidate");
+        sendMessage({
+          event: "candidate",
+          data: event.candidate,
+        });
+      }
+    };
+
+    myPeerConnection.current.addEventListener("addstream", handleAddStream);
+
+    return () => {
+      socket.current?.disconnect();
+    };
+  }, []);
+
+  const sendMessage = (message: { event: string; data: any }) => {
+    if (socket.current) {
+      const data = { roomId, ...message };
+      socket.current.emit("rtc-message", JSON.stringify(data));
+    }
+  };
+
+  const handleAddStream = (event: any) => {
+    console.log("Receive Streaming Data!");
+    if (peerVideoRef.current) {
+      peerVideoRef.current.srcObject = event.stream;
+    }
+  };
+
+  const getMedia = async () => {
+    try {
+      myStream.current = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: true,
+      });
+      if (myFaceRef.current) {
+        myFaceRef.current.srcObject = myStream.current;
+      }
+    } catch (error) {
+      console.error("미디어 스트림 에러", error);
+    }
+  };
+
+  const createOffer = async () => {
+    await getMedia();
+    if (myStream.current) {
+      myStream.current.getTracks().forEach((track) =>
+        myPeerConnection.current.addTrack(track, myStream.current!)
+      );
+    }
+    const offer = await myPeerConnection.current.createOffer();
+    await myPeerConnection.current.setLocalDescription(offer);
+    console.log("Send Offer");
+    sendMessage({
+      event: "offer",
+      data: offer,
     });
   };
 
- 
-  const toggleAudio = () => {
-    if (localStream) {
-      const audioTrack = localStream.getAudioTracks()[0];
-      audioTrack.enabled = !audioTrack.enabled;
-      setIsAudioEnabled(audioTrack.enabled);
+  
+
+  const handleReceiveOffer = async (offer: RTCSessionDescriptionInit) => {
+    await myPeerConnection.current.setRemoteDescription(offer);
+    await getMedia();
+    if (myStream.current) {
+      myStream.current.getTracks().forEach((track) =>
+        myPeerConnection.current.addTrack(track, myStream.current!)
+      );
     }
+    const answer = await myPeerConnection.current.createAnswer();
+    await myPeerConnection.current.setLocalDescription(answer);
+    console.log("Send Answer");
+    sendMessage({
+      event: "answer",
+      data: answer,
+    });
   };
 
-  const toggleVideo = () => {
-    if (localStream) {
-      const videoTrack = localStream.getVideoTracks()[0];
-      videoTrack.enabled = !videoTrack.enabled;
-      setIsVideoEnabled(videoTrack.enabled);
-    }
-  };
-
-  //마이크가 열려있는지 확인할 수 있도록 음량 시각화
   const AudioVisualizer = ({ stream }: { stream: MediaStream | null }) => {
     const [levels, setLevels] = useState<number[]>(new Array(20).fill(0));
     const analyserRef = useRef<AnalyserNode | null>(null);
@@ -200,60 +371,74 @@ const RolePlayPage = () => {
           analyser.getByteFrequencyData(dataArray);
           const normalizedLevels = Array.from(dataArray)
             .slice(0, 40) 
-            .map((value) => (value / 255) * 100); 
+            .map((value) => (value / 255) * 100);
   
           setLevels(normalizedLevels);
-          requestAnimationFrame(updateLevels);
+          requestAnimationFrame(updateLevels); 
         };
   
         updateLevels();
-      }
-  
-      return () => {
-        audioContextRef.current?.close();
-      };
-    }, [stream]);
 
+        return () => {
+          audioContextRef.current?.close();
+        };
+      }
+    }, [stream]);
+        
+
+      return (
+        <VisualizerContainer>
+          {levels.map((level, index) => (
+            <VisualizerBar key={index} height={level} />
+          ))}
+        </VisualizerContainer>
+      );
+    };
+
+    const myRole = roles?.find((r: RoleInfo) => r.friend === userInfo)?.role;
+    const peerRole = roles?.find((r: RoleInfo) => r.friend !== userInfo)?.role;
+    
+  
     return (
-      <VisualizerContainer>
-        {levels.map((level, index) => (
-          <VisualizerBar key={index} height={level} />
-        ))}
-      </VisualizerContainer>
+      <PageContainer>
+        <Header>
+          <h1>역할놀이</h1>
+          <Button onClick={createOffer}>
+              <FaMask />
+              역할놀이 시작하기
+            </Button>
+        </Header>
+  
+        <VideoSection>
+          <VideoBox>
+            <Video ref={myFaceRef} playsInline autoPlay />
+            <h3>나의 화면</h3>
+            <p>{myRole ? `역할: ${myRole}` : '역할 없음'}</p>
+            <AudioVisualizer stream={myStream.current} />
+          </VideoBox>
+          <VideoBox>
+            
+            <Video ref={peerVideoRef} playsInline autoPlay />
+            <p>{peerRole ? `상대방 역할: ${peerRole}` : '역할 없음'}</p>
+            <AudioVisualizer stream={null} />
+          </VideoBox>
+        </VideoSection>
+  
+        <StorySection>
+          <StoryImage src={book[page].image}  />
+          <StoryContent>{book[page].content_scenario}</StoryContent>
+          <ButtonContainer>
+          <ControlButton onClick={handlePrevPage} disabled={page === 0}>
+              이전 페이지
+            </ControlButton>
+            
+            <ControlButton onClick={handleNextPage} disabled={page === book.length - 1}>
+              다음 페이지
+            </ControlButton>
+          </ButtonContainer>
+        </StorySection>
+      </PageContainer>
     );
   };
-
-  return (
-    <MainContainer>
-      <InfoHeader type="역할 놀이" />
-      <PageContainer>
-      <h2>화상회의 테스트</h2>
-      <VideoContainer>
-        {localStream && <VideoBox autoPlay muted playsInline ref={(ref) => ref && (ref.srcObject = localStream)} />}
-
-        {remoteStreams.map((stream, index) => (
-          <VideoBox key={index} autoPlay playsInline ref={(ref) => ref && (ref.srcObject = stream)} />
-        ))}
-      </VideoContainer>
-      <SubContainer>
-      <AudioVisualizer stream={localStream} />
-      </SubContainer>
-      <button onClick={startCall}>역할놀이 시작</button>
-      
-      <div>
-      <button onClick={toggleVideo}>
-        {isVideoEnabled ? <BiSolidCamera /> : <BiSolidCameraOff />}
-        {isVideoEnabled ? '비디오 끄기' : '비디오 켜기'}
-      </button>
-
-        <button onClick={toggleAudio}>
-        {isVideoEnabled ? <PiSpeakerSimpleSlashDuotone /> : <PiSpeakerSimpleHighDuotone />}
-          {isAudioEnabled ? '소리 끄기' : '소리 켜기'}
-        </button>
-      </div>
-      </PageContainer>
-    </MainContainer>
-  );
-};
-
-export default RolePlayPage;
+  
+  export default RolePlayPage;
