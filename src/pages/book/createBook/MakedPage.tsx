@@ -44,8 +44,11 @@ const Photo = styled.img`
     height: 400px;
     margin-top: 20px;
     margin-bottom: 20px;
+    border-radius: 20px;
     @media (max-width: 768px) {
         margin-top: 0px;
+        width: 300px;
+        height: 300px;
     }
 `;
 const ButtonContainer = styled.div`
@@ -74,7 +77,7 @@ const MakedPage = () => {
             <SubContainer>
                 <PhotoContainer>
                     <CustomTitle>나만의 동화가 완성되었어요!</CustomTitle>
-                    <Photo src="../public/images/temp.svg" />
+                    <Photo src={URL.createObjectURL(bookStore.getImage(bookStore.getIndex()))} />
                 </PhotoContainer>
                 <ButtonContainer>
                     <ButtonSubContainer>
