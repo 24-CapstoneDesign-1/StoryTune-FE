@@ -30,7 +30,7 @@ const MyInfo = lazy(() => import("@/pages/mypage/MyInfoPage"));
 const ChangeInfo = lazy(() => import("@/pages/mypage/ChangeInfoPage"));
 const FriendList = lazy(() => import("@/pages/mypage/FriendListPage"));
 const RolePlayMain = lazy(() => import("@/pages/roleplay/MainPage"));
-const FriendPlay = lazy(() => import("@/pages/roleplay/FriendPlayPage"));
+const FriendPlay = lazy(() => import("@/pages/roleplay/RolePlayBookPage"));
 const SelectRole = lazy(() => import("@/pages/roleplay/RoleSelectPage"));
 const RolePlay = lazy(() => import("@/pages/roleplay/RolePlayPage"));
 

@@ -66,6 +66,18 @@ const FriendName = styled.p`
   color: #5d4037;
 `;
 
+const FriendUsername = styled.div`
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: #5d4037;
+  width: 100%;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+`;
+
 const RequestActions = styled.div`
   margin-top: 0.5rem;
   display: flex;
@@ -114,17 +126,23 @@ const FriendListPage = () => {
 
   const friendService = FriendService(); 
   const [friends, setFriends] = useState<{ id: string; name: string }[]>([]);
-  const [receivedRequests, setReceivedRequests] = useState<{ id: string; name: string }[]>([]);
+  const [receivedRequests, setReceivedRequests] = useState<{ friendId: number; name: string, username: string }[]>([]);
   const [searchId, setSearchId] = useState("");
-  const [searchResults, setSearchResults] = useState<{ id: string; name: string }[]>([]);
+  const [searchResults, setSearchResults] = useState<{ userId: number; name: string; username: string}>({
+    userId: 0,
+    name: "",
+    username: "",
+  });
   const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchFriendsData = async () => {
         try {
-          const { friends, requests } = await friendService.fetchFriendList();  // Assuming the API returns this format
-          setFriends(friends);
-          setReceivedRequests(requests);
+          const friends = await friendService.fetchFriendList();  // Assuming the API returns this format
+          const receivedRequests = await friendService.fetchFriendRequests();
+          setFriends(friends.result);
+          setReceivedRequests(receivedRequests.result);
+          console.log(receivedRequests.result);
         } catch (error) {
           console.error("친구 목록 불러오기 실패", error);
         }
@@ -132,16 +150,17 @@ const FriendListPage = () => {
       
 
     fetchFriendsData();
-  }, [friendService]);
+  }, []);
 
   const handleSearch = async () => {
     try {
-      const searchResults = await friendService.searchFriend(searchId);
-      if (searchResults.length > 0) {
-        setSearchResults(searchResults);
+      const searchResult = await friendService.searchFriend(searchId);
+      console.log(searchResult.result);
+      if (searchResult.result.userId !== undefined) {
+        setSearchResults(searchResult.result);
+        console.log(searchResults);
         setError("");
       } else {
-        setSearchResults([]);
         setError("존재하지 않는 사용자이거나 이미 친구입니다.");
       }
     } catch (error) {
@@ -149,27 +168,29 @@ const FriendListPage = () => {
     }
   };
 
-  const handleSendRequest = async (user: { id: string; name: string }) => {
+  const handleSendRequest = async ({userId, name, username} : {userId: number, name: string, username: string}) => {
     try {
-      await friendService.addFriend(user.id); 
-      alert(`"${user.name}"님에게 친구 요청을 보냈습니다.`);
+      await friendService.addFriend(userId);
+      console.log(username);
+      alert(`"${name}"님에게 친구 요청을 보냈습니다.`);
     } catch (error) {
       console.error("친구 요청 실패:", error);
       alert("친구 요청에 실패했습니다.");
     }
   };
 
-  const handleAcceptRequest = async (id: string) => {
+  const handleAcceptRequest = async (id: number, username: string) => {
     try {
-      await friendService.acceptRequest(id); 
-      alert(`"${id}"님의 요청을 수락했습니다.`);
+      console.log(id);
+      await friendService.acceptRequest(id, {status: "ACCEPTED"}); 
+      alert(`"${username}"님의 요청을 수락했습니다.`);
     } catch (error) {
       console.error("요청 수락 실패:", error);
       alert("요청 수락에 실패했습니다.");
     }
   };
 
-  const handleRejectRequest = async (id: string) => {
+  const handleRejectRequest = async (id: number) => {
     try {
       await friendService.rejectRequest(id);
       alert(`"${id}"님의 요청을 거절했습니다.`);
@@ -220,15 +241,23 @@ const FriendListPage = () => {
         {error && <p style={{color : "red"}}>{error}</p>}
         <Section>
         <div>
-        {searchResults.map((result) => (
-            <FriendCard key={result.id} onClick={() => handleSendRequest(result)}>
-              <FaUserPlus size={32} color="#FF8A65" />
-              <FriendName>{result.name}</FriendName>
-              <small style={{ backgroundColor: "#E6E6E6" }}>
-                {result.id}
-               </small>
-            </FriendCard>
-          ))}
+          <>
+          {console.log(searchResults)}
+          </>
+          {searchResults.userId !== 0 ? (<>
+            <FriendCard onClick={() => handleSendRequest(searchResults)}>
+            <FaUserPlus size={32} color="#FF8A65" />
+            <FriendName>{searchResults.name}</FriendName>
+            <FriendUsername style={{ backgroundColor: "#E6E6E6" }}>
+              {searchResults?.username}
+             </FriendUsername>
+          </FriendCard>
+          </>
+          ) : (
+            <>
+            </>
+          )
+          }
         </div>
         </Section>
       </SearchContainer>
@@ -237,7 +266,7 @@ const FriendListPage = () => {
       <Section>
         <h2>친구 목록</h2>
         <div>
-          {(friends).length !== 0 ? (friends.map((friend) => (
+          {friends.length !== 0 ? (friends.map((friend) => (
             <FriendCard key={friend.id}>
               <FaUserCheck size={32} color="#FF8A65" />
               <FriendName>{friend.name}</FriendName>
@@ -257,23 +286,23 @@ const FriendListPage = () => {
         <h2>받은 친구 요청</h2>
         <div>
           {receivedRequests.map((request) => (
-            <FriendCard key={request.id}>
+            <FriendCard>
               <FaUserPlus size={32} color="#FF8A65" />
               <FriendName>{request.name}</FriendName>
               <small style={{ backgroundColor: "#E6E6E6", padding: "2px 4px", borderRadius: "4px" }}>
-                {request.id}
+                {request.username}
               </small>
 
               <RequestActions>
                 <ActionButton
                   accept
-                  onClick={() => handleAcceptRequest(request.id)}
+                  onClick={() => handleAcceptRequest(request.friendId, request.name)}
                 >
                   수락
                 </ActionButton>
                 <ActionButton
                   reject
-                  onClick={() => handleRejectRequest(request.id)}
+                  onClick={() => handleRejectRequest(request.friendId)}
                 >
                   거절
                 </ActionButton>
