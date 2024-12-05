@@ -1,54 +1,22 @@
-import React, { useState, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
-import { MainContainer, SquareButton } from "@/entities";
+import { MainContainer, SquareButton, Loading } from "@/entities";
 import { useNavigate } from 'react-router-dom';
-import { PAGE_URL } from '@/shared';
-//Modal.tsx에서 가져오니까 오류생겨서 일단 여기에 함 
+import { PAGE_URL, RolePlayService, FriendService, AuthService } from '@/shared';
 
+// Styled Components
 const SubContainer = styled.div`
-    display: flex;
-    justify-content: space-between;
-    margin-top: 280px;
-    height: 100vh;
-    @media (max-width: 768px) {
-        flex-direction: column;
-        height: 100%;
-        width: 100%;
-    }
-`;
-
-const ButtonSubContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 35%;
-  @media (max-width: 768px) {
-    height: 200px;
-  }
+  align-items: center;
+  height: 100vh;
+  margin-top: 150px;
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
-  gap: 10px; 
-  margin-top: 20px; 
-`;
-
-const SmallSquareButton = styled(SquareButton)`
-  width: 200px; 
-  height: 50px; 
-  background: rgba(0, 0, 0, 0.1);
-  font-size: 16px; 
-`;
-const ImageContainer = styled.img`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 50vh;
-    margin-top: -100px;
-    @media (max-width: 768px) {
-        height: 100%;
-        margin-top: 30px;
-    }
+  flex-direction: column;
+  gap: 20px;
 `;
 
 const ModalContainer = styled.div`
@@ -62,60 +30,95 @@ const ModalContainer = styled.div`
   justify-content: center;
   align-items: center;
 `;
+
+const ModalContent = styled.div`
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  width: 400px;
+`;
+
 const FriendsList = styled.ul`
   list-style: none;
   padding: 0;
-  margin: 0;
-  text-align: left;
 `;
 
 const FriendItem = styled.li`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
-  padding: 8px 0;
+  padding: 10px;
   border-bottom: 1px solid #eee;
 `;
 
-const ModalContent = styled.div`
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 400px;
-  text-align: center;
-`;
+// Interfaces
+interface Friend {
+  userId: string;
+  name: string;
+  status: string;
+}
 
-interface ModalProps {
-    open: boolean; 
-    onClose: () => void;
-    onNavigate: () => void;
-    title: string;
-    children: React.ReactNode;
-  }
+interface InviteModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  friends: Friend[];
+  onInvite: (friendId: string) => void;
+  invitedFriends: Friend[];
+  onNext: () => void;
+}
 
-  
-const Modal : React.FC<ModalProps>= ({ open, onClose, onNavigate, title, children }) => {
-  const modalBackground = useRef(null);
-
-  if (!open) return null;
+// Components
+const InviteModal = ({ isOpen, onClose, friends, onInvite, invitedFriends, onNext }: InviteModalProps) => {
+  if (!isOpen) return null;
 
   return (
-    <ModalContainer
-      ref={modalBackground}
-      onClick={(e) => {
-        if (e.target === modalBackground.current) {
-          onClose();
-        }
-      }}
-    >
-      <ModalContent>
-        <h2>{title}</h2>
-        <p>{children}</p>
-        <ButtonContainer>
-            <SmallSquareButton onClick={onClose}>닫기</SmallSquareButton>
-            <SmallSquareButton onClick={onNavigate}>역할 배정하러 가기</SmallSquareButton>
-        </ButtonContainer>
+    <ModalContainer onClick={onClose}>
+      <ModalContent onClick={(e) => e.stopPropagation()}>
+        <h3>친구 초대하기</h3>
+        <FriendsList>
+
+          {friends.map((friend) => (
+            <FriendItem>
+              <span>{friend.name}</span>
+              {invitedFriends.some(invited => invited.userId === friend.userId) ? (
+                <span>초대됨</span>
+              ) : (
+                <>{console.log(friend)}
+                <SquareButton onClick={() => onInvite(friend.userId)}>초대하기</SquareButton></>
+              )}
+            </FriendItem>
+          ))}
+        </FriendsList>
+        {invitedFriends.length > 0 && (
+          <SquareButton onClick={onNext}>역할놀이 시작하기</SquareButton>
+        )}
+      </ModalContent>
+    </ModalContainer>
+  );
+};
+
+const AcceptModal = ({ isInvited, onClose, invitedList, curUserId, onInvite }: {
+  isInvited: boolean;
+  onClose: () => void;
+  invitedList: any;
+  curUserId: number;
+  onInvite: (userId: number) => void;
+}) => {
+  if (!isInvited) return null;
+
+  return (
+    <ModalContainer onClick={onClose}>
+      <ModalContent onClick={(e) => e.stopPropagation()}>
+        <h3>친구 초대가 왔어요!</h3>
+        <FriendsList>
+
+          {invitedList.map((invite:any) => (
+            <FriendItem>
+              <span>{invite.ownerName}</span>
+              <SquareButton onClick={() => onInvite(curUserId)}>들어가기</SquareButton>
+            </FriendItem>
+          ))}
+        </FriendsList>
       </ModalContent>
     </ModalContainer>
   );
@@ -123,57 +126,127 @@ const Modal : React.FC<ModalProps>= ({ open, onClose, onNavigate, title, childre
 
 const MainPage = () => {
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [invitedFriends, setInvitedFriends] = useState<any[]>([]); //친구 초대해서 저장
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [friends, setFriends] = useState<Friend[]>([]);
+  const [invitedFriends, setInvitedFriends] = useState<Friend[]>([]);
+  const [currentRoomId, setCurrentRoomId] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [invitedList, setinvitedList] = useState<Friend[]>([]);
+  const [isInvitedList, setIsInvitedList] = useState(false);
+  const rolePlayService = RolePlayService();
+  const friendService = FriendService();
+  const authService = AuthService();
+  const [curUserId, setCurUserId] = useState<number>(0);
 
-  const friends = [
-    { id: 1, name: '김가현' },
-    { id: 2, name: '김나현' },
-    { id: 3, name: '강지혜' },
-  ];
+  // 친구 목록 가져오기
+  useEffect(() => {
+    const fetchFriends = async () => {
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+        try {
+          const friendList = await friendService.fetchFriendList();
+          const invitedList = await rolePlayService.inviteList();
+          const curUser = await authService.currentUser();
+          setCurUserId(curUser.result.userId);
+          setFriends(friendList.result);
+          setinvitedList(invitedList.result);
+          console.log('invitedList', invitedList);
+          if(invitedList.result.length > 0) {
+            setIsInvitedList(true);
+          }
+        } catch (error) {
+          console.error('Failed to fetch friends:', error);
+        }
 
-  const NextPage = () => {
-    closeModal();
-    navigate(PAGE_URL.SelectRole, { state: { friends: invitedFriends } });
-  };
+    };
 
-  const handleInviteFriend = (friendId: number) => {
-    const invitedFriend = friends.find(friend => friend.id === friendId);
-    if (invitedFriend && !invitedFriends.includes(invitedFriend)) {
-      setInvitedFriends([...invitedFriends, invitedFriend]);
+    fetchFriends();
+  }, []);
+
+  // 방 생성 및 모달 열기
+  const handleCreateRoom = async () => {
+    setIsLoading(true);
+    try {
+      const room = await rolePlayService.createRoom();
+      setCurrentRoomId(room.result.rolePlayingRoomId);
+      setModalOpen(true);
+    } catch (error) {
+      console.error('Failed to create room:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
-  
+
+  // 친구 초대하기
+  const handleInvite = async (friendId: string) => {
+    if (!currentRoomId) return;
+
+    try {
+      console.log('Inviting friend:', friendId);
+      await rolePlayService.inviteUser(currentRoomId, Number(friendId));
+      const invitedFriend = friends.find(friend => friend.userId === friendId);
+      if (invitedFriend) {
+        setInvitedFriends(prev => [...prev, invitedFriend]);
+      }
+      console.log('Invited friend:', invitedFriend);
+    } catch (error) {
+      console.error('Failed to invite friend:', error);
+    }
+  };
+
+  // 다음 페이지로 이동
+  const handleNext = () => {
+    if (!currentRoomId || !invitedFriends.length) return;
+    console.log('state: ', currentRoomId, invitedFriends);
+    navigate(PAGE_URL.FriendPlay, {
+      state: {
+        rolePlayingRoomId: currentRoomId,
+        participants: invitedFriends,
+      },
+    });
+  };
+  const onInvite = async (userId: number) => {
+    await rolePlayService.updateInviteStatus(Number(userId), {status:'ACCEPTED'})
+    .then(() => {
+      // navigate(PAGE_URL.RolePlay, {state: {rolePlayingRoomId: invitedList[0].rolePlayingRoomId}});
+      navigate(PAGE_URL.RolePlay);
+    })
+
+  }
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setIsInvitedList(false);
+    setInvitedFriends([]);
+  };
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
   return (
     <MainContainer>
-        <SubContainer>
-            <ImageContainer src="./public/images/logo.svg" />
-                <ButtonSubContainer>
-                <SquareButton width="400px" onClick={openModal}>친구와 함께 하기</SquareButton>
-                <SquareButton width="400px" onClick={() => navigate(PAGE_URL.RolePlay)}>혼자 하기</SquareButton>
-                </ButtonSubContainer>
-
-      <Modal open={isModalOpen} onClose={closeModal} onNavigate={NextPage} title="친구 초대하기">
-      <div>
-            <h3>친구 목록</h3>
-            <FriendsList>
-              {friends.map(friend => (
-                <FriendItem key={friend.id}>
-                  <span>{friend.name}</span>
-                  {invitedFriends.some(invited => invited.id === friend.id) ? (
-                    <span>초대된 친구</span>
-                  ) : (
-                    <SmallSquareButton onClick={() => handleInviteFriend(friend.id)}>친구 초대</SmallSquareButton>
-                  )}
-                </FriendItem>
-              ))}
-              </FriendsList>
-          </div>
-      </Modal>
-        </SubContainer>
+      <SubContainer>
+        
+        <ButtonContainer>
+          <SquareButton onClick={handleCreateRoom}>친구와 함께 하기</SquareButton>
+          <SquareButton onClick={() => navigate(PAGE_URL.RolePlay)}>혼자 하기</SquareButton>
+        </ButtonContainer>
+        <AcceptModal
+          isInvited={isInvitedList}
+          onClose={handleCloseModal}
+          invitedList={invitedList}
+          curUserId={curUserId}
+          onInvite={onInvite}
+          />
+        <InviteModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          friends={friends}
+          onInvite={handleInvite}
+          invitedFriends={invitedFriends}
+          onNext={handleNext}
+        />
+      </SubContainer>
     </MainContainer>
   );
 };
