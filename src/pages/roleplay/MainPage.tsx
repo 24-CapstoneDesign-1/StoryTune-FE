@@ -206,12 +206,11 @@ const MainPage = () => {
   };
   const onInvite = async (userId: number) => {
     await rolePlayService.updateInviteStatus(Number(userId), {status:'ACCEPTED'})
-    .then(() => {
       // navigate(PAGE_URL.RolePlay, {state: {rolePlayingRoomId: invitedList[0].rolePlayingRoomId}});
       navigate(PAGE_URL.RolePlay);
-    })
+    }
 
-  }
+  
 
   const handleCloseModal = () => {
     setModalOpen(false);
