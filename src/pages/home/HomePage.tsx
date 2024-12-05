@@ -133,18 +133,6 @@ const HomePage = () => {
     }
   ]);
 
-  // const user = async () => {
-  //   await authService.userInfo()
-  //   .then((res) => {
-  //       userStore.setUsername(res.result.userId);
-  //       userStore.setName(res.result.name);
-  //       console.log(userStore.getUserAllInfo());
-  //   })
-  // }
-
-  // useEffect(() => {
-  //   user();
-  // }, []);
   const handleSearch = () => {
     if (search.trim()) navigate(PAGE_URL.Search, { state: { search } });
   };

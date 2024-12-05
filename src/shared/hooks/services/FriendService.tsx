@@ -4,10 +4,15 @@ import { useFriendStore } from "../stores/useFriendStore";
 export const FriendService = () => {
   const friendStore = useFriendStore((state) => state);
 
-  const addFriend = async (userId: string) => {
+  const addFriend = async (userId: number) => {
     try {
-      const { data } = await API.post(`/api/friend/${userId}`);
-      friendStore.setFriends([...friendStore.friends, data]); 
+      const { data } = await API.post(
+        `/api/friend/${userId}`,{
+        headers: {
+          "Authorization": `Bearer ${getAccess()}`,
+        },
+      });
+      // friendStore.setFriends([...friendStore.friends, data]); 
       return data;
     } catch (error) {
       console.error("친구 추가 실패:", error);
@@ -16,10 +21,17 @@ export const FriendService = () => {
   };
 
   // 친구 요청 수락
-  const acceptRequest = async (requestId: string) => {
+  const acceptRequest = async (requestId: number, body: {status: string}) => {
     try {
-      const { data } = await API.patch(`/api/friend/request/${requestId}`);
-      friendStore.setFriends([...friendStore.friends, data]); 
+      const { data } = await API.patch(
+        `/api/friend/request/${requestId}`, body,
+        {
+          headers: {
+            "Authorization": `Bearer ${getAccess()}`,
+          },
+        }
+      );
+      // friendStore.setFriends([...friendStore.friends, data]); 
       return data;
     } catch (error) {
       console.error("친구 요청 수락 실패:", error);
@@ -27,10 +39,10 @@ export const FriendService = () => {
     }
   };
 
-  const rejectRequest = async (requestId: string) => {
+  const rejectRequest = async (requestId: number) => {
     try {
       const { data } = await API.patch(`/api/friend/request/${requestId}`);
-      friendStore.setFriends(friendStore.friends.filter((friend) => friend.id !== requestId));
+      // friendStore.setFriends(friendStore.friends.filter((friend) => friend.id !== requestId));
       return data;
     } catch (error) {
       console.error("친구 요청 거절 실패:", error);
@@ -48,6 +60,7 @@ export const FriendService = () => {
         }
       );
       friendStore.setFriends(data); 
+      console.log('data', data);
       return data;
     } catch (error) {
       throw new Error("친구 목록 조회에 실패했습니다.");
