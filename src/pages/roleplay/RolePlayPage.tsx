@@ -203,7 +203,7 @@ const RolePlayPage: React.FC = () => {
         console.log("Book detail:", data);
         if (data?.result) {
           setBook(data.result.details);
-          setTitle(data.result.title);
+        
         }
       } catch (error) {
         console.error("Failed to fetch book details:", error);
