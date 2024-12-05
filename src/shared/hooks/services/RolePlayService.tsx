@@ -70,12 +70,22 @@ export const RolePlayService = () => {
     return data;
   };
 
-  const updateInviteStatus = async (participantId: number, status: RolePlay.InviteStatus["status"]) => {
-    const { data } = await API.patch(`/api/roleplaying/invite/${participantId}`, { status }, {
+  const inviteList = async () => {
+    const { data } = await API.get(`/api/roleplaying/invite`, {
       headers: {
         "Authorization": `Bearer ${getAccess()}`,
       },
     }) as AxiosResponse;
+    return data;
+  };
+
+  const updateInviteStatus = async (participantId: number, status: any) => {
+    const { data } = await API.patch(`/api/roleplaying/invite/${participantId}`,
+      status , {
+        headers: {
+          "Authorization": `Bearer ${getAccess()}`,
+        },
+      }) as AxiosResponse;
     return data;
   };
 
@@ -90,6 +100,7 @@ const roleSelect = async (myRoomId: number, bookId: number) => {
 }
 
   return {
+    inviteList,
     roleSelect,
     createRoom,
     getRoomById,

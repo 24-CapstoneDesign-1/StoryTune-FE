@@ -68,7 +68,7 @@ declare namespace RolePlay {
     }
   
     interface InviteStatus {
-      status: "PENDING";
+      status: "PENDING" | "ACCEPTED";
     }
 
     interface RolePlayInvite {
