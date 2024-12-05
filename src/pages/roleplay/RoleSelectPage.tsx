@@ -4,7 +4,7 @@ import { MainContainer, SquareButton } from "@/entities";
 import { InfoHeader } from "@/widgets";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { PAGE_URL, RolePlayService } from '@/shared';
-import { FaPlay, FaTheaterMasks, FaHeart } from 'react-icons/fa';
+import {  FaTheaterMasks } from 'react-icons/fa';
 
 const NextButton = styled(SquareButton)`
  height : 50px;

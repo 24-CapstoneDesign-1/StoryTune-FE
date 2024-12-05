@@ -158,7 +158,7 @@ interface RoleInfo {
 
 const RolePlayPage: React.FC = () => {
   const location = useLocation();
-  const { myBookId, myRoomId, role } = location.state || {};
+  const { myBookId, role } = location.state || {};
   const roles = role as RoleInfo[];
 
   const [book, setBook] = useState([{
@@ -169,7 +169,7 @@ const RolePlayPage: React.FC = () => {
 
   const [page, setPage] = useState<number>(0);
     const bookService = BookService();
-    // const [title, setTitle] = useState("");
+
 
     const [userInfo, setUserInfo] = useState<string>('');
 
@@ -191,7 +191,6 @@ const RolePlayPage: React.FC = () => {
 
 
     useEffect(() => {
-      console.log(myRoomId);
       if (myBookId) {
         getDetail();
       }
@@ -204,7 +203,7 @@ const RolePlayPage: React.FC = () => {
         console.log("Book detail:", data);
         if (data?.result) {
           setBook(data.result.details);
-          // setTitle(data.result.title);
+        
         }
       } catch (error) {
         console.error("Failed to fetch book details:", error);
