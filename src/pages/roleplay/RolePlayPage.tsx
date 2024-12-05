@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import io, { Socket } from "socket.io-client";
 import styled from '@emotion/styled';
-import { FaMask, FaVideo, FaMicrophone } from "react-icons/fa";
-import { MainContainer } from "@/entities";
+import { FaMask } from "react-icons/fa";
 import { BookService } from "@/shared/hooks/services/BookService";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import {  API, getAccess } from "@/shared";
 
 const PageContainer = styled.div`
@@ -120,24 +119,6 @@ const VisualizerContainer = styled.div`
 `;
 
 
-const BookSection = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 40px;
-  padding: 30px;
-  background: #FFF;
-  border-radius: 30px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-  margin: 20px auto;
-  max-width: 1200px;
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    align-items: center;
-  }
-`;
-
-
 const VisualizerBar = styled.div<{ height: number }>`
   width: 3px;
   height: ${(props) => props.height}px;
@@ -177,7 +158,7 @@ interface RoleInfo {
 
 const RolePlayPage: React.FC = () => {
   const location = useLocation();
-  const { myBookId, myRoomId, role } = location.state || {};
+  const { myBookId, role } = location.state || {};
   const roles = role as RoleInfo[];
 
   const [book, setBook] = useState([{
@@ -188,7 +169,7 @@ const RolePlayPage: React.FC = () => {
 
   const [page, setPage] = useState<number>(0);
     const bookService = BookService();
-    const [title, setTitle] = useState("");
+    const [ setTitle] = useState("");
 
     const [userInfo, setUserInfo] = useState<string>('');
 
