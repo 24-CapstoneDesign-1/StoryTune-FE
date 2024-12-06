@@ -174,6 +174,7 @@ const RolePlayPage: React.FC = () => {
     const [userInfo, setUserInfo] = useState<string>('');
 
   useEffect(() => {
+    console.log(myBookId);
     const fetchUserInfo = async () => {
       try {
         const { data } = await API.get("/api/user", {
@@ -191,15 +192,13 @@ const RolePlayPage: React.FC = () => {
 
 
     useEffect(() => {
-      if (myBookId) {
-        getDetail();
-      }
-    }, [myBookId]);
+      getDetail();
+    }, []);
 
   
     const getDetail = async () => {
       try {
-        const data = await bookService.myBookDetail(myBookId);
+        const data = await bookService.myBookDetail(216);
         console.log("Book detail:", data);
         if (data?.result) {
           setBook(data.result.details);

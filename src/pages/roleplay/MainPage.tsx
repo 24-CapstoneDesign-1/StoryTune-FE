@@ -104,7 +104,11 @@ const AcceptModal = ({ isInvited, onClose, invitedList, curUserId, onInvite }: {
   curUserId: number;
   onInvite: (userId: number) => void;
 }) => {
-  if (!isInvited) return null;
+  const navigate = useNavigate();
+  if (!isInvited) {
+    console.log(curUserId, onInvite);
+    return null;
+  }
 
   return (
     <ModalContainer onClick={onClose}>
@@ -115,7 +119,7 @@ const AcceptModal = ({ isInvited, onClose, invitedList, curUserId, onInvite }: {
           {invitedList.map((invite:any) => (
             <FriendItem>
               <span>{invite.ownerName}</span>
-              <SquareButton onClick={() => onInvite(curUserId)}>들어가기</SquareButton>
+              <SquareButton onClick={() => navigate(PAGE_URL.RolePlay)}>들어가기</SquareButton>
             </FriendItem>
           ))}
         </FriendsList>
@@ -205,7 +209,8 @@ const MainPage = () => {
     });
   };
   const onInvite = async (userId: number) => {
-    await rolePlayService.updateInviteStatus(Number(userId), {status:'ACCEPTED'})
+    console.log(userId);
+    // await rolePlayService.updateInviteStatus(Number(userId), {status:'ACCEPTED'})
       // navigate(PAGE_URL.RolePlay, {state: {rolePlayingRoomId: invitedList[0].rolePlayingRoomId}});
       navigate(PAGE_URL.RolePlay);
     }

@@ -80,6 +80,7 @@ interface RecordContentProps {
     setProgress: Dispatch<SetStateAction<number>>;
     isLoading: boolean;
     setIsLoading: Dispatch<SetStateAction<boolean>>;
+    isLine: boolean;
 }
 
 export const RecordContent = ({
@@ -88,6 +89,7 @@ export const RecordContent = ({
     setRecordProgress,
     setProgress,
     setIsLoading,
+    isLine,
 }: RecordContentProps) => {
     const [recording, setRecording] = useState(false);
     const bookService = BookService();
@@ -113,7 +115,7 @@ export const RecordContent = ({
             // Upload the audio to the server
             await bookService.myBookContent(myBookContentId, {
                 audio: file,
-                isLine: false,
+                isLine: isLine,
                 myBookCharacterId: null,
             });
 
