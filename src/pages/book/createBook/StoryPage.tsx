@@ -23,6 +23,7 @@ const StoryPage = () => {
     const pageNum = bookStore.getAllBook().length;
     const bookService = BookService();
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isLine, setIsLine] = useState<boolean>(false);
 
     const handleGPTApi = async () => {
         // console.log('bookStore.getAllBook(): ', bookStore.getAllBook()[0].name);
@@ -90,6 +91,7 @@ const StoryPage = () => {
                                         setProgress={setProgress}
                                         isLoading={isLoading}
                                         setIsLoading={setIsLoading}
+                                        isLine={isLine}
                                     />
                                     {/* <RecordIcon onClick={
                                         () => setIsRecord(true)
@@ -132,6 +134,7 @@ const StoryPage = () => {
                                     console.log('res', res);
                                     setHero(res.result.map((name: any) => name.name));
                                     console.log('hero', hero);
+                                    setIsLine(true);
                                     setProgress(progress+1)
                                 });
                             }}>네</CircleButton>
