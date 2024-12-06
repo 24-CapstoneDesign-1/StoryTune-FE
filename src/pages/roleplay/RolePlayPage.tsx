@@ -198,7 +198,7 @@ const RolePlayPage: React.FC = () => {
   
     const getDetail = async () => {
       try {
-        const data = await bookService.myBookDetail(216);
+        const data = await bookService.myBookDetail(221);
         console.log("Book detail:", data);
         if (data?.result) {
           setBook(data.result.details);
